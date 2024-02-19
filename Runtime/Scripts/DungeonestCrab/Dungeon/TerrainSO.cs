@@ -7,6 +7,7 @@ using Sirenix.OdinInspector;
 using DungeonestCrab.Dungeon.Printer;
 
 namespace DungeonestCrab.Dungeon {
+	[CreateAssetMenu(menuName = "DungeonestCrab/Terrain")]
 	public class TerrainSO : ScriptableObject {
 
 		public enum FloorStyle {

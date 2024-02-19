@@ -4,13 +4,18 @@ using UnityEngine;
 using Pomerandomian;
 using KH.Audio;
 using KH.Tools;
+using KH.Extensions;
 
 namespace DungeonestCrab.Dungeon.Printer {
 	[DefaultExecutionOrder(-1)]
 	public class DungeonPrinter : MonoBehaviour {
 
 		[SerializeField] DungeonReference GeneratorRef;
-		public GameObject MovementBlocker;
+		[SerializeField] GameObject MovementBlocker;
+
+		[Header("Config")]
+		[Tooltip("Size of tile in (width, height, depth) order.")]
+		[SerializeField] Vector3Int TileSize = Vector3Int.one;
 		public bool MergeMeshes = true;
 
 		public static DungeonPrinter Shared;
@@ -22,9 +27,13 @@ namespace DungeonestCrab.Dungeon.Printer {
 		Transform StaticEntityHolder;
 		Transform EntityHolder;
 		private Transform _testHolder;
+		private Vector2Int _tileFloorSize;
+		private float _tileHeightMult;
 
 		protected void Awake() {
 			Shared = this;
+			_tileFloorSize = TileSize.ToVectorXZ();
+			_tileHeightMult = TileSize.y;
 			MakeHolders(this.transform);
 		}
 
@@ -35,15 +44,13 @@ namespace DungeonestCrab.Dungeon.Printer {
 				Entity floorReplacingEntity = tileSpec.Entities.FirstOrDefault(t => t.Type.ReplacesFloor);
 				Entity ceilingReplacingEntity = tileSpec.Entities.FirstOrDefault(t => t.Type.ReplacesCeiling);
 
-				GameObject blocker = null;
 				bool walkable = tileSpec.Walkable;
 				if (!walkable) {
-					blocker = Instantiate(MovementBlocker, new Vector3(x, 0, y), Quaternion.identity, CollisionHolder);
+					AddMovementBlocker(tileSpec, 0);
 				}
 				if (walkable && floorReplacingEntity == null) {
-					blocker = Instantiate(MovementBlocker, new Vector3(x, -1, y), Quaternion.identity, CollisionHolder);
+					AddMovementBlocker(tileSpec, -1);
 				}
-				if (blocker != null) blocker.name = $"Movement Blocker: ({x}, {y})";
 
 				DrawWall(dg, tileSpec, 0, -1);
 				DrawWall(dg, tileSpec, 0, 1);
@@ -57,17 +64,17 @@ namespace DungeonestCrab.Dungeon.Printer {
 
 				if (tileSpec.Tile == Tile.Wall && tileSpec.Terrain.WallHeight < tileSpec.CeilingOffset && tileSpec.Terrain.WallCapDrawer != null) {
 					GameObject go = tileSpec.Terrain.WallCapDrawer.DrawFlat(EnvironmentHolder, dg.ConsistentRNG, tileSpec);
-					go.transform.localPosition = new Vector3(x, tileSpec.Terrain.WallHeight, y);
+					go.transform.localPosition = OriginForTile(tileSpec, tileSpec.Terrain.WallHeight);
 					go.name = $"Wall Cap: ({x}, {y})";
 				}
 
 				if (tileSpec.DrawAsFloor) {
 					if (tileSpec.GroundOffset == 0 || walkable) {
-						AddFloor(tileSpec, x, y, tileSpec.Tile, floorReplacingEntity != null, dg, 0);
+						AddFloor(tileSpec, tileSpec.Tile, floorReplacingEntity != null, dg, 0);
 					}
 
 					if (tileSpec.GroundOffset != 0) {
-						AddFloor(tileSpec, x, y, Tile.Wall, floorReplacingEntity != null, dg, -tileSpec.GroundOffset);
+						AddFloor(tileSpec, Tile.Wall, floorReplacingEntity != null, dg, -tileSpec.GroundOffset);
 					}
 				}
 
@@ -95,7 +102,7 @@ namespace DungeonestCrab.Dungeon.Printer {
 			}
 			SetFarPlaneFromFog();
 
-			GeneratorRef.Value = dg;
+			if (GeneratorRef != null) GeneratorRef.Value = dg;
 		}
 
 		public void ClearGeneratedTestDungeon() {
@@ -115,8 +122,14 @@ namespace DungeonestCrab.Dungeon.Printer {
 			Print(dg);
 		}
 
+		private void AddMovementBlocker(TileSpec tile, float yOffset) {
+			if (MovementBlocker == null) return;
+			var blocker = Instantiate(MovementBlocker, OriginForCoords(tile.Coords) + new Vector3(0, yOffset, 0), Quaternion.identity, CollisionHolder);
+			blocker.name = $"Movement Blocker: ({tile.Coords.x}, {tile.Coords.y})";
+		}
+
 		/// <summary>
-		/// Draws a wall facing away from the current block to the adjacent block.
+		/// Draws a wall for the tile in the direction given by the offsets.
 		/// </summary>
 		/// <param name="dg">Dungeon generator</param>
 		/// <param name="tile">Tile representing the "wall" tile</param>
@@ -127,35 +140,34 @@ namespace DungeonestCrab.Dungeon.Printer {
 		/// This parameter being false does not affect the presence of lower walls (i.e. walls drawn from being next to a lower
 		/// area) or upper walls (walls drawn from being next to an area with higher walls)</param>
 		private void DrawWall(TheDungeon dg, TileSpec tile, int xOffset, int yOffset) {
-			int adjX = tile.Coords.x + xOffset;
-			int adjY = tile.Coords.y + yOffset;
+			TileSpec adjTile = dg.GetTileSpecSafe(tile.Coords + new Vector2Int(xOffset, yOffset));
 			// Outside of map bounds
-			if (!dg.Contains(adjX, adjY)) return;
-			DrawWall(dg, dg.GetTileSpec(adjX, adjY), tile);
+			if (adjTile == null) return;
+			DrawWall(dg, tile, adjTile);
 		}
 
 		/// <summary>
-		/// Draws a wall on tile in the direction of facingTile.
+		/// Draws a wall on tile in the direction of adjTile.
 		/// </summary>
-		private void DrawWall(TheDungeon dg, TileSpec tile, TileSpec facingTile) {
-			bool drawStandardWalls = !facingTile.DrawAsFloor;
+		private void DrawWall(TheDungeon dg, TileSpec tile, TileSpec adjTile) {
+			bool drawStandardWalls = !adjTile.DrawAsFloor;
 
-			int xOffset = tile.Coords.x - facingTile.Coords.x;
-			int yOffset = tile.Coords.y - facingTile.Coords.y;
-			int rot = xOffset == 0 ? (yOffset > 0 ? 0 : 180) : (xOffset > 0 ? 90 : 270);
+			int xOffset = tile.Coords.x - adjTile.Coords.x;
+			int yOffset = tile.Coords.y - adjTile.Coords.y;
+			int rot = xOffset == 0 ? (yOffset > 0 ? 180 : 0) : (xOffset > 0 ? 270 : 90);
 
-			float ceilingOffset = facingTile.Terrain.CeilingOffset;
-			float wallHeight = facingTile.Terrain.WallHeight;
-			float adjWallHeight = tile.Terrain.WallHeight;
-			float groundOffset = facingTile.Terrain.GroundOffset;
+			float ceilingOffset = adjTile.Terrain.CeilingOffset * _tileHeightMult;
+			float wallHeight = adjTile.Terrain.WallHeight * _tileHeightMult;
+			float adjWallHeight = tile.Terrain.WallHeight * _tileHeightMult;
+			float groundOffset = adjTile.Terrain.GroundOffset;
 			float adjGroundOffset = tile.Terrain.GroundOffset;
 
-			bool hasCeiling = dg.Trait != Trait.Ceilingless && dg.Trait != Trait.CeilinglessPit && facingTile.Terrain.HasCeiling;
+			bool hasCeiling = dg.Trait != Trait.Ceilingless && dg.Trait != Trait.CeilinglessPit && adjTile.Terrain.HasCeiling;
 			adjWallHeight = dg.Trait == Trait.CeilinglessPit ? -1 : adjWallHeight;
 
-			TileSpec tileDrawStyle = dg.Trait == Trait.InvasiveWalls ? facingTile : tile;
+			TileSpec tileDrawStyle = dg.Trait == Trait.InvasiveWalls ? tile : adjTile;
 
-			Vector3 loc = new Vector3(facingTile.Coords.x, 0, facingTile.Coords.y);
+			Vector3 loc = OriginForTile(tile);
 
 			if (tile.DrawAsFloor) {
 				// Draw wall segments below the floor.
@@ -183,7 +195,7 @@ namespace DungeonestCrab.Dungeon.Printer {
 
 		private void DrawWallSingle(Transform parent, IRandom rand, TileSpec style, Vector3 loc, float rot, float from, float to) {
 			if (from >= to) return;
-			style.Terrain.WallDrawer.DrawWall(parent, rand, style, loc, rot, from, to);
+			style.Terrain.WallDrawer.DrawWall(parent, rand, style, loc, TileSize, rot, from, to);
 		}
 
 		private void SetFarPlaneFromFog() {
@@ -241,11 +253,11 @@ namespace DungeonestCrab.Dungeon.Printer {
 			if (entityReplacesCeiling || ceilingless) return;
 
 			GameObject go = tileSpec.Terrain.CeilingDrawer.DrawFlat(EnvironmentHolder, dg.ConsistentRNG, tileSpec);
-			go.transform.localPosition = new Vector3(tileSpec.Coords.x, ceilZ - 1, tileSpec.Coords.y);
+			go.transform.localPosition = OriginForTile(tileSpec, (ceilZ - 1) * _tileHeightMult);
 			go.name = $"Ceiling: ({tileSpec.Coords.x}, {tileSpec.Coords.y}) [{tileSpec.Terrain}]";
 		}
 
-		private void AddFloor(TileSpec tileSpec, int x, int y, Tile type, bool entityReplacesFloor, TheDungeon dg, float floorZ = 0) {
+		private void AddFloor(TileSpec tileSpec, Tile type, bool entityReplacesFloor, TheDungeon dg, float floorZ = 0) {
 			if (entityReplacesFloor) return;
 
 			if (tileSpec.Terrain == null) {
@@ -256,17 +268,29 @@ namespace DungeonestCrab.Dungeon.Printer {
             GameObject go;
 			if (type == Tile.Floor) {
 				go = terrain.FloorDrawer.DrawFlat(EnvironmentHolder, dg.ConsistentRNG, tileSpec);
-				go.name = $"Floor: ({x}, {y}) [{terrain}]";
+				go.name = $"Floor: ({tileSpec.Coords.x}, {tileSpec.Coords.y}) [{terrain}]";
 			} else if (type == Tile.Wall) {
 				go = terrain.WallFloorDrawer.DrawFlat(EnvironmentHolder, dg.ConsistentRNG, tileSpec);
-				go.name = $"Floor [Lower]: ({x}, {y}) [{terrain}]";
+				go.name = $"Floor [Lower]: ({tileSpec.Coords.x}, {tileSpec.Coords.y}) [{terrain}]";
 			} else {
 				// Unset tile.
 				return;
 			}
 
-			go.transform.localPosition = new Vector3(x, floorZ, y);
+			go.transform.localPosition = OriginForTile(tileSpec, floorZ);
 			return;
+		}
+
+		private Vector3 OriginForTile(TileSpec tile) {
+			return OriginForCoords(tile.Coords);
+		}
+
+		private Vector3 OriginForTile(TileSpec tile, float zOffset) {
+			return OriginForCoords(tile.Coords) + new Vector3(0, zOffset * _tileHeightMult, 0);
+		}
+
+		private Vector3 OriginForCoords(Vector2Int point) {
+			return (point * _tileFloorSize).ToVectorX0Y();
 		}
 
 		public Vector3 PointForCoords(Vector2Int coords) {
@@ -274,9 +298,9 @@ namespace DungeonestCrab.Dungeon.Printer {
 		}
 
 		public Vector2Int PointForLocalPoint(Vector3 localPos) {
-			int x = (int)(localPos.x + 0.5F);
-			int y = (int)(localPos.z + 0.5F);
-			return new Vector2Int(x, y);
+			return new Vector2Int(
+				(int)((localPos.x + 0.5f) * _tileFloorSize.x),
+				(int)((localPos.z + 0.5f) * _tileFloorSize.y));
 		}
 
 		public Vector2Int PointForWorldPoint(Vector3 worldPoint) {

@@ -10,7 +10,7 @@ namespace DungeonestCrab.Dungeon {
         [PreviewField(50, ObjectFieldAlignment.Right)]
         public GameObject Prefab;
         public bool BlocksMovement;
-        [Tooltip("Whether or not the mesh can be merged. Use only if the object does not rotate or move at runtime [THIS INCLUDES BILLBOARDS].")]
+        [Tooltip("Whether or not the mesh can be merged. Use only if the object does not rotate or move at runtime [MOVEMENT INCLUDES BILLBOARDS].")]
         public bool CanBeMerged;
 
         [Header("Tile Modifiers")]

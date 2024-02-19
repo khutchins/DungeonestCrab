@@ -13,8 +13,6 @@ namespace DungeonestCrab.Dungeon.Generator {
 
 
         public override IAlterer ToAlterer() {
-            switch (Type) {
-            }
             throw new System.NotImplementedException();
         }
     }
