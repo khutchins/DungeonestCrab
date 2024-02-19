@@ -1,0 +1,13 @@
+{
+  "name": "com.khutchins.dungeonestcrab",
+  "displayName": "DungeonestCrab",
+  "author": {
+    "name": "Kevin Hutchins",
+    "url": "https://github.com/khutchins"
+  },
+  "version": "1.0.0",
+  "unity": "2019.3",
+  "description": "A set of scripts for making dungeons.",
+  "type": "library",
+  "hideInEditor": false
+}
