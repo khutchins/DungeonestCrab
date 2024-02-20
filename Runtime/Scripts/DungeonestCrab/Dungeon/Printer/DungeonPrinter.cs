@@ -172,7 +172,7 @@ namespace DungeonestCrab.Dungeon.Printer {
 
 				// Draw the wall segments up to the wall height.
 				if (drawStandardWalls) {
-					DrawWallSingle(EnvironmentHolder, dg.ConsistentRNG, tile, loc, rot, 0, wallHeight);
+					DrawWallSingle(EnvironmentHolder, dg.ConsistentRNG, tileDrawStyle, loc, rot, 0, wallHeight);
 				}
 			}
 
@@ -241,7 +241,7 @@ namespace DungeonestCrab.Dungeon.Printer {
 			instantiatedObject.transform.localPosition = OriginForCoords(coords) + new Vector3(0, z * _tileHeightMult, 0);
 
 			foreach (IEntityInit init in instantiatedObject.GetComponentsInChildren<IEntityInit>()) {
-				init.DoInit(entity, coords, rand);
+				init.DoInit(instantiatedObject, entity, rand);
 			}
 
 			instantiatedObject.transform.SetParent(entity.Type.CanBeMerged ? StaticEntityHolder : EntityHolder);

@@ -7,7 +7,7 @@ namespace DungeonestCrab.Dungeon.Printer {
     public class EntityInitPosition : IEntityInit {
         [SerializeField] Vector3 MaxRange = Vector3.zero;
 
-        public override void DoInit(Entity entity, Vector2Int pt, IRandom random) {
+        public override void DoInit(GameObject go, Entity entity, IRandom random) {
             MaxRange.x = Mathf.Abs(MaxRange.x);
             MaxRange.y = Mathf.Abs(MaxRange.y);
             MaxRange.z = Mathf.Abs(MaxRange.z);
