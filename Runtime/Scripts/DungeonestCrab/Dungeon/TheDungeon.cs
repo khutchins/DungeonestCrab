@@ -136,6 +136,10 @@ namespace DungeonestCrab.Dungeon {
 		}
 
 		public Entity FindEntity(EntitySO type, string id = null) {
+			return Entities.FirstOrDefault(x => x.Type == type.Entity && (id == null || id == "" || x.EntityID == id));
+		}
+
+		public Entity FindEntity(EntitySpec type, string id = null) {
 			return Entities.FirstOrDefault(x => x.Type == type && (id == null || id == "" || x.EntityID == id));
 		}
 

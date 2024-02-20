@@ -11,12 +11,15 @@ namespace DungeonestCrab.Dungeon {
 	}
 
 	public class TileSpec : IEquatable<TileSpec> {
+		public static string DRAW_STYLE_FLOOR = "drawStyle:floor";
+		public static string DRAW_STYLE_WALL = "drawStyle:wall";
+
 		public readonly Vector2Int Coords;
 		public Tile Tile;
 		public TerrainSO Terrain;
 		public int Style;
 		public bool Immutable;
-		public List<string> Flags = new List<string>();
+		private HashSet<string> Tags = new HashSet<string>();
 		public List<Entity> Entities = new List<Entity>();
 
 		private Adjacency _cachedTileAdjacencies;
@@ -50,6 +53,15 @@ namespace DungeonestCrab.Dungeon {
 			Entities.Add(entity);
 		}
 
+		public void AddTag(string tag) {
+			if (Tags == null) Tags = new HashSet<string>();
+			Tags.Add(tag);
+		}
+
+		public bool HasTag(string tag) {
+			return Tags != null && Tags.Contains(tag);
+		}
+
 		public bool EntityBlocksMovement() {
 			foreach (Entity entity in Entities) {
 				if (entity.Type.BlocksMovement) return true;
@@ -62,7 +74,8 @@ namespace DungeonestCrab.Dungeon {
 		}
 
 		public bool DrawAsFloor {
-			get => Terrain.ShouldDrawAsFloor(Tile) || Style == (int)PaintStyle.SunkenFlooded;
+			get => !Tags.Contains(DRAW_STYLE_WALL) && 
+				(Terrain.ShouldDrawAsFloor(Tile) || Tags.Contains(DRAW_STYLE_FLOOR));
 		}
 
 		public float CeilingOffset {

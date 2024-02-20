@@ -11,7 +11,8 @@ namespace DungeonestCrab.Dungeon.Printer {
 	public class DungeonPrinter : MonoBehaviour {
 
 		[SerializeField] DungeonReference GeneratorRef;
-		[SerializeField] GameObject MovementBlocker;
+		[SerializeField] GameObject WalkableObject;
+		[SerializeField] GameObject ImpassableObject;
 
 		[Header("Config")]
 		[Tooltip("Size of tile in (width, height, depth) order.")]
@@ -45,11 +46,13 @@ namespace DungeonestCrab.Dungeon.Printer {
 				Entity ceilingReplacingEntity = tileSpec.Entities.FirstOrDefault(t => t.Type.ReplacesCeiling);
 
 				bool walkable = tileSpec.Walkable;
-				if (!walkable) {
-					AddMovementBlocker(tileSpec, 0);
+				if (!walkable && ImpassableObject != null) {
+					var blocker = Instantiate(ImpassableObject, OriginForCoords(tileSpec.Coords), Quaternion.identity, CollisionHolder);
+					blocker.name = $"Wall Object: ({x}, {y})";
 				}
-				if (walkable && floorReplacingEntity == null) {
-					AddMovementBlocker(tileSpec, -1);
+				if (walkable && WalkableObject != null) {
+					var blocker = Instantiate(WalkableObject, OriginForCoords(tileSpec.Coords), Quaternion.identity, CollisionHolder);
+					blocker.name = $"Floor Object: ({x}, {y})";
 				}
 
 				DrawWall(dg, tileSpec, 0, -1);
@@ -120,12 +123,6 @@ namespace DungeonestCrab.Dungeon.Printer {
 			MakeHolders(_testHolder);
 
 			Print(dg);
-		}
-
-		private void AddMovementBlocker(TileSpec tile, float yOffset) {
-			if (MovementBlocker == null) return;
-			var blocker = Instantiate(MovementBlocker, OriginForCoords(tile.Coords) + new Vector3(0, yOffset, 0), Quaternion.identity, CollisionHolder);
-			blocker.name = $"Movement Blocker: ({tile.Coords.x}, {tile.Coords.y})";
 		}
 
 		/// <summary>
@@ -236,10 +233,15 @@ namespace DungeonestCrab.Dungeon.Printer {
 
 		private void AddEntity(Entity entity, int x, int y, float z, IRandom rand) {
 			Vector2Int coords = new Vector2Int(x, y);
-			GameObject instantiatedObject = entity.Type.Initialize(coords, new Vector3(x, z, y));
+
+			GameObject instantiatedObject = entity.Type.Prefab != null ?
+				Instantiate(entity.Type.Prefab)
+				: new GameObject();
+			instantiatedObject.transform.SetParent(entity.Type.CanBeMerged ? StaticEntityHolder : EntityHolder);
+			instantiatedObject.transform.localPosition = OriginForCoords(coords) + new Vector3(0, z * _tileHeightMult, 0);
 
 			foreach (IEntityInit init in instantiatedObject.GetComponentsInChildren<IEntityInit>()) {
-				init.DoInit(coords, rand);
+				init.DoInit(entity, coords, rand);
 			}
 
 			instantiatedObject.transform.SetParent(entity.Type.CanBeMerged ? StaticEntityHolder : EntityHolder);
@@ -266,7 +268,7 @@ namespace DungeonestCrab.Dungeon.Printer {
 			TerrainSO terrain = tileSpec.Terrain;
 
             GameObject go;
-			if (type == Tile.Floor) {
+			if (tileSpec.DrawAsFloor) {
 				go = terrain.FloorDrawer.DrawFlat(EnvironmentHolder, dg.ConsistentRNG, tileSpec);
 				go.name = $"Floor: ({tileSpec.Coords.x}, {tileSpec.Coords.y}) [{terrain}]";
 			} else if (type == Tile.Wall) {

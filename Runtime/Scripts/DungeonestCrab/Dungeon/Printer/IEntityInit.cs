@@ -5,6 +5,6 @@ using UnityEngine;
 
 namespace DungeonestCrab.Dungeon.Printer {
     public abstract class IEntityInit : MonoBehaviour {
-        public abstract void DoInit(Vector2Int pt, IRandom random);
+        public abstract void DoInit(Entity entity, Vector2Int pt, IRandom random);
     }
 }

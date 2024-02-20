@@ -15,12 +15,12 @@ namespace DungeonestCrab.Dungeon {
 		/// The index in which the entity was created as part of the adder. As a result, multiple entities can have the same index.
 		/// </summary>
 		public readonly int EntityIndex;
-		public readonly EntitySO Type;
+		public readonly EntitySpec Type;
 		public readonly CodeOnInstantiate Code;
 		public readonly float YAngle;
 		public readonly string EntityID;
 
-		public Entity(Vector2Int tile, int entityIndex, EntitySO type, CodeOnInstantiate code = null, string entityID = null, float yAngle = 0) {
+		public Entity(Vector2Int tile, int entityIndex, EntitySpec type, CodeOnInstantiate code = null, string entityID = null, float yAngle = 0) {
 			Tile = tile;
 			EntityIndex = entityIndex;
 			Type = type;
@@ -42,7 +42,7 @@ namespace DungeonestCrab.Dungeon {
 			return other != null &&
 				   EqualityComparer<Vector2Int>.Default.Equals(Tile, other.Tile) &&
 				   EntityIndex == other.EntityIndex &&
-				   EqualityComparer<EntitySO>.Default.Equals(Type, other.Type) &&
+				   EqualityComparer<EntitySpec>.Default.Equals(Type, other.Type) &&
 				   YAngle == other.YAngle &&
 				   EntityID == other.EntityID;
 		}

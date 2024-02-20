@@ -6,6 +6,11 @@ using UnityEngine;
 namespace DungeonestCrab.Dungeon {
     [CreateAssetMenu(menuName = "Dungeon/Entity")]
     public class EntitySO : ScriptableObject {
+        public EntitySpec Entity;
+    }
+
+    [System.Serializable]
+    public class EntitySpec {
         public string ID;
         [PreviewField(50, ObjectFieldAlignment.Right)]
         public GameObject Prefab;
@@ -25,9 +30,5 @@ namespace DungeonestCrab.Dungeon {
         public Sprite MapImage;
         [ShowIf("ShowOnMap")]
         public bool RotateMapImage;
-
-        public GameObject Initialize(Vector2Int coords, Vector3 basePosition) {
-            return Instantiate(Prefab, basePosition, Quaternion.identity);
-        }
     }
 }

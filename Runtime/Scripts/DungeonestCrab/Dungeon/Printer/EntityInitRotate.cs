@@ -14,7 +14,7 @@ namespace DungeonestCrab.Dungeon.Printer {
         [Tooltip("Increments to rotate at. If zero, will be continuous.")]
         [SerializeField] Vector3 AngleIncrements = Vector3.zero;
 
-        public override void DoInit(Vector2Int pt, IRandom random) {
+        public override void DoInit(Entity entity, Vector2Int pt, IRandom random) {
             this.transform.localEulerAngles = new Vector3(
                 GetAngle(random, MaxAngles.x, RotateInIncrements, AngleIncrements.x),
                 GetAngle(random, MaxAngles.y, RotateInIncrements, AngleIncrements.y),
