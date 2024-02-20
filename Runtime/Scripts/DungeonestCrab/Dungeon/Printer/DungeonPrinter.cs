@@ -40,6 +40,10 @@ namespace DungeonestCrab.Dungeon.Printer {
 
 		public void Print(TheDungeon dg) {
 			foreach (TileSpec tileSpec in dg.AllTiles()) {
+				if (!IsDrawableTile(tileSpec)) {
+					// Tile isn't configured. Means that it shouldn't be rendered.
+					continue;
+				}
 				int x = tileSpec.Coords.x, y = tileSpec.Coords.y;
 
 				Entity floorReplacingEntity = tileSpec.Entities.FirstOrDefault(t => t.Type.ReplacesFloor);
@@ -125,6 +129,10 @@ namespace DungeonestCrab.Dungeon.Printer {
 			Print(dg);
 		}
 
+		private bool IsDrawableTile(TileSpec tile) {
+			return tile != null && tile.Terrain != null && tile.Tile != Tile.Unset;
+		}
+
 		/// <summary>
 		/// Draws a wall for the tile in the direction given by the offsets.
 		/// </summary>
@@ -138,8 +146,8 @@ namespace DungeonestCrab.Dungeon.Printer {
 		/// area) or upper walls (walls drawn from being next to an area with higher walls)</param>
 		private void DrawWall(TheDungeon dg, TileSpec tile, int xOffset, int yOffset) {
 			TileSpec adjTile = dg.GetTileSpecSafe(tile.Coords + new Vector2Int(xOffset, yOffset));
-			// Outside of map bounds
-			if (adjTile == null) return;
+			// Outside of map bounds or not properly configured.
+			if (!IsDrawableTile(adjTile)) return;
 			DrawWall(dg, tile, adjTile);
 		}
 
@@ -161,6 +169,7 @@ namespace DungeonestCrab.Dungeon.Printer {
 
 			bool hasCeiling = dg.Trait != Trait.Ceilingless && dg.Trait != Trait.CeilinglessPit && adjTile.Terrain.HasCeiling;
 			adjWallHeight = dg.Trait == Trait.CeilinglessPit ? -1 : adjWallHeight;
+
 
 			TileSpec tileDrawStyle = dg.Trait == Trait.InvasiveWalls ? tile : adjTile;
 

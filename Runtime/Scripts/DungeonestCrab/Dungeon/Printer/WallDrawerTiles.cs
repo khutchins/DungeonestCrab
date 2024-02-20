@@ -4,7 +4,7 @@ using System;
 using UnityEngine;
 
 namespace DungeonestCrab.Dungeon.Printer {
-	[CreateAssetMenu(menuName = "Dungeon/WallDrawer/Tile")]
+	[CreateAssetMenu(menuName = "DungeonestCrab/Drawer/Wall - Tiles")]
 	public class WallDrawerTiles : IWallDrawer {
 
 		public GameObject Wall;
