@@ -88,7 +88,7 @@ namespace DungeonestCrab.Dungeon.Printer {
 				float entityPosition = walkable ? 0 : (tileSpec.DrawAsFloor ? -tileSpec.GroundOffset: tileSpec.CeilingOffset);
 
 				foreach (Entity entity in tileSpec.Entities) {
-					AddEntity(entity, x, y, entity.Type.RaiseToCeiling ? tileSpec.CeilingOffset - 1 : entityPosition, dg.ConsistentRNG);
+					AddEntity(dg, entity, x, y, entity.Type.RaiseToCeiling ? tileSpec.CeilingOffset - 1 : entityPosition, dg.ConsistentRNG);
 				}
 			}
 
@@ -240,7 +240,7 @@ namespace DungeonestCrab.Dungeon.Printer {
 
 		}
 
-		private void AddEntity(Entity entity, int x, int y, float z, IRandom rand) {
+		private void AddEntity(TheDungeon dungeon, Entity entity, int x, int y, float z, IRandom rand) {
 			Vector2Int coords = new Vector2Int(x, y);
 
 			GameObject instantiatedObject = entity.Type.Prefab != null ?
@@ -255,7 +255,7 @@ namespace DungeonestCrab.Dungeon.Printer {
 
 			instantiatedObject.transform.SetParent(entity.Type.CanBeMerged ? StaticEntityHolder : EntityHolder);
 			instantiatedObject.name = $"Entity: {entity.Type.ID} @ ({x}, {y})";
-			entity.Code?.Invoke(instantiatedObject, entity, rand);
+			entity.Code?.Invoke(dungeon, instantiatedObject, entity, rand);
 		}
 
 		private void AddCeiling(TileSpec tileSpec, bool entityReplacesCeiling, TheDungeon dg, float ceilZ = 1) {

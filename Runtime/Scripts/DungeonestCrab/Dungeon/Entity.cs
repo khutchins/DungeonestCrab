@@ -8,7 +8,7 @@ using System;
 namespace DungeonestCrab.Dungeon {
 
 	public class Entity : IEquatable<Entity> {
-		public delegate void CodeOnInstantiate(GameObject go, Entity entity, IRandom random);
+		public delegate void CodeOnInstantiate(TheDungeon dungeon, GameObject go, Entity entity, IRandom random);
 
 		public readonly Vector2Int Tile;
 		/// <summary>
