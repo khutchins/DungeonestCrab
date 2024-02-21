@@ -84,10 +84,9 @@ namespace DungeonestCrab.Dungeon.Printer {
 						AddFloor(tileSpec, Tile.Wall, floorReplacingEntity != null, dg, -tileSpec.GroundOffset);
 					}
 				}
-
-				float entityPosition = walkable ? 0 : -tileSpec.GroundOffset;
-
+				
 				foreach (Entity entity in tileSpec.Entities) {
+					float entityPosition = walkable ? 0 : -tileSpec.GroundOffset;
 					AddEntity(dg, entity, x, y, entity.Type.RaiseToCeiling ? tileSpec.CeilingOffset - 1 : entityPosition, dg.ConsistentRNG);
 				}
 			}
@@ -178,7 +177,10 @@ namespace DungeonestCrab.Dungeon.Printer {
 			if (tile.DrawAsFloor) {
 				// Draw wall segments below the floor.
 				DrawWallSingle(EnvironmentHolder, dg.ConsistentRNG, tile, loc, rot, -adjGroundOffset, -groundOffset);
+			}
 
+			// The wall is only drawn if this tile is not itself a wall.
+			if (!tile.DrawWalls) {
 				// Draw the wall segments up to the wall height.
 				if (drawStandardWalls) {
 					DrawWallSingle(EnvironmentHolder, dg.ConsistentRNG, tileDrawStyle, loc, rot, 0, wallHeight);
