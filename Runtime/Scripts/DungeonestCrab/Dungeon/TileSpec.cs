@@ -13,17 +13,29 @@ namespace DungeonestCrab.Dungeon {
 	public class TileSpec : IEquatable<TileSpec> {
 		public static string DRAW_STYLE_FLOOR = "drawStyle:floor";
 		public static string DRAW_STYLE_WALL = "drawStyle:wall";
+		public static string DRAW_STYLE_ALL = "drawStyle:all";
+		public static string DRAW_STYLE_NONE = "drawStyle:none";
+		public static string STYLE_PREFIX = "style";
 
 		public readonly Vector2Int Coords;
 		public Tile Tile;
 		public TerrainSO Terrain;
 		public int Style;
 		public bool Immutable;
-		private HashSet<string> Tags = new HashSet<string>();
+		private HashSet<string> _tags = new HashSet<string>();
 		public List<Entity> Entities = new List<Entity>();
 
 		private Adjacency _cachedTileAdjacencies;
 		private Adjacency _cachedTerrainAdjacencies;
+		private DrawStyle _drawStyle = DrawStyle.NoOverride;
+
+		[Flags]
+		enum DrawStyle {
+			None = -1,
+			NoOverride = 0,
+			Wall = 1 << 0,
+			Floor = 1 << 1,
+		}
 
 		[Flags]
 		// These are intentionally ordered to allow indexing based on
@@ -54,12 +66,33 @@ namespace DungeonestCrab.Dungeon {
 		}
 
 		public void AddTag(string tag) {
-			if (Tags == null) Tags = new HashSet<string>();
-			Tags.Add(tag);
+			if (_tags == null) _tags = new HashSet<string>();
+			_tags.Add(tag);
+
+			if (tag == DRAW_STYLE_ALL) {
+				_drawStyle = DrawStyle.Wall | DrawStyle.Floor;
+			} else if (tag == DRAW_STYLE_FLOOR) {
+				_drawStyle = DrawStyle.Floor;
+			} else if (tag == DRAW_STYLE_WALL) {
+				_drawStyle = DrawStyle.Wall;
+			} else if (tag == DRAW_STYLE_NONE) {
+				_drawStyle = DrawStyle.None;
+			}
 		}
 
 		public bool HasTag(string tag) {
-			return Tags != null && Tags.Contains(tag);
+			return _tags != null && _tags.Contains(tag);
+		}
+
+		public string GetTagType(string type) {
+			foreach (string tag in _tags) {
+				var split = tag.Split(':', 2);
+				if (split[0] == type) {
+					if (split.Length == 1) return "";
+					else return split[1];
+				}
+			}
+			return null;
 		}
 
 		public bool EntityBlocksMovement() {
@@ -74,8 +107,13 @@ namespace DungeonestCrab.Dungeon {
 		}
 
 		public bool DrawAsFloor {
-			get => !Tags.Contains(DRAW_STYLE_WALL) && 
-				(Terrain.ShouldDrawAsFloor(Tile) || Tags.Contains(DRAW_STYLE_FLOOR));
+			get => _drawStyle != DrawStyle.None 
+				&& (Terrain.ShouldDrawAsFloor(Tile) || (_drawStyle & DrawStyle.Floor) != 0);
+		}
+
+		public bool DrawWalls {
+			get => _drawStyle != DrawStyle.None
+				&& (!Terrain.ShouldDrawAsFloor(Tile) || (_drawStyle & DrawStyle.Wall) != 0);
 		}
 
 		public float CeilingOffset {

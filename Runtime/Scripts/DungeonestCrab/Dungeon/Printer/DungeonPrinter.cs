@@ -155,7 +155,7 @@ namespace DungeonestCrab.Dungeon.Printer {
 		/// Draws a wall on tile in the direction of adjTile.
 		/// </summary>
 		private void DrawWall(TheDungeon dg, TileSpec tile, TileSpec adjTile) {
-			bool drawStandardWalls = !adjTile.DrawAsFloor;
+			bool drawStandardWalls = adjTile.DrawWalls;
 
 			int xOffset = tile.Coords.x - adjTile.Coords.x;
 			int yOffset = tile.Coords.y - adjTile.Coords.y;
