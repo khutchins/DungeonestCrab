@@ -85,7 +85,7 @@ namespace DungeonestCrab.Dungeon.Printer {
 					}
 				}
 
-				float entityPosition = walkable ? 0 : (tileSpec.DrawAsFloor ? -tileSpec.GroundOffset: tileSpec.CeilingOffset);
+				float entityPosition = walkable ? 0 : -tileSpec.GroundOffset;
 
 				foreach (Entity entity in tileSpec.Entities) {
 					AddEntity(dg, entity, x, y, entity.Type.RaiseToCeiling ? tileSpec.CeilingOffset - 1 : entityPosition, dg.ConsistentRNG);

@@ -34,7 +34,7 @@ namespace DungeonestCrab.Dungeon {
         public class Builder {
             private string _id;
             private GameObject _prefab;
-            private bool _blocksMovement = true;
+            private bool _blocksMovement = false;
             private bool _canBeMerged = false;
             private bool _replacesCeiling = false;
             private bool _replacesFloor = false;
