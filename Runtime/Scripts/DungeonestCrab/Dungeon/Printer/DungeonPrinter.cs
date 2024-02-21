@@ -130,7 +130,7 @@ namespace DungeonestCrab.Dungeon.Printer {
 		}
 
 		private bool IsDrawableTile(TileSpec tile) {
-			return tile != null && tile.Terrain != null && tile.Tile != Tile.Unset;
+			return tile != null && tile.IsDrawable;
 		}
 
 		/// <summary>
@@ -167,7 +167,7 @@ namespace DungeonestCrab.Dungeon.Printer {
 			float groundOffset = adjTile.Terrain.GroundOffset;
 			float adjGroundOffset = tile.Terrain.GroundOffset;
 
-			bool hasCeiling = dg.Trait != Trait.Ceilingless && dg.Trait != Trait.CeilinglessPit && adjTile.Terrain.HasCeiling;
+			bool hasCeiling = dg.Trait != Trait.Ceilingless && dg.Trait != Trait.CeilinglessPit && adjTile.HasCeiling;
 			adjWallHeight = dg.Trait == Trait.CeilinglessPit ? -1 : adjWallHeight;
 
 
@@ -260,7 +260,7 @@ namespace DungeonestCrab.Dungeon.Printer {
 
 		private void AddCeiling(TileSpec tileSpec, bool entityReplacesCeiling, TheDungeon dg, float ceilZ = 1) {
 			if (tileSpec.Terrain == null) return;
-			bool ceilingless = dg.Trait == Trait.CeilinglessPit || dg.Trait == Trait.Ceilingless || !tileSpec.Terrain.HasCeiling;
+			bool ceilingless = dg.Trait == Trait.CeilinglessPit || dg.Trait == Trait.Ceilingless || !tileSpec.HasCeiling;
 			if (entityReplacesCeiling || ceilingless) return;
 
 			GameObject go = tileSpec.Terrain.CeilingDrawer.DrawFlat(EnvironmentHolder, dg.ConsistentRNG, tileSpec);

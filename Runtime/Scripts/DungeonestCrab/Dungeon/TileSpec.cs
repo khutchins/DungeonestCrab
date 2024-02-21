@@ -108,12 +108,14 @@ namespace DungeonestCrab.Dungeon {
 
 		public bool DrawAsFloor {
 			get => _drawStyle != DrawStyle.None 
-				&& (Terrain.ShouldDrawAsFloor(Tile) || (_drawStyle & DrawStyle.Floor) != 0);
+				&& ((Terrain.ShouldDrawAsFloor(Tile) && _drawStyle == DrawStyle.NoOverride) 
+					|| (_drawStyle & DrawStyle.Floor) != 0);
 		}
 
 		public bool DrawWalls {
 			get => _drawStyle != DrawStyle.None
-				&& (!Terrain.ShouldDrawAsFloor(Tile) || (_drawStyle & DrawStyle.Wall) != 0);
+				&& ((!Terrain.ShouldDrawAsFloor(Tile) && _drawStyle == DrawStyle.NoOverride) 
+					|| (_drawStyle & DrawStyle.Wall) != 0);
 		}
 
 		public float CeilingOffset {
@@ -126,6 +128,18 @@ namespace DungeonestCrab.Dungeon {
 
 		public float GroundOffset {
 			get => Mathf.Max(Terrain.GroundOffset, Style == (int)PaintStyle.SunkenFlooded ? 0.2F : 0);
+		}
+
+		public float TileCarvingCost {
+			get {
+				if (Immutable) return -1;
+				if (Terrain == null) return Tile == Tile.Wall ? 6 : 1;
+				return Terrain.TileCarvingCost(Tile);
+			}
+		}
+
+		public bool IsDrawable {
+			get => Terrain != null && Tile != Tile.Unset;
 		}
 
 		public void SetTerrainIfNull(TerrainSO terrain) {

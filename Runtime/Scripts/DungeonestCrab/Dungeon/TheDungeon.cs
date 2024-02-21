@@ -143,19 +143,8 @@ namespace DungeonestCrab.Dungeon {
 			return Entities.FirstOrDefault(x => x.Type == type && (id == null || id == "" || x.EntityID == id));
 		}
 
-		public float TileCarvingCost(TerrainSO terrain, Tile tile, bool immutable) {
-			if (immutable) {
-				return -1;
-			}
-			if (terrain == null) {
-				return tile == Tile.Wall ? 6 : 1;
-			} else {
-				return terrain.TileCarvingCost(tile, immutable);
-			}
-		}
-
 		public float TileCarvingCost(TileSpec spec) {
-			return TileCarvingCost(spec.Terrain, spec.Tile, spec.Immutable);
+			return spec.TileCarvingCost;
 		}
 
 

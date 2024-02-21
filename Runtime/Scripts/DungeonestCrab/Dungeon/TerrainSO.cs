@@ -58,19 +58,13 @@ namespace DungeonestCrab.Dungeon {
 		[Tooltip("How much it costs to carve a path through floor tiles of this terrain.")]
 		public float FloorCarveCost = 1;
 
-		public float TileCarvingCost(Tile type, bool immutable) {
-			if (immutable) {
-				return -1;
-			}
-			switch (type) {
-				case Tile.Floor:
-					return OverrideTileCosts ? FloorCarveCost : 1;
-				case Tile.Wall:
-					return OverrideTileCosts ? WallCarveCost : 6;
-				default:
-					return 6;
-			}
-		}
+		public float TileCarvingCost(Tile type) {
+            return type switch {
+                Tile.Floor => OverrideTileCosts ? FloorCarveCost : 1,
+                Tile.Wall => OverrideTileCosts ? WallCarveCost : 6,
+                _ => 6,
+            };
+        }
 
 		public static char GenericCharForTile(Tile type) {
 			switch (type) {
