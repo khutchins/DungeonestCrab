@@ -39,9 +39,14 @@ namespace DungeonestCrab.Dungeon.Printer {
 		}
 
 		public void Print(TheDungeon dg) {
+			_dungeon = dg;
 			foreach (TileSpec tileSpec in dg.AllTiles()) {
 				if (!IsDrawableTile(tileSpec)) {
 					// Tile isn't configured. Means that it shouldn't be rendered.
+					// The entities should still be drawn though.
+					if (tileSpec.Entities.Count > 0) {
+						Debug.LogWarning($"{tileSpec.Entities.Count} entities will not be drawn because they are on the invalid tile {tileSpec.Coords}");
+					}
 					continue;
 				}
 				int x = tileSpec.Coords.x, y = tileSpec.Coords.y;
@@ -84,10 +89,10 @@ namespace DungeonestCrab.Dungeon.Printer {
 						AddFloor(tileSpec, Tile.Wall, floorReplacingEntity != null, dg, -tileSpec.GroundOffset);
 					}
 				}
-				
+
 				foreach (Entity entity in tileSpec.Entities) {
 					float entityPosition = walkable ? 0 : -tileSpec.GroundOffset;
-					AddEntity(dg, entity, x, y, entity.Type.RaiseToCeiling ? tileSpec.CeilingOffset - 1 : entityPosition, dg.ConsistentRNG);
+					AddEntity(dg, entity, tileSpec.Coords, entity.Type.RaiseToCeiling ? tileSpec.CeilingOffset - 1 : entityPosition, dg.ConsistentRNG);
 				}
 			}
 
@@ -242,9 +247,7 @@ namespace DungeonestCrab.Dungeon.Printer {
 
 		}
 
-		private void AddEntity(TheDungeon dungeon, Entity entity, int x, int y, float z, IRandom rand) {
-			Vector2Int coords = new Vector2Int(x, y);
-
+		private void AddEntity(TheDungeon dungeon, Entity entity, Vector2Int coords, float z, IRandom rand) {
 			GameObject instantiatedObject = entity.Type.Prefab != null ?
 				Instantiate(entity.Type.Prefab)
 				: new GameObject();
@@ -256,7 +259,7 @@ namespace DungeonestCrab.Dungeon.Printer {
 			}
 
 			instantiatedObject.transform.SetParent(entity.Type.CanBeMerged ? StaticEntityHolder : EntityHolder);
-			instantiatedObject.name = $"Entity: {entity.Type.ID} @ ({x}, {y})";
+			instantiatedObject.name = $"Entity: {entity.Type.ID} @ ({coords.x}, {coords.y})";
 			entity.Code?.Invoke(dungeon, instantiatedObject, entity, rand);
 		}
 
