@@ -112,6 +112,10 @@ namespace DungeonestCrab.Dungeon {
 					|| (_drawStyle & DrawStyle.Floor) != 0);
 		}
 
+		public bool DrawAdjacentWalls {
+			get => DrawAsFloor || _drawStyle == DrawStyle.None;
+		}
+
 		public bool DrawWalls {
 			get => _drawStyle != DrawStyle.None
 				&& ((!Terrain.ShouldDrawAsFloor(Tile) && _drawStyle == DrawStyle.NoOverride) 

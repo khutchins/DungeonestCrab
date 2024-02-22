@@ -185,7 +185,7 @@ namespace DungeonestCrab.Dungeon.Printer {
 			}
 
 			// The wall is only drawn if this tile is not itself a wall.
-			if (!tile.DrawWalls) {
+			if (tile.DrawAdjacentWalls) {
 				// Draw the wall segments up to the wall height.
 				if (drawStandardWalls) {
 					DrawWallSingle(EnvironmentHolder, dg.ConsistentRNG, tileDrawStyle, loc, rot, 0, wallHeight);
