@@ -172,19 +172,7 @@ namespace DungeonestCrab.Dungeon.Crawl {
                 Debug.LogError("No entrance registered. This will not work.");
                 return null;
             }
-
-            String entranceStr = InkStateManager.INSTANCE.GetStringVariable("loading_entrance");
-            DungeonEntrance entrance = null;
-            if (entranceStr != null) {
-                entrance = _entrances.Where(x => x.Name == entranceStr).FirstOrDefault();
-            }
-            if (entrance == null) {
-                Debug.Log($"Invalid entrance set in 'loading_entrance' var: {entranceStr}!");
-                entrance = _entrances.Where(x => x.Default).FirstOrDefault();
-            }
-
-            if (entrance == null) entrance = _entrances[0];
-            return entrance;
+            return _entrances[0];
         }
 
         void PositionPlayer() {
