@@ -36,7 +36,7 @@ namespace DungeonestCrab.Dungeon.Printer {
 			_tileFloorSize = TileSize.ToVectorXZ();
 			_tileHeightMult = TileSize.y;
 			MakeHolders(this.transform);
-		}
+		} 
 
 		public void Print(TheDungeon dg) {
 			_dungeon = dg;

@@ -14,10 +14,7 @@ namespace DungeonestCrab.Dungeon.Pen {
 
         public static InkStateManager INSTANCE;
         [SerializeField] protected TaskQueue InteractQueue;
-        private Story _inkStory;
-        private readonly Dictionary<string, HashSet<Action<bool>>> _boolVariableListeners = new();
-        private readonly Dictionary<string, HashSet<Action<int>>> _intVariableListeners = new();
-        private readonly Dictionary<string, HashSet<Action<string>>> _stringVariableListeners = new();
+        private StoryManager _manager;
 
         public class TitlePassage {
             public readonly string Title;
@@ -39,8 +36,10 @@ namespace DungeonestCrab.Dungeon.Pen {
             }
         }
 
+        public StoryManager Manager => _manager;
+
         public Story InkStory {
-            get => _inkStory;
+            get => _manager.Story;
         }
 
         public class EphemeralInkPassage : IDisposable {
@@ -65,57 +64,8 @@ namespace DungeonestCrab.Dungeon.Pen {
             }
         }
 
-        public static bool IsValidKnotOrStitch(Story story, string name) {
-            if (name == null) return false;
-            return story.ContentAtPath(new Ink.Runtime.Path(name)).correctObj != null;
-        }
-
-        public int VisitCount(string passageName) {
-            if (string.IsNullOrEmpty(passageName)) return 0;
-            return _inkStory.state.VisitCountAtPathString(passageName);
-        }
-
-        public string Save() {
-            return _inkStory.state.ToJson();
-        }
-
-        /// <summary>
-        /// Saves the ink state on creation, restores it on dispose.
-        /// Use it inside of a using block, like `using (HandleFlow(passage)) {}`
-        /// </summary>
-        public EphemeralInkPassage HandleFlow(string passage) {
-            return new EphemeralInkPassage(_inkStory, passage);
-        }
-
-        public void SaveTo(string filePath, string json) {
-            string tmp = $"{filePath}.tmp";
-            if (File.Exists(filePath)) {
-                IOHelper.EnsurePathAndWriteText(tmp, json);
-                // Can't replace or overwrite because we want a new last modified date.
-                File.Delete(filePath);
-                File.Move(tmp, filePath);
-            } else {
-                IOHelper.EnsurePathAndWriteText(filePath, json);
-            }
-        }
-
-        public void Load(string json) {
-            _inkStory.state.LoadJson(json);
-        }
-
-        public void LoadFrom(string filePath) {
-            Load(File.ReadAllText(filePath));
-        }
-
         void Awake() {
-            _inkStory = new Story(InkFile.text);
-            _inkStory.variablesState.variableChangedEvent += VariableChanged;
-
-            _inkStory.onError += (msg, type) => {
-                if (type == Ink.ErrorType.Warning) Debug.LogWarning(msg);
-                else Debug.LogError(msg);
-            };
-
+            _manager = new StoryManager(InkFile);
             OnAwake();
             INSTANCE = this;
         }
@@ -133,76 +83,12 @@ namespace DungeonestCrab.Dungeon.Pen {
         /// Runs a passage without generating any text tasks.
         /// </summary>
         protected void SilentlyRunPassage(string passage) {
-            if (!IsValidKnotOrStitch(_inkStory, passage)) {
-                Debug.LogWarning($"Failed running {passage} silently. It doesn't exist!");
-            }
-            _inkStory.ChoosePathString(passage);
-            while (_inkStory.canContinue) {
-                _inkStory.Continue();
-            }
+            _manager.SilentlyRunPassageUntilFirstChoiceOrEnd(passage);
         }
 
         public void Reset() {
-            // I don't know for sure that we have to reset the listener, but
-            // we probably should anyway.
-            _inkStory.variablesState.variableChangedEvent -= VariableChanged;
-            _inkStory.ResetState();
+            _manager.Reset();
             OnReset();
-            _inkStory.variablesState.variableChangedEvent += VariableChanged;
-        }
-
-        void VariableChanged(string name, Ink.Runtime.Object value) {
-            if (value is BoolValue) {
-                HandleVariable(_boolVariableListeners, name, (value as BoolValue).value);
-            } else if (value is IntValue) {
-                HandleVariable(_intVariableListeners, name, (value as IntValue).value);
-            } else if (value is StringValue) {
-                HandleVariable(_stringVariableListeners, name, (value as StringValue).value);
-            }
-        }
-
-        private void HandleVariable<T>(Dictionary<string, HashSet<Action<T>>> listeners, string variableName, T value) {
-            if (!listeners.ContainsKey(name)) return;
-
-            var listenersForName = listeners[name];
-            foreach (var listener in listenersForName.ToList()) {
-                listener(value);
-            }
-        }
-
-        public InkList GetInkListVariable(string variableName) {
-            return (InkList)_inkStory.variablesState[variableName];
-        }
-
-        public string GetStringVariable(string variableName, string defaultValue = null) {
-            Ink.Runtime.Object obj = _inkStory.variablesState.GetVariableWithName(variableName);
-            if (!(obj is StringValue)) {
-                Debug.LogWarning($"Requested ink variable {variableName} is not a string!");
-                return defaultValue;
-            }
-            return (obj as StringValue).value;
-        }
-
-        public void SetStringVariable(string variableName, string value) {
-            _inkStory.variablesState[variableName] = value;
-        }
-
-        public int GetIntVariable(string variableName, int defaultValue = -1) {
-            Ink.Runtime.Object obj = _inkStory.variablesState.GetVariableWithName(variableName);
-            if (!(obj is IntValue)) {
-                Debug.LogWarning($"Requested ink variable {variableName} is not an int!");
-                return defaultValue;
-            }
-            return (obj as IntValue).value;
-        }
-
-        /// <summary>
-        /// Expected format: #rrggbb or #rrggbbaa
-        /// </summary>
-        public Color GetColorVariable(string variableName, Color defaultValue) {
-            string str = GetStringVariable(variableName, null);
-            if (str == null) return defaultValue;
-            return StringToColor(str);
         }
 
         /// <summary>
@@ -216,78 +102,5 @@ namespace DungeonestCrab.Dungeon.Pen {
             return new Color(r / 255, g / 255, b / 255, a / 255);
         }
 
-        /// <summary>
-        /// Spreads an InkList into a List of InkLists, with each generated
-        /// InkList having exactly one item.
-        /// </summary>
-        /// <param name="list">InkList to spread.</param>
-        /// <returns>List of InkLists with one entry each.</returns>
-        public List<InkList> SpreadList(InkList list) {
-            return list.Select(x => {
-                InkListItem item = x.Key;
-                var subList = new InkList(item.originName, _inkStory);
-                subList.AddItem(item);
-                return subList;
-            }).ToList();
-        }
-
-        public void SetIntVariable(string variableName, int value) {
-            _inkStory.variablesState[variableName] = value;
-        }
-
-        public void SetBoolVariable(string variableName, bool value) {
-            _inkStory.variablesState[variableName] = value;
-        }
-
-        public void IncrementInkVariable(string variableName, int value) {
-            _inkStory.variablesState[variableName] = (int)_inkStory.variablesState[variableName] + value;
-        }
-
-        public void RegisterBoolVariableListener(string variableName, Action<bool> listener, bool immediateCallback = false) {
-            RegisterVariableListener(_boolVariableListeners, variableName, listener, immediateCallback);
-        }
-
-        public void UnregisterBoolVariableListener(string variableName, Action<bool> listener) {
-            UnregisterVariableListener(_boolVariableListeners, variableName, listener);
-        }
-
-        public void RegisterIntVariableListener(string variableName, Action<int> listener, bool immediateCallback = false) {
-            RegisterVariableListener(_intVariableListeners, variableName, listener, immediateCallback);
-        }
-
-        public void UnregisterIntVariableListener(string variableName, Action<int> listener) {
-            UnregisterVariableListener(_intVariableListeners, variableName, listener);
-        }
-
-        public void RegisterStringVariableListener(string variableName, Action<string> listener, bool immediateCallback = false) {
-            RegisterVariableListener(_stringVariableListeners, variableName, listener, immediateCallback);
-        }
-
-        public void UnregisterStringVariableListener(string variableName, Action<string> listener) {
-            UnregisterVariableListener(_stringVariableListeners, variableName, listener);
-        }
-
-        private void RegisterVariableListener<T>(Dictionary<string, HashSet<Action<T>>> dict, string variableName, Action<T> listener, bool immediateCallback = false) {
-            if (variableName == null) {
-                Debug.LogWarning("Caller trying to register listener for null variable.");
-                return;
-            }
-            if (!dict.ContainsKey(variableName)) dict[variableName] = new();
-            dict[variableName].Add(listener);
-            if (!_inkStory.variablesState.GlobalVariableExistsWithName(variableName)) {
-                Debug.LogWarning($"Caller trying to register listener for variable not in ink: {variableName}.");
-                return;
-            }
-            if (immediateCallback) {
-                listener((T)_inkStory.variablesState[variableName]);
-            }
-        }
-
-        private void UnregisterVariableListener<T>(Dictionary<string, HashSet<Action<T>>> dict, string variableName, Action<T> listener) {
-            if (variableName == null) return;
-            if (!dict.ContainsKey(variableName)) return;
-
-            dict[variableName].Remove(listener);
-        }
     }
 }

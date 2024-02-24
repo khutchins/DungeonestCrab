@@ -743,7 +743,7 @@ namespace DungeonestCrab.Dungeon.Crawl {
             MovementQueueingAllowed.Value = false;
             Story story = InkStateManager.INSTANCE.InkStory;
 
-            if (!InkStateManager.IsValidKnotOrStitch(story, passage)) {
+            if (!StoryManager.IsValidKnotOrStitch(story, passage)) {
                 Debug.LogWarning($"Invalid knot/stitch {passage}! Ignoring interaction.");
             } else {
                 story.ChoosePathString(passage);

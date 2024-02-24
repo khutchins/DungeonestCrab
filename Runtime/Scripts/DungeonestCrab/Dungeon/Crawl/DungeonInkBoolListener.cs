@@ -31,11 +31,11 @@ namespace DungeonestCrab.Dungeon.Crawl {
             // before the interactable registers it in start.
             if (!_started) return;
             _forceUpdate = true;
-            InkStateManager.INSTANCE.RegisterBoolVariableListener(_trigger, UpdatedTriggerValue, true);
+            InkStateManager.INSTANCE.Manager.RegisterBoolVariableListener(_trigger, UpdatedTriggerValue, true);
         }
 
         private void Unregister() {
-            InkStateManager.INSTANCE.UnregisterBoolVariableListener(_trigger, UpdatedTriggerValue);
+            InkStateManager.INSTANCE.Manager.UnregisterBoolVariableListener(_trigger, UpdatedTriggerValue);
         }
 
         private void OnEnable() {

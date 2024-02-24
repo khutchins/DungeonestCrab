@@ -27,7 +27,7 @@ namespace DungeonestCrab.Dungeon.Crawl {
         }
 
         void CheckHide() {
-            if (HideAfterInteraction && InkStateManager.INSTANCE.VisitCount(InkPassage) > 0) {
+            if (HideAfterInteraction && InkStateManager.INSTANCE.Manager.VisitCount(InkPassage) > 0) {
                 Kill();
             }
         }
