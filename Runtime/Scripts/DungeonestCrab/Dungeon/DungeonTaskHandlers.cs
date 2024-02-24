@@ -22,26 +22,7 @@ namespace DungeonestCrab.Dungeon {
         private void Awake() {
             FaderRef.Value = 1f;
 
-            Story story = InkStateManager.INSTANCE.InkStory;
-
-            story.BindExternalFunction("setMusic", (string music) => {
-                InteractQueue.Enqueue(new MusicTask(music));
-            });
-            story.BindExternalFunction("setFog", (string color, float density) => {
-                InteractQueue.Enqueue(new FogTask(color, density));
-            });
-            story.BindExternalFunction("setSky", (string color) => {
-                InteractQueue.Enqueue(new SkyColorTask(color));
-            });
-            story.BindExternalFunction("fadeIn", (bool faded, float duration) => {
-                InteractQueue.Enqueue(new FadeTask(faded, duration));
-            });
-            story.BindExternalFunction("goToTitle", () => {
-                InteractQueue.Enqueue(new SceneLoadTask("MenuScene"));
-            });
-
             TaskQueueManager.INSTANCE.AddHandler(typeof(TextTask), TextTaskHandler);
-
             TaskQueueManager.INSTANCE.AddHandler(typeof(MusicTask), MusicTaskHandler);
             TaskQueueManager.INSTANCE.AddHandler(typeof(FogTask), FogTaskHandler);
             TaskQueueManager.INSTANCE.AddHandler(typeof(SkyColorTask), SkyColorTaskHandler);

@@ -118,8 +118,9 @@ namespace DungeonestCrab.Dungeon.Pen {
                     if (line.Length == 0) continue;
 
                     bool skipLine = false;
+                    string trimmedLine = line.Trim();
                     foreach (ISpecialLineHandler handler in _handlers) {
-                        if (handler.ShouldHandle(this, line) && handler.Handle(this, line)) {
+                        if (handler.ShouldHandle(this, trimmedLine) && handler.Handle(this, trimmedLine)) {
                             // Line processing should stop.
                             skipLine = true;
                             continue;

@@ -4,32 +4,16 @@ using System;
 using UnityEngine;
 
 namespace DungeonestCrab.Dungeon.Pen {
+    public interface IInkFunctionRegistrar {
+        public void RegisterOn(Story story, TaskQueue taskQueue);
+    }
+
     public class InkStateManager : MonoBehaviour {
         [SerializeField] TextAsset InkFile;
 
         public static InkStateManager INSTANCE;
         [SerializeField] protected TaskQueue InteractQueue;
         private StoryManager _manager;
-
-        public class TitlePassage {
-            public readonly string Title;
-            public readonly string Passage;
-
-            public TitlePassage(string title, string passage) {
-                Title = title;
-                Passage = passage;
-            }
-
-            public override bool Equals(object obj) {
-                return obj is TitlePassage passage &&
-                       Title == passage.Title &&
-                       Passage == passage.Passage;
-            }
-
-            public override int GetHashCode() {
-                return HashCode.Combine(Title, Passage);
-            }
-        }
 
         public StoryManager Manager => _manager;
 
@@ -63,6 +47,10 @@ namespace DungeonestCrab.Dungeon.Pen {
             _manager = new StoryManager(InkFile);
             INSTANCE = this;
             OnAwake();
+
+            foreach (IInkFunctionRegistrar registrar in GetComponents<IInkFunctionRegistrar>()) {
+                registrar.RegisterOn(_manager.Story, InteractQueue);
+            }
         }
 
         private void Start() {
