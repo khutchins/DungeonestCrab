@@ -10,33 +10,52 @@ namespace DungeonestCrab.Dungeon.Crawl {
     public class DungeonMoverProxy : MonoBehaviour {
 
         [SerializeField]
-        private DungeonMoverReference DungeonMover;
+        private DungeonEntityReference DungeonMover;
+
+        private DungeonMover Mover {
+            get {
+                DungeonEntity entity = DungeonMover.Value;
+                if (entity == null) return null;
+                if (!(entity is DungeonMover)) return null;
+                return entity as DungeonMover;
+            }
+        }
+
+        public void TryDoAction(DungeonMover.Action action) {
+            var mover = Mover;
+            if (mover == null) {
+                Debug.LogWarning($"Trying to do action but dungeon mover proxy isn't attached!");
+                return;
+            }
+            mover.TryDoAction(action);
+        }
+
         public void TryMoveLeft() {
-            DungeonMover.Value.TryMoveLeft();
+            TryDoAction(Crawl.DungeonMover.Action.MoveLeft);
         }
 
         public void TryMoveRight() {
-            DungeonMover.Value.TryMoveRight();
+            TryDoAction(Crawl.DungeonMover.Action.MoveRight);
         }
 
         public void TryMoveForward() {
-            DungeonMover.Value.TryMoveForward();
+            TryDoAction(Crawl.DungeonMover.Action.MoveForward);
         }
 
         public void TryMoveBack() {
-            DungeonMover.Value.TryMoveBack();
+            TryDoAction(Crawl.DungeonMover.Action.MoveBack);
         }
 
         public void TryTurnLeft() {
-            DungeonMover.Value.TryTurnLeft();
+            TryDoAction(Crawl.DungeonMover.Action.TurnLeft);
         }
 
         public void TryTurnRight() {
-            DungeonMover.Value.TryTurnRight();
+            TryDoAction(Crawl.DungeonMover.Action.TurnRight);
         }
 
         public void TryWait() {
-            DungeonMover.Value.TryWait();
+            TryDoAction(Crawl.DungeonMover.Action.Wait);
         }
     }
 }

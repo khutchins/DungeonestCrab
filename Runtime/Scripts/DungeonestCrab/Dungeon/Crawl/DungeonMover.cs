@@ -33,7 +33,7 @@ namespace DungeonestCrab.Dungeon.Crawl {
             Timed
         }
 
-        enum Action {
+        public enum Action {
             None,
             MoveLeft,
             MoveForward,
@@ -132,7 +132,7 @@ namespace DungeonestCrab.Dungeon.Crawl {
             TryDoAction(Action.Wait);
         }
 
-        bool TryDoAction(Action action) {
+        public bool TryDoAction(Action action) {
             if (action == Action.None) return false;
             // Can't do action on first frame to prevent
             // holdover from scene transition.
