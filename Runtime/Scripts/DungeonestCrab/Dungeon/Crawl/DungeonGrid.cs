@@ -6,9 +6,6 @@ using Ratferences;
 using KH.Extensions;
 using KH.Graph;
 using System.Linq;
-using Ink.Runtime;
-using KH.Texts;
-using static SpeakerInformation;
 using KH;
 using DungeonestCrab.Dungeon.Pen;
 #if UNITY_EDITOR
@@ -20,9 +17,7 @@ namespace DungeonestCrab.Dungeon.Crawl {
     public class DungeonGrid : MonoBehaviour {
 
         [SerializeField] BoolReference MovementQueueingAllowed;
-        [SerializeField] SpeakerInformation Speakers;
         [SerializeField] TaskQueue TaskQueue;
-        [SerializeField] LineSpecQueue FaderTextQueue;
 
         public interface Resettable {
             public void ResetEntity();
@@ -52,7 +47,6 @@ namespace DungeonestCrab.Dungeon.Crawl {
         private bool _movementAllowed = true;
         private Dictionary<Node, DirectedGraph<Node>.Node> _graphMap = new Dictionary<Node, KH.Graph.DirectedGraph<Node>.Node>();
         private DirectedGraph<Node> _graph = new DirectedGraph<Node>();
-        private TaskStoryReader _storyReader;
 
         public bool MovementAllowed {
             get => _movementAllowed;
@@ -135,8 +129,6 @@ namespace DungeonestCrab.Dungeon.Crawl {
             _instance = this;
             _minBounds = new Vector2Int(int.MaxValue, int.MaxValue);
             _maxBounds = new Vector2Int(int.MinValue, int.MinValue);
-
-            _storyReader = GenerateStoryReader();
         }
 
         public void RegisterPlayer(DungeonMover mover) {
@@ -735,74 +727,6 @@ namespace DungeonestCrab.Dungeon.Crawl {
                 DungeonGrid.GridItemInfo info = interact.GridItemInfo();
                 DungeonGrid.INSTANCE.RegisterEntity(interact, info);
             }
-        }
-
-        public void PerformInkAction(string passage, LineSpecQueue queue) {
-            StartCoroutine(PerformInkActionCoroutine(passage, queue));
-        }
-
-        private readonly static string READER_CURRENT_QUEUE = "currentQueue";
-        private readonly static string READER_DEFAULT_QUEUE = "defaultQueue";
-        private readonly static string READER_AUTO_CONVO = "autoConvo";
-        private TaskStoryReader GenerateStoryReader() {
-            TaskStoryReader reader = new TaskStoryReader(TaskQueue, (reader, story, line, tags) => {
-                string[] segments = line.Split(':', 2);
-                string speaker = segments.Length == 2 ? segments[0] : "";
-                line = (segments.Length == 2 ? segments[1] : segments[0]).Trim();
-                Color col = Color.white;
-                if (Speakers != null) {
-                    Info info = Speakers.InfoForSpeaker(speaker);
-                    if (info != null) {
-                        if (info.Pitch != 1) line = $"<pitch={info.Pitch}>{line}</pitch>";
-                        col = info.NameColor;
-                    }
-                }
-
-                return new TextTask(
-                    reader.ReadScratch(READER_CURRENT_QUEUE, null) as LineSpecQueue, 
-                    new LineSpec(speaker.Trim(), line.Trim(), col)
-                );
-            });
-            reader.AddStoryStartCallback((reader) => {
-                reader.ClearScratch(READER_AUTO_CONVO);
-                reader.WriteScratch(READER_CURRENT_QUEUE, reader.ReadScratch(READER_DEFAULT_QUEUE, null));
-            });
-            reader.AddSpecialLineHandler(">>> AWAIT", (reader, line) => {
-                // This naturally will clear the queue before continuing.
-                return true;
-            });
-            reader.AddSpecialLineHandler(">>> AUTOCONVO", (reader, line) => {
-                reader.WriteScratch(READER_AUTO_CONVO, true);
-                return true;
-            });
-            reader.AddSpecialLineHandler(">>> QUEUE: Fader", (reader, line) => {
-                reader.WriteScratch(READER_CURRENT_QUEUE, FaderTextQueue);
-                return true;
-            });
-            reader.AddSpecialLineHandler(">>> QUEUE: Default", (reader, line) => {
-                reader.WriteScratch(READER_CURRENT_QUEUE, reader.ReadScratch(READER_DEFAULT_QUEUE, null));
-                return true;
-            });
-            reader.AddChoiceTweaker((reader, task) => {
-                if ((bool)reader.ReadScratch(READER_AUTO_CONVO, false)) {
-                    task.SelectedChoice = 0;
-                }
-                return task;
-            });
-
-            return reader;
-        }
-
-        public IEnumerator PerformInkActionCoroutine(string passage, LineSpecQueue queue) {
-            bool oldQueueing = MovementQueueingAllowed.Value;
-            MovementQueueingAllowed.Value = false;
-            _storyReader.WriteScratch(READER_DEFAULT_QUEUE, queue);
-            yield return InkStateManager.INSTANCE.Manager.ReadPassage(passage, _storyReader);
-
-            // This is necessary, as tasks can be enqueued after the last line,
-            // and we should wait for those to finish too.
-            yield return TaskQueue.WaitUntilEmpty();
-            MovementQueueingAllowed.Value = oldQueueing;
         }
 
         private IEnumerator HandleInteracts(DungeonMover mover, List<DungeonInteractable> interacts) {

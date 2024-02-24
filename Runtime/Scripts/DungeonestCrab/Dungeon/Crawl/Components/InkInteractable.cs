@@ -9,7 +9,6 @@ using UnityEngine;
 namespace DungeonestCrab.Dungeon.Crawl {
     public class InkInteractable : DungeonInteractable {
         public string InkPassage;
-        public LineSpecQueue Queue;
         public bool HideAfterInteraction;
 
         protected override void OnStart() {
@@ -21,7 +20,7 @@ namespace DungeonestCrab.Dungeon.Crawl {
         }
 
         IEnumerator RunInkPassage() {
-            yield return DungeonGrid.INSTANCE.PerformInkActionCoroutine(InkPassage, Queue);
+            yield return DungeonReader.INSTANCE.PerformInkActionCoroutine(InkPassage);
             CheckHide();
             ActionFinished(null);
         }
