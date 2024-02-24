@@ -52,6 +52,7 @@ namespace DungeonestCrab.Dungeon.Crawl {
         private bool _movementAllowed = true;
         private Dictionary<Node, DirectedGraph<Node>.Node> _graphMap = new Dictionary<Node, KH.Graph.DirectedGraph<Node>.Node>();
         private DirectedGraph<Node> _graph = new DirectedGraph<Node>();
+        private TaskStoryReader _storyReader;
 
         public bool MovementAllowed {
             get => _movementAllowed;
@@ -134,6 +135,8 @@ namespace DungeonestCrab.Dungeon.Crawl {
             _instance = this;
             _minBounds = new Vector2Int(int.MaxValue, int.MaxValue);
             _maxBounds = new Vector2Int(int.MinValue, int.MinValue);
+
+            _storyReader = GenerateStoryReader();
         }
 
         public void RegisterPlayer(DungeonMover mover) {
@@ -738,68 +741,63 @@ namespace DungeonestCrab.Dungeon.Crawl {
             StartCoroutine(PerformInkActionCoroutine(passage, queue));
         }
 
+        private readonly static string READER_CURRENT_QUEUE = "currentQueue";
+        private readonly static string READER_DEFAULT_QUEUE = "defaultQueue";
+        private readonly static string READER_AUTO_CONVO = "autoConvo";
+        private TaskStoryReader GenerateStoryReader() {
+            TaskStoryReader reader = new TaskStoryReader(TaskQueue, (reader, story, line, tags) => {
+                string[] segments = line.Split(':', 2);
+                string speaker = segments.Length == 2 ? segments[0] : "";
+                line = (segments.Length == 2 ? segments[1] : segments[0]).Trim();
+                Color col = Color.white;
+                if (Speakers != null) {
+                    Info info = Speakers.InfoForSpeaker(speaker);
+                    if (info != null) {
+                        if (info.Pitch != 1) line = $"<pitch={info.Pitch}>{line}</pitch>";
+                        col = info.NameColor;
+                    }
+                }
+
+                return new TextTask(
+                    reader.ReadScratch(READER_CURRENT_QUEUE, null) as LineSpecQueue, 
+                    new LineSpec(speaker.Trim(), line.Trim(), col)
+                );
+            });
+            reader.AddStoryStartCallback((reader) => {
+                reader.ClearScratch(READER_AUTO_CONVO);
+                reader.WriteScratch(READER_CURRENT_QUEUE, reader.ReadScratch(READER_DEFAULT_QUEUE, null));
+            });
+            reader.AddSpecialLineHandler(">>> AWAIT", (reader, line) => {
+                // This naturally will clear the queue before continuing.
+                return true;
+            });
+            reader.AddSpecialLineHandler(">>> AUTOCONVO", (reader, line) => {
+                reader.WriteScratch(READER_AUTO_CONVO, true);
+                return true;
+            });
+            reader.AddSpecialLineHandler(">>> QUEUE: Fader", (reader, line) => {
+                reader.WriteScratch(READER_CURRENT_QUEUE, FaderTextQueue);
+                return true;
+            });
+            reader.AddSpecialLineHandler(">>> QUEUE: Default", (reader, line) => {
+                reader.WriteScratch(READER_CURRENT_QUEUE, reader.ReadScratch(READER_DEFAULT_QUEUE, null));
+                return true;
+            });
+            reader.AddChoiceTweaker((reader, task) => {
+                if ((bool)reader.ReadScratch(READER_AUTO_CONVO, false)) {
+                    task.SelectedChoice = 0;
+                }
+                return task;
+            });
+
+            return reader;
+        }
+
         public IEnumerator PerformInkActionCoroutine(string passage, LineSpecQueue queue) {
             bool oldQueueing = MovementQueueingAllowed.Value;
             MovementQueueingAllowed.Value = false;
-            Story story = InkStateManager.INSTANCE.InkStory;
-
-            if (!StoryManager.IsValidKnotOrStitch(story, passage)) {
-                Debug.LogWarning($"Invalid knot/stitch {passage}! Ignoring interaction.");
-            } else {
-                story.ChoosePathString(passage);
-                bool autoConvo = false;
-                LineSpecQueue currentQueue = queue;
-
-                while (story.canContinue) {
-                    while (story.canContinue) {
-                        string line = story.Continue();
-
-                        // Can happen when setting variables.
-                        if (line.Length == 0) continue;
-
-                        string trimmedLine = line.Trim();
-                        if (trimmedLine.StartsWith(">>>")) {
-                            if (trimmedLine == ">>> AWAIT") {
-                                yield return TaskQueue.WaitUntilEmpty();
-                            } else if (trimmedLine == ">>> AUTOCONVO") {
-                                autoConvo = true;
-                            } else if (trimmedLine == ">>> QUEUE: Fader") {
-                                currentQueue = FaderTextQueue;
-                            } else if (trimmedLine == ">>> QUEUE: Default") {
-                                currentQueue = queue;
-                            } else {
-                                Debug.LogWarning($"Unrecognized command: {trimmedLine}");
-                            }
-                            continue;
-                        }
-
-
-                        string[] segments = line.Split(':', 2);
-                        string speaker = segments.Length == 2 ? segments[0] : "";
-                        line = (segments.Length == 2 ? segments[1] : segments[0]).Trim();
-                        Color col = Color.white;
-                        if (Speakers != null) {
-                            Info info = Speakers.InfoForSpeaker(speaker);
-                            if (info != null) {
-                                if (info.Pitch != 1) line = $"<pitch={info.Pitch}>{line}</pitch>";
-                                col = info.NameColor;
-                            }
-                        }
-
-                        TextTask task = new(currentQueue, new LineSpec(speaker.Trim(), line.Trim(), col));
-                        yield return TaskQueue.EnqueueAndAwaitTaskFinished(task);
-                    }
-
-                    if (story.currentChoices.Count > 0) {
-                        if (autoConvo) {
-                            story.ChooseChoiceIndex(0);
-                            autoConvo = false;
-                        } else {
-                            Debug.LogWarning($"Choices not supported. First choice: {story.currentChoices[0]}");
-                        }
-                    }
-                }
-            }
+            _storyReader.WriteScratch(READER_DEFAULT_QUEUE, queue);
+            yield return InkStateManager.INSTANCE.Manager.ReadPassage(passage, _storyReader);
 
             // This is necessary, as tasks can be enqueued after the last line,
             // and we should wait for those to finish too.

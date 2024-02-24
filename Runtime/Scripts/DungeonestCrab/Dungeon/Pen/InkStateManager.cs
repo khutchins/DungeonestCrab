@@ -1,11 +1,6 @@
 using Ink.Runtime;
 using KH;
-using KH.Texts;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using UnityEngine;
 
 namespace DungeonestCrab.Dungeon.Pen {
@@ -66,8 +61,8 @@ namespace DungeonestCrab.Dungeon.Pen {
 
         void Awake() {
             _manager = new StoryManager(InkFile);
-            OnAwake();
             INSTANCE = this;
+            OnAwake();
         }
 
         private void Start() {
