@@ -276,6 +276,20 @@ namespace DungeonestCrab.Dungeon {
 			return tileSpec.Walkable;
 		}
 
+		public bool WalkableAt(TileSpec tile, Vector2Int offset) {
+			if (tile == null) return false;
+			return WalkableAt(tile.Coords + offset);
+		}
+
+		public static float RotationForDir(string dir) {
+			return dir switch {
+				"E" => 90,
+				"S" => 180,
+				"W" => 270,
+				_ => 0,
+			};
+		}
+
 		public string Visualize() {
 			StringBuilder str = new StringBuilder();
 			for (int y = Size.y - 1; y >= 0; y--) {

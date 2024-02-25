@@ -29,6 +29,10 @@ namespace DungeonestCrab.Dungeon {
 			YAngle = yAngle;
 		}
 
+		public Entity(Vector2Int tile, int entityIndex, EntitySO type, CodeOnInstantiate code = null, string entityID = null, float yAngle = 0)
+			: this(tile, entityIndex, type.Entity, code, entityID, yAngle) {
+		}
+
 		public Entity(Vector2Int tile, int entityIndex, EntitySource.Pair pair, string entityID = null, float yAngle = 0)
 			: this(tile, entityIndex, pair.Entity, pair.Code, entityID, yAngle) {
 		}

@@ -19,7 +19,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 			foreach (TileSpec tile in generator.AllTiles()) {
 				if (tile.Tile != Tile.Floor || tile.Immutable || tile.Style != (int)PaintStyle.Default) continue;
 				
-				if (generator.AdjacentWalkableList(tile.Coords).Count() < 2) {
+				if (generator.CardinalAdjacentWalkableList(tile.Coords).Count(x => x) < 2) {
 					yield return tile;
 				}
 			}

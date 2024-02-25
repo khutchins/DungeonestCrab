@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace DungeonestCrab.Dungeon {
-    [CreateAssetMenu(menuName = "Dungeon/Entity")]
+    [CreateAssetMenu(menuName = "DungeonestCrab/Entity")]
     public class EntitySO : ScriptableObject {
         public EntitySpec Entity;
     }
