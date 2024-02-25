@@ -44,6 +44,11 @@ namespace DungeonestCrab.Dungeon.Pen {
         }
 
         void Awake() {
+            if (InkFile == null) {
+                Debug.LogWarning($"No ink file specified!");
+                this.enabled = false;
+                return;
+            }
             _manager = new StoryManager(InkFile);
             INSTANCE = this;
             OnAwake();
