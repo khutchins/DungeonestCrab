@@ -247,6 +247,12 @@ namespace DungeonestCrab.Dungeon {
 			}
 		}
 
+		public IEnumerable<TileSpec> WalkableAdjacencies(Vector2Int pt) {
+			foreach (TileSpec adj in TileAdjacencies(pt)) {
+				if (adj.Walkable) yield return adj;
+			}
+		}
+
 		public bool[] CardinalAdjacentWalkableList(Vector2Int pt) {
 			return new bool[] {
 				WalkableAt(pt.x, pt.y - 1),

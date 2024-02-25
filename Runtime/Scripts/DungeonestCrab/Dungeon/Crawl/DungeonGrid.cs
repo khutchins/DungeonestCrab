@@ -526,7 +526,7 @@ namespace DungeonestCrab.Dungeon.Crawl {
         }
 
         public DungeonEntity.TurnAction MoveForPathToNode(DungeonInteractable entity, Vector2 gridPosition) {
-            Node node = _interactableMap[entity];
+            Node node = TryGetNode(RoundedNode(entity.GridItemInfo().GridPosition));
             Node pNode = TryGetNode(RoundedNode(gridPosition));
             if (!_graphMap.ContainsKey(node) || pNode == null || !_graphMap.ContainsKey(pNode)) {
                 Debug.LogWarning($"Failed to find node info {node} {pNode}");
@@ -562,17 +562,28 @@ namespace DungeonestCrab.Dungeon.Crawl {
 
             DesiredMove pMove = GetDesiredMove(player, DungeonEntity.TurnAction.MoveForward);
             DungeonInteractable interact = InteractableForMove(pMove.edgeNode, true);
-            StartCoroutine(IndependentInteractCoroutine(player, new(1) { interact }));
+            StartCoroutine(IndependentInteractCoroutine(player, interact));
         }
 
-        IEnumerator IndependentInteractCoroutine(DungeonMover mover, List<DungeonInteractable> interacts) {
+        IEnumerator IndependentInteractCoroutine(DungeonMover mover, params DungeonInteractable[] interacts) {
             yield return HandleInteracts(mover, interacts);
             _movementAllowed = true;
 
             if (mover) mover.OnReadyForInput();
         }
 
-        public void InitiateMove(DungeonMover player, DungeonEntity.TurnAction playerAction, float moveTime, bool interactOnBump) {
+        public void InitiateSingleMove(DungeonEntity entity, DungeonEntity.TurnAction action, float moveTime, bool interactOnBump) {
+            StartCoroutine(DoSingleMove(entity, action, moveTime, interactOnBump));
+        }
+
+        public IEnumerator DoSingleMove(DungeonEntity entity, DungeonEntity.TurnAction action, float moveTime, bool interactOnBump) {
+            DesiredMove move = GetDesiredMove(entity, action);
+            move.attempt = GetMoveAttempt(move);
+
+            yield return move.entity.DoTurnAction(move.turn, move.attempt, moveTime);
+        }
+
+        public void InitiateLockstepMove(DungeonMover player, DungeonEntity.TurnAction playerAction, float moveTime, bool interactOnBump) {
             if (!_movementAllowed) {
                 Debug.LogWarning("Tried to move while already moving!");
                 return;
@@ -729,7 +740,7 @@ namespace DungeonestCrab.Dungeon.Crawl {
             }
         }
 
-        private IEnumerator HandleInteracts(DungeonMover mover, List<DungeonInteractable> interacts) {
+        private IEnumerator HandleInteractsEnumerable(DungeonMover mover, IEnumerable<DungeonInteractable> interacts) {
             // disable movement queueing
             MovementQueueingAllowed.Value = false;
 
@@ -742,9 +753,12 @@ namespace DungeonestCrab.Dungeon.Crawl {
             MovementQueueingAllowed.Value = true;
         }
 
+        private IEnumerator HandleInteracts(DungeonMover mover, params DungeonInteractable[] interacts) {
+            yield return HandleInteractsEnumerable(mover, interacts);
+        }
+
         private IEnumerator MoveCoroutine(DungeonMover mover, DesiredMove[] attempts, List<DungeonInteractable> hitItems, float moveTime) {
             List<DesiredMove> successfulAttempts = attempts.Where(x => x.ShouldDo).ToList();
-
 
             List<IEnumerator> allMoves = new List<IEnumerator>();
             foreach (DesiredMove move in successfulAttempts) {
@@ -761,7 +775,7 @@ namespace DungeonestCrab.Dungeon.Crawl {
                 UpdateEntityOnGrid(move.entity);
             }
 
-            yield return HandleInteracts(mover, hitItems);
+            yield return HandleInteractsEnumerable(mover, hitItems);
 
             // enable movement
             _movementAllowed = true;

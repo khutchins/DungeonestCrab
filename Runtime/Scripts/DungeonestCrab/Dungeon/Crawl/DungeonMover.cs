@@ -16,6 +16,8 @@ namespace DungeonestCrab.Dungeon.Crawl {
         [SerializeField] AudioEvent WallMoveSound;
         [SerializeField] BoolReference PlayerMovementInputAllowed;
         [SerializeField] BoolReference PlayerInitiatedInteraction;
+        [Tooltip("If true, moving this entity will trigger all other entities to also move.")]
+        [SerializeField] bool LockstepMovement = false;
         [SerializeField] bool InteractOnBump;
         [Tooltip("Time to wait before allowing another interaction. This is primarily to avoid the interact close input beginning another interaction.")]
         [SerializeField] float InteractCooldown = 0.2f;
@@ -195,8 +197,17 @@ namespace DungeonestCrab.Dungeon.Crawl {
                 // but it's yelling at me regardless so it's all noise anyway.
                 _ => TurnAction.DoNothing,
             };
+            if (LockstepMovement) {
+                DungeonGrid.INSTANCE.InitiateLockstepMove(this, turnAction, animTime, InteractOnBump);
+            } else {
+                StartCoroutine(DoTurn(turnAction, animTime, InteractOnBump));
+            }
+        }
 
-            DungeonGrid.INSTANCE.InitiateMove(this, turnAction, animTime, InteractOnBump);
+        IEnumerator DoTurn(TurnAction turnAction, float animTime, bool interactOnBump) {
+            _inMovement = true;
+            yield return DungeonGrid.INSTANCE.DoSingleMove(this, turnAction, animTime, interactOnBump);
+            _inMovement = false;
         }
 
         private void TryInteract() {

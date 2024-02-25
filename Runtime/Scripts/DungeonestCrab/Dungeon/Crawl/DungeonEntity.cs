@@ -27,14 +27,18 @@ namespace DungeonestCrab.Dungeon.Crawl {
         }
 
         public bool MovementAllowed {
-            get => DungeonGrid.INSTANCE.MovementAllowed;
+            get => DungeonGrid.INSTANCE.MovementAllowed && !_inMovement;
         }
 
         public UnityEvent OnReset;
         public UnityEvent OnAfterMove;
 
+        public delegate void BeforeMove();
+        public BeforeMove OnBeforeMove;
+
         protected float _angle;
         protected Vector2Int _lastMove;
+        protected bool _inMovement = false;
 
         public DungeonGrid.GridItemInfo GridItemInfo() {
             return DungeonGrid.INSTANCE.InfoForLocation(transform.position);
@@ -111,6 +115,7 @@ namespace DungeonestCrab.Dungeon.Crawl {
             Vector3 dest = this.transform.position + new Vector3(offset.x, 0, offset.y);
 
             if (!bump) {
+                OnBeforeMove?.Invoke();
                 yield return MoveComputed(dest, duration);
                 OnAfterMove?.Invoke();
             } else {
