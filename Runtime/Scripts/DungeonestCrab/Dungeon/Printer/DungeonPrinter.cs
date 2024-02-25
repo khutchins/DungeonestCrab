@@ -256,6 +256,7 @@ namespace DungeonestCrab.Dungeon.Printer {
 				: new GameObject();
 			instantiatedObject.transform.SetParent(entity.Type.CanBeMerged ? StaticEntityHolder : EntityHolder);
 			instantiatedObject.transform.localPosition = OriginForCoords(coords) + new Vector3(0, z * _tileHeightMult, 0);
+			instantiatedObject.transform.localEulerAngles = new Vector3(0, entity.YAngle, 0);
 
 			foreach (IEntityInit init in instantiatedObject.GetComponentsInChildren<IEntityInit>()) {
 				init.DoInit(instantiatedObject, entity, rand);
