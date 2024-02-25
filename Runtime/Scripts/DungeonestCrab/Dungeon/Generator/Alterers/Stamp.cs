@@ -136,6 +136,14 @@ namespace DungeonestCrab.Dungeon.Generator {
 			return Tiles[pt.y, pt.x];
 		}
 
+		public Tile At(Vector2Int pt, Tile defaultValue) {
+			return At(pt.x, pt.y, defaultValue);
+		}
+
+		public bool InBounds(Vector2Int pt) {
+			return pt.x >= 0 && pt.y >= 0 && pt.x < W && pt.y < H;
+		}
+
 		/// <summary>
 		/// An enumerable that iterates all coords in the stamp.
 		/// </summary>
