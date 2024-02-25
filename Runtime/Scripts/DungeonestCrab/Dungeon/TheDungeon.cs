@@ -247,6 +247,15 @@ namespace DungeonestCrab.Dungeon {
 			}
 		}
 
+		public bool[] CardinalAdjacentWalkableList(Vector2Int pt) {
+			return new bool[] {
+				WalkableAt(pt.x, pt.y - 1),
+				WalkableAt(pt.x + 1, pt.y),
+				WalkableAt(pt.x, pt.y + 1),
+				WalkableAt(pt.x - 1, pt.y),
+			};
+		}
+
 		// Returns walkable adjacency list for given point. Starts
 		// at top left and rotates clockwise around the point. Used
 		// to compute whether taking this square would block movement.
@@ -288,6 +297,23 @@ namespace DungeonestCrab.Dungeon {
 				"W" => 270,
 				_ => 0,
 			};
+		}
+
+		public static Vector2Int OffsetForDir(string dir) {
+			return dir switch {
+				"S" => new Vector2Int(0, -1),
+				"E" => new Vector2Int(1, 0),
+				"W" => new Vector2Int(-1, 0),
+				_ => new Vector2Int(0, 1),
+			};
+		}
+
+		public string FindWalkableDir(TileSpec tile) {
+			if (WalkableAt(tile, OffsetForDir("N"))) return "N";
+			if (WalkableAt(tile, OffsetForDir("E"))) return "E";
+			if (WalkableAt(tile, OffsetForDir("S"))) return "S";
+			if (WalkableAt(tile, OffsetForDir("W"))) return "W";
+			return null;
 		}
 
 		public string Visualize() {
