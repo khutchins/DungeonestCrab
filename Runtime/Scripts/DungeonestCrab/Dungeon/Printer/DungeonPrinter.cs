@@ -126,6 +126,9 @@ namespace DungeonestCrab.Dungeon.Printer {
 		public void PrintForTest(TheDungeon dg) {
 			ClearGeneratedTestDungeon();
 
+			_tileFloorSize = TileSize.ToVectorXZ();
+			_tileHeightMult = TileSize.y;
+
 			_testHolder = new GameObject(TEST_HOLDER_NAME).transform;
 			_testHolder.SetParent(this.transform);
 			MakeHolders(_testHolder);
