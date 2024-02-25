@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace DungeonestCrab.Dungeon.Generator {
-    [CreateAssetMenu(menuName = "Dungeon/Spec/Bounds - Multi Options")]
+    [CreateAssetMenu(menuName = "DungeonestCrab/Spec/Bounds - Multi Options")]
     public class BoundsComboSO : BoundsSO {
         public enum BoundsType {
             Full = 0,

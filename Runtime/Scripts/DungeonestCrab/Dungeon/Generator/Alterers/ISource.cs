@@ -1,9 +1,11 @@
 ﻿using DungeonestCrab.Dungeon;
 using Pomerandomian;
+using UnityEngine;
 
 namespace DungeonestCrab.Dungeon.Generator {
+	[System.Serializable]
 	public abstract class ISource {
-		protected readonly Tile _tileToSet;
+		[SerializeField] protected Tile _tileToSet;
 
 		public ISource(Tile tileToSet) {
 			_tileToSet = tileToSet;

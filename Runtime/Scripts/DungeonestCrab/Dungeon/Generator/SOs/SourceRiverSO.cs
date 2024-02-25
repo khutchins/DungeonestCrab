@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace DungeonestCrab.Dungeon.Generator {
-    [CreateAssetMenu(menuName = "Dungeon/Spec/Source - River")]
+    [CreateAssetMenu(menuName = "DungeonestCrab/Spec/Source - River")]
     [InlineEditor]
     public class SourceRiverSO : SourceSO {
         [Range(0f, 10f)]

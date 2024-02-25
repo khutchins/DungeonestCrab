@@ -10,10 +10,16 @@ namespace DungeonestCrab.Dungeon.Generator {
 	/// 
 	/// Only guarantees connection if placed in a contiguous space.
 	/// </summary>
+	[System.Serializable]
 	public class SourceMaze : ISource {
-		private readonly float _straightBias;
-		private readonly bool _conservative;
-		private readonly float _braidPercent;
+		[Range(0f, 1f)]
+		[Tooltip("Bias towards straight lines in the maze.")]
+		[SerializeField] float _straightBias;
+		[Range(0f, 1f)]
+		[Tooltip("Percent of dead ends that should be turned into loops.")]
+		[SerializeField] float _braidPercent;
+		[Tooltip("Whether the maze should conditionally increase the inset to avoid not having a gap between a maze and its surroundings.")]
+		[SerializeField] bool _conservative;
 
 		/// <summary>
 		/// Creates a maze source.
