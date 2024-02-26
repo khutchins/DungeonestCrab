@@ -47,7 +47,8 @@ namespace DungeonestCrab.Dungeon.Printer {
             int idx = 0;
             for (float x = 0; x < VerticesPerSide; x++) {
                 for (float y = 0; y < VerticesPerSide; y++) {
-                    vertices[idx] = basePos + x * xDelta + y * yDelta;
+                    Vector3 vPos = basePos + x * xDelta + y * yDelta;
+                    vertices[idx] = vPos - back * InsetForPoint(vPos + position);
                     uvs[idx] = new Vector2(x / (VerticesPerSide - 1), y / (VerticesPerSide - 1));
                     ++idx;
                 }
@@ -77,7 +78,7 @@ namespace DungeonestCrab.Dungeon.Printer {
         }
 
         float InsetForPoint(Vector3 position) {
-            return Random.Range(0, MaxInset);
+            return (position.x + position.y + position.z) % 1 * MaxInset;
         }
     }
 }
