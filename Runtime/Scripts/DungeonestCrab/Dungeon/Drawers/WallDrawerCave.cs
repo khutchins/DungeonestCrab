@@ -8,6 +8,7 @@ namespace DungeonestCrab.Dungeon.Printer {
     [CreateAssetMenu(menuName = "DungeonestCrab/Drawer/Wall - Perturbed")]
     public class WallDrawerCave : IWallDrawer {
         [SerializeField] int VerticesPerSide = 5;
+        [SerializeField] bool ConvergeAtEdges = false;
         [Range(0, 0.5f)][SerializeField] float MaxInset = 0.1f;
         [SerializeField] Material Material;
 
@@ -48,7 +49,9 @@ namespace DungeonestCrab.Dungeon.Printer {
             for (float x = 0; x < VerticesPerSide; x++) {
                 for (float y = 0; y < VerticesPerSide; y++) {
                     Vector3 vPos = basePos + x * xDelta + y * yDelta;
-                    vertices[idx] = vPos - back * InsetForPoint(vPos + position);
+                    bool perturb = !(ConvergeAtEdges && (x == 0 || y == 0 || x == VerticesPerSide - 1 || y == VerticesPerSide - 1));
+                    vPos = perturb ? vPos - back * InsetForPoint(vPos + position) : vPos;
+                    vertices[idx] = vPos;
                     uvs[idx] = new Vector2(x / (VerticesPerSide - 1), y / (VerticesPerSide - 1));
                     ++idx;
                 }
