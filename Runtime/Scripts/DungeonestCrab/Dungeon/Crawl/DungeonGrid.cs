@@ -603,6 +603,10 @@ namespace DungeonestCrab.Dungeon.Crawl {
             move.attempt = GetMoveAttemptSingleMove(move);
 
             yield return move.entity.DoTurnAction(move.turn, move.attempt, moveTime);
+            DungeonInteractable interact = InteractableForMove(move.edgeNode, false);
+            if (interact != null && move.entity is DungeonMover) {
+                yield return (move.entity as DungeonMover).HandleInteract(interact);
+            }
             UpdateEntityOnGrid(move.entity);
         }
 

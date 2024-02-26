@@ -30,7 +30,7 @@ namespace DungeonestCrab.Dungeon {
         public readonly float Density;
 
         public FogTask(string color, float density) {
-            Color = InkStateManager.StringToColor(color);
+            Color = StoryManager.StringToColor(color);
             Density = density;
         }
     }
@@ -39,7 +39,7 @@ namespace DungeonestCrab.Dungeon {
         public readonly Color Color;
 
         public SkyColorTask(string color) {
-            Color = InkStateManager.StringToColor(color);
+            Color = StoryManager.StringToColor(color);
         }
     }
 
