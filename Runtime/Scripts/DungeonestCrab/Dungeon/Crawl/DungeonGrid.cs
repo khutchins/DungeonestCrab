@@ -487,6 +487,26 @@ namespace DungeonestCrab.Dungeon.Crawl {
             return attempt;
         }
 
+        private MoveAttempt GetMoveAttemptSingleMove(DesiredMove move) {
+            GridItemInfo info = move.entity.GridItemInfo();
+            Vector2Int offset = move.entity.RealMoveDir(move.turn);
+
+            Vector2Int curr = RoundedNode(info.GridPosition);
+
+            Node.EdgeNode to = offset.sqrMagnitude > 0 ? GetNodeInDir(curr, offset) : null;
+
+            bool walkable = to != null && to.Node.Walkable;
+            bool interactableBlockingPath = walkable && !CanMove(move.edgeNode);
+
+            MoveAttempt attempt = new MoveAttempt {
+                from = info.WorldPosition,
+                to = info.WorldPosition + (offset * _cellSize).ToVectorX0Y(),
+                isBump = !walkable || interactableBlockingPath,
+                isWallBump = !interactableBlockingPath,
+            };
+            return attempt;
+        }
+
         public DungeonInteractable InteractableForMove(Node.EdgeNode to, bool manualInteraction) {
             if (to == null) return null;
             DungeonInteractable interact = to.Edge.Interactables.Where(x => !manualInteraction || !x.IgnoreInteractButton).FirstOrDefault();
@@ -580,9 +600,10 @@ namespace DungeonestCrab.Dungeon.Crawl {
 
         public IEnumerator DoSingleMove(DungeonEntity entity, DungeonEntity.TurnAction action, float moveTime, bool interactOnBump) {
             DesiredMove move = GetDesiredMove(entity, action);
-            move.attempt = GetMoveAttempt(move);
+            move.attempt = GetMoveAttemptSingleMove(move);
 
             yield return move.entity.DoTurnAction(move.turn, move.attempt, moveTime);
+            UpdateEntityOnGrid(move.entity);
         }
 
         public void InitiateLockstepMove(DungeonMover player, DungeonEntity.TurnAction playerAction, float moveTime, bool interactOnBump) {
@@ -806,7 +827,7 @@ namespace DungeonestCrab.Dungeon.Crawl {
             public readonly Vector2Int Coords;
             public readonly Vector3 WorldPos;
             /// <summary>
-            /// Whether a node or not is walkable. Generally not needed, but used for when an interactable is between two nodes but one doesn't exist.
+            /// Whether a node or not is walkable. Generally not needed, but used for when an interactable is on an edge betwee two nodes, but only one exists on the grid.
             /// </summary>
             public bool Walkable;
             EdgeNode[] Neighbors = new EdgeNode[4];
