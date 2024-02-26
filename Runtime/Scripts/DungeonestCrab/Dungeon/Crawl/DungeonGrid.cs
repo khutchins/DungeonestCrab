@@ -525,10 +525,12 @@ namespace DungeonestCrab.Dungeon.Crawl {
             return MoveForPathToNode(entity, pInfo.GridPosition);
         }
 
+        public GridItemInfo PlayerPosition => _player.GridItemInfo();
+
         public DungeonEntity.TurnAction MoveForPathToNode(DungeonInteractable entity, Vector2 gridPosition) {
             Node node = TryGetNode(RoundedNode(entity.GridItemInfo().GridPosition));
             Node pNode = TryGetNode(RoundedNode(gridPosition));
-            if (!_graphMap.ContainsKey(node) || pNode == null || !_graphMap.ContainsKey(pNode)) {
+            if (node == null || !_graphMap.ContainsKey(node) || pNode == null || !_graphMap.ContainsKey(pNode)) {
                 Debug.LogWarning($"Failed to find node info {node} {pNode}");
             }
 

@@ -4,7 +4,7 @@ using UnityEngine;
 using KH.Input;
 using Sirenix.OdinInspector;
 
-namespace DungeonestCrab.Dungeon.Crawler {
+namespace DungeonestCrab.Dungeon.Crawl {
     [CreateAssetMenu(menuName = "DungeonestCrab/Crawl/Controller")]
     public class Controller : ScriptableObject {
         [InlineEditor] public SingleInputMediator Interact;
@@ -14,5 +14,6 @@ namespace DungeonestCrab.Dungeon.Crawler {
         [InlineEditor] public SingleInputMediator MoveBack;
         [InlineEditor] public SingleInputMediator TurnLeft;
         [InlineEditor] public SingleInputMediator TurnRight;
+        [InlineEditor] public CurrentInputSO CurrentInput;
     }
 }

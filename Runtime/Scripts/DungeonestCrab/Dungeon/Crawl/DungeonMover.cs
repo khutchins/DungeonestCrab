@@ -7,7 +7,6 @@ using KH.Audio;
 using Ratferences;
 using KH.Extensions;
 using Sirenix.OdinInspector;
-using DungeonestCrab.Dungeon.Crawler;
 
 namespace DungeonestCrab.Dungeon.Crawl {
     public class DungeonMover : DungeonEntity, DungeonGrid.GridObject {
