@@ -81,7 +81,9 @@ namespace DungeonestCrab.Dungeon.Printer {
         }
 
         float InsetForPoint(Vector3 position) {
-            return (position.x + position.y + position.z) % 1 * MaxInset;
+            int modVert = VerticesPerSide - 1;
+            float modifiedPos = (position.x * modVert * 13 + position.y * modVert * 29 + position.z * modVert * 113);
+            return modifiedPos / 811f % 1 * MaxInset;
         }
     }
 }
