@@ -7,6 +7,7 @@ using KH.Audio;
 using Ratferences;
 using KH.Extensions;
 using Sirenix.OdinInspector;
+using static DungeonestCrab.Dungeon.Crawl.DungeonGrid;
 
 namespace DungeonestCrab.Dungeon.Crawl {
     public class DungeonMover : DungeonEntity, DungeonGrid.GridObject {
@@ -15,8 +16,6 @@ namespace DungeonestCrab.Dungeon.Crawl {
         [SerializeField] AudioEvent WallMoveSound;
         [SerializeField] BoolReference PlayerMovementInputAllowed;
         [SerializeField] BoolReference PlayerInitiatedInteraction;
-        [Tooltip("If true, moving this entity will trigger all other entities to also move.")]
-        [SerializeField] bool LockstepMovement = false;
         [SerializeField] bool InteractOnBump;
         [Tooltip("Time to wait before allowing another interaction. This is primarily to avoid the interact close input beginning another interaction.")]
         [SerializeField] float InteractCooldown = 0.2f;
@@ -46,7 +45,7 @@ namespace DungeonestCrab.Dungeon.Crawl {
             Interact,
         }
 
-        enum ActionType {
+        public enum ActionType {
             Move,
             Turn,
             Interact,
@@ -196,16 +195,14 @@ namespace DungeonestCrab.Dungeon.Crawl {
                 // but it's yelling at me regardless so it's all noise anyway.
                 _ => TurnAction.DoNothing,
             };
-            if (LockstepMovement) {
-                DungeonGrid.INSTANCE.InitiateLockstepMove(this, turnAction, animTime, InteractOnBump);
-            } else {
-                StartCoroutine(DoTurn(turnAction, animTime, InteractOnBump));
-            }
+            
+            StartCoroutine(DoTurn(turnAction, animTime, InteractOnBump));
         }
 
         IEnumerator DoTurn(TurnAction turnAction, float animTime, bool interactOnBump) {
             _inMovement = true;
-            yield return DungeonGrid.INSTANCE.DoSingleMove(this, turnAction, animTime, interactOnBump);
+            MoveAttempt attempt = DungeonGrid.INSTANCE.GetMoveAttempt(this, turnAction);
+            yield return DungeonGrid.INSTANCE.DoSingleMove(this, turnAction, MovementConfig, interactOnBump);
             _inMovement = false;
         }
 
@@ -311,7 +308,7 @@ namespace DungeonestCrab.Dungeon.Crawl {
 
         IMovementConfig MovementConfig => MovementType == DungeonMovementType.Instant ? InstantMovement : TimedMovement;
 
-        interface IMovementConfig {
+        public interface IMovementConfig {
             void OnInit();
             float TimeForAction(Action action);
             bool AllowEnqueue(ActionType type, Action action);
@@ -320,7 +317,7 @@ namespace DungeonestCrab.Dungeon.Crawl {
         }
 
         [System.Serializable]
-        class InstantMovementConfig : IMovementConfig {
+        public class InstantMovementConfig : IMovementConfig {
             [SerializeField] bool RetriggerAfterDelay;
             [ShowIf("RetriggerAfterDelay")] [SerializeField] float RetriggerDelay = 0.25f;
             [Tooltip("If set, retrigger will only occur if this key is held down. If not set, it will always happen.")]
@@ -356,7 +353,7 @@ namespace DungeonestCrab.Dungeon.Crawl {
         }
 
         [System.Serializable]
-        class TimedMovementConfig : IMovementConfig {
+        public class TimedMovementConfig : IMovementConfig {
             [SerializeField] bool EnqueueMoves = true;
             [SerializeField] bool EnqueueTurns = true;
             [SerializeField] bool AutoRepeatMoves = true;

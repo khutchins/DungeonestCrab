@@ -507,7 +507,7 @@ namespace DungeonestCrab.Dungeon.Crawl {
             return attempt;
         }
 
-        public DungeonInteractable InteractableForMove(Node.EdgeNode to, bool manualInteraction) {
+        public static DungeonInteractable InteractableForMove(Node.EdgeNode to, bool manualInteraction) {
             if (to == null) return null;
             DungeonInteractable interact = to.Edge.Interactables.Where(x => !manualInteraction || !x.IgnoreInteractButton).FirstOrDefault();
             if (interact != null) return interact;
@@ -594,15 +594,15 @@ namespace DungeonestCrab.Dungeon.Crawl {
             if (mover) mover.OnReadyForInput();
         }
 
-        public void InitiateSingleMove(DungeonEntity entity, DungeonEntity.TurnAction action, float moveTime, bool interactOnBump) {
-            StartCoroutine(DoSingleMove(entity, action, moveTime, interactOnBump));
+        public void InitiateSingleMove(DungeonEntity entity, DungeonEntity.TurnAction action, DungeonMover.IMovementConfig movementConfig, bool interactOnBump) {
+            StartCoroutine(DoSingleMove(entity, action, movementConfig, interactOnBump));
         }
 
-        public IEnumerator DoSingleMove(DungeonEntity entity, DungeonEntity.TurnAction action, float moveTime, bool interactOnBump) {
+        public IEnumerator DoSingleMove(DungeonEntity entity, DungeonEntity.TurnAction action, DungeonMover.IMovementConfig movementConfig, bool interactOnBump) {
             DesiredMove move = GetDesiredMove(entity, action);
             move.attempt = GetMoveAttemptSingleMove(move);
 
-            yield return move.entity.DoTurnAction(move.turn, move.attempt, moveTime);
+            yield return move.entity.DoTurnAction(move.turn, move.attempt, movementConfig);
             DungeonInteractable interact = InteractableForMove(move.edgeNode, false);
             if (interact != null && move.entity is DungeonMover) {
                 yield return (move.entity as DungeonMover).HandleInteract(interact);
@@ -610,150 +610,9 @@ namespace DungeonestCrab.Dungeon.Crawl {
             UpdateEntityOnGrid(move.entity);
         }
 
-        public void InitiateLockstepMove(DungeonMover player, DungeonEntity.TurnAction playerAction, float moveTime, bool interactOnBump) {
-            if (!_movementAllowed) {
-                Debug.LogWarning("Tried to move while already moving!");
-                return;
-            }
-            _movementAllowed = false;
-
-            // This code is a bit of a mess. It runs simulations of all moves, and tries to be a maximalist about
-            // what moves are allowed (e.g. e1 -> s2 and e2 takes e1's square), but that can lead to messy cases
-            // where two entities bump and they both retreat. To solve that, the last entity in the entity list
-            // will "win" (last entity to avoid the player).
-            //
-            // However, that doesn't handle the case where an entity thought it'd move and freed up its square.
-            // To handle that, there are a sequence of resolutions that cancel any moves into the squares that
-            // it moved out of. This can cascade as more moves get cancelled.
-            //
-            // This has a bug, as entities that don't move are still added to the moves to be resolved, and if
-            // they aren't last, they can 'lose' the resolution process, leaving two entities at that spot.
-            // Furthermore, it's a bit awkward if two entities move onto a static position, as the player would
-            // potentially interact with both, which doesn't really make sense.
-            //
-            // To solve this, I should add a pass at the start that detects moves into static squares and cancels
-            // those moves first.
-
-            // figure out all move attempts + interactions
-            Dictionary<object, List<DesiredMove>> moveDict = new Dictionary<object, List<DesiredMove>>();
-
-            DesiredMove[] moves = new DesiredMove[_registeredEntities.Count + 1];
-
-            // Handle player
-            DesiredMove pMove = GetDesiredMove(player, playerAction);
-            pMove.attempt = GetMoveAttempt(pMove);
-            moves[0] = pMove;
-            AddAppropriate(moveDict, pMove);
-
-            int i = 1;
-            foreach (DungeonEntity entity in _registeredEntities) {
-                DesiredMove move = GetDesiredMove(entity, entity.GetTurnAction());
-                move.attempt = GetMoveAttempt(move);
-                moves[i] = move;
-                AddAppropriate(moveDict, move);
-                i++;
-            }
-
-            List<DungeonInteractable> playerHitEntities = new List<DungeonInteractable>();
-            HashSet<DesiredMove> movesToReprocess = new HashSet<DesiredMove>();
-            foreach (var kvp in moveDict) {
-                if (kvp.Value.Count > 1) {
-                    // Any time the KVP is > 1, all of them collide. This wouldn't
-                    // be true if we were checking on the start node, where the logic
-                    // would be more complicated.
-
-                    List<DesiredMove> allMoves = kvp.Value;
-                    bool playerHit = false;
-                    int blockerCount = 0;
-                    List<DungeonInteractable> potentialInteracts = new List<DungeonInteractable>();
-                    foreach (DesiredMove move in allMoves) {
-                        if (move.entity == player) {
-                            playerHit = true;
-                            blockerCount++;
-                        } else if (move.entity is DungeonInteractable interact) {
-                            if (interact.BlocksMovement) blockerCount++;
-                            potentialInteracts.Add(interact);
-                        }
-                    }
-
-                    if (playerHit) {
-                        playerHitEntities.AddRange(potentialInteracts);
-                    }
-
-                    // Cancel all movements for objects that can bump.
-                    if (blockerCount > 1) {
-                        // Last entity in the list "wins"
-                        // NOTE: This is buggy. If a non-moving object isn't last, it'll "lose"
-                        // and the winner will also move into its square.
-                        bool choseWinner = false;
-                        for (int j = kvp.Value.Count - 1; j >= 0; j--) {
-                            DesiredMove move = kvp.Value[j];
-                            if (move.entity == player || (move.entity is DungeonInteractable interact && interact.BlocksMovement)) {
-                                if (choseWinner) {
-                                    move.attempt.isBump = true;
-                                    move.attempt.isWallBump = false;
-                                    movesToReprocess.Add(move);
-
-                                    // Remove from the list, as we may reprocess this list,
-                                    // and we don't need to touch this (it's already failed).
-                                    kvp.Value.Remove(move);
-                                } else {
-                                    choseWinner = true;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Shouldn't try to reprocess a move more than once, but just in case.
-            HashSet<DesiredMove> reprocessedMoves = new HashSet<DesiredMove>();
-
-            while (movesToReprocess.Count > 0) {
-                DesiredMove reprocessedMove = movesToReprocess.First();
-                movesToReprocess.Remove(reprocessedMove);
-                reprocessedMoves.Add(reprocessedMove);
-
-                if (moveDict.ContainsKey(reprocessedMove.from)) {
-                    var secondPassMoves = moveDict[reprocessedMove.from];
-
-                    // All moves should be failed in this list.
-                    foreach (DesiredMove spMove in secondPassMoves) {
-                        if (movesToReprocess.Contains(spMove)) {
-                            // Already want to reprocess.
-                            continue;
-                        }
-                        if (reprocessedMoves.Contains(spMove)) {
-                            // Will happen if two entities bump on an edge when moving to each other's spaces.
-                            continue;
-                        }
-
-                        // Player bounced and these are tapping on their rear.
-                        if (reprocessedMove.entity == player && spMove.entity is DungeonInteractable interact) {
-                            if (!playerHitEntities.Contains(interact)) playerHitEntities.Add(interact);
-                        }
-                        // Player is hitting bounced entity.
-                        if (spMove.entity == player && reprocessedMove.entity is DungeonInteractable interact2) {
-                            if (!playerHitEntities.Contains(interact2)) playerHitEntities.Add(interact2);
-                        }
-                        spMove.attempt.isBump = true;
-                        spMove.attempt.isWallBump = false;
-                        movesToReprocess.Add(spMove);
-                    }
-
-                    // We can remove this now, as everything pointing here has
-                    // been failed.
-                    moveDict.Remove(reprocessedMove.from);
-                }
-            }
-
-            if (!interactOnBump) {
-                playerHitEntities = playerHitEntities.Where(x => x.ForceTriggerOnBump).ToList();
-                if (playerHitEntities.Count == 0) {
-                    pMove.attempt.isWallBump = true;
-                }
-            }
-            StartCoroutine(MoveCoroutine(player, moves, playerHitEntities, moveTime));
+        public MoveAttempt GetMoveAttempt(DungeonEntity entity, DungeonEntity.TurnAction action) {
+            DesiredMove move = GetDesiredMove(entity, action);
+            return GetMoveAttemptSingleMove(move);
         }
 
         private IEnumerator WaitCoroutine(float delay) {
@@ -782,32 +641,6 @@ namespace DungeonestCrab.Dungeon.Crawl {
 
         private IEnumerator HandleInteracts(DungeonMover mover, params DungeonInteractable[] interacts) {
             yield return HandleInteractsEnumerable(mover, interacts);
-        }
-
-        private IEnumerator MoveCoroutine(DungeonMover mover, DesiredMove[] attempts, List<DungeonInteractable> hitItems, float moveTime) {
-            List<DesiredMove> successfulAttempts = attempts.Where(x => x.ShouldDo).ToList();
-
-            List<IEnumerator> allMoves = new List<IEnumerator>();
-            foreach (DesiredMove move in successfulAttempts) {
-                allMoves.Add(move.entity.DoTurnAction(move.turn, move.attempt, moveTime));
-            }
-
-            // Just to make sure we get the delay we asked for.
-            allMoves.Add(WaitCoroutine(moveTime));
-
-            yield return KH.CoroutineCoordinator.RunAll(this, allMoves);
-
-            // Update positions
-            foreach (DesiredMove move in successfulAttempts) {
-                UpdateEntityOnGrid(move.entity);
-            }
-
-            yield return HandleInteractsEnumerable(mover, hitItems);
-
-            // enable movement
-            _movementAllowed = true;
-
-            if (mover) mover.OnReadyForInput();
         }
 
         static bool ShouldShowEntityOnMap(IEnumerable<DungeonInteractable> interacts) {

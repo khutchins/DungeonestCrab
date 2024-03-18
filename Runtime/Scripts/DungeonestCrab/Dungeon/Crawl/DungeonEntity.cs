@@ -70,7 +70,23 @@ namespace DungeonestCrab.Dungeon.Crawl {
             return ActionToMoveDir(action);
         }
 
-        public IEnumerator DoTurnAction(TurnAction action, DungeonGrid.MoveAttempt attempt, float duration) {
+        private DungeonMover.Action ActionForTurnAction(TurnAction action) {
+            return action switch {
+                TurnAction.MoveForward => DungeonMover.Action.MoveForward,
+                TurnAction.MoveLeft => DungeonMover.Action.MoveLeft,
+                TurnAction.MoveRight => DungeonMover.Action.MoveRight,
+                TurnAction.MoveBack => DungeonMover.Action.MoveBack,
+                TurnAction.TurnLeft => DungeonMover.Action.TurnLeft,
+                TurnAction.TurnRight => DungeonMover.Action.TurnRight,
+                // No context on actual move direction, but in this case it's *probably* a mob doing the movement,
+                // so it should go with a default speed unless they care enough to pass that in.
+                TurnAction.MoveNorth or TurnAction.MoveWest or TurnAction.MoveEast or TurnAction.MoveSouth => DungeonMover.Action.MoveForward,
+                _ => DungeonMover.Action.None,
+            };
+        }
+
+        public IEnumerator DoTurnAction(TurnAction action, DungeonGrid.MoveAttempt attempt, DungeonMover.IMovementConfig movementConfig) {
+            float duration = movementConfig.TimeForAction(ActionForTurnAction(action));
             switch (action) {
                 case TurnAction.TurnLeft:
                     _lastMove = Vector2Int.zero;
