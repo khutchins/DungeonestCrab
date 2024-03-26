@@ -49,6 +49,10 @@ namespace DungeonestCrab {
 			yield return new Vector2Int(v.x, v.y + 2);
 		}
 
+		public static IEnumerable<Vector2Int> Range(this Vector2Int v) {
+			return Range(0, 0, v.x, v.y);
+		}
+
 		public static IEnumerable<Vector2Int> Range(int x, int y, int width, int height) {
 			for (int ix = x; ix < x + width; ix++) {
 				for (int iy = y; iy < y + height; iy++) {
