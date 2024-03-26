@@ -180,6 +180,10 @@ namespace DungeonestCrab.Dungeon.Pen {
             _story.variablesState[variableName] = ListWithItem(value);
         }
 
+        public Ink.Runtime.Object GetVariable(string variableName) {
+            return _story.variablesState.GetVariableWithName(variableName);
+        }
+
         public bool GetBoolVariable(string variableName, bool defaultValue = false) {
             Ink.Runtime.Object obj = _story.variablesState.GetVariableWithName(variableName);
             if (!(obj is BoolValue)) {
@@ -209,6 +213,15 @@ namespace DungeonestCrab.Dungeon.Pen {
                 return defaultValue;
             }
             return (obj as IntValue).value;
+        }
+
+        public float GetFloatVariable(string variableName, float defaultValue = -1) {
+            Ink.Runtime.Object obj = _story.variablesState.GetVariableWithName(variableName);
+            if (!(obj is FloatValue)) {
+                Debug.LogWarning($"Requested ink variable {variableName} is not an int!");
+                return defaultValue;
+            }
+            return (obj as FloatValue).value;
         }
 
         /// <summary>
@@ -249,6 +262,10 @@ namespace DungeonestCrab.Dungeon.Pen {
         }
 
         public void SetIntVariable(string variableName, int value) {
+            _story.variablesState[variableName] = value;
+        }
+
+        public void SetFloatVariable(string variableName, float value) {
             _story.variablesState[variableName] = value;
         }
 

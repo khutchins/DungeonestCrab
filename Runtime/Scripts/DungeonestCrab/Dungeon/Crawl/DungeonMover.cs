@@ -314,6 +314,7 @@ namespace DungeonestCrab.Dungeon.Crawl {
             bool AllowEnqueue(ActionType type, Action action);
             bool AllowAutoRepeat(ActionType type, Action action);
             void ActionTriggered(ActionType type, Action action);
+            float BumpPercentage { get; }
         }
 
         [System.Serializable]
@@ -325,6 +326,8 @@ namespace DungeonestCrab.Dungeon.Crawl {
             [ShowIf("RetriggerAfterDelay")] [SerializeField] bool AutoRepeatMoves = true;
             [ShowIf("RetriggerAfterDelay")] [SerializeField] bool AutoRepeatTurns = false;
             private TimeCheck _check;
+
+            public float BumpPercentage => 0;
 
             public void OnInit() {
                 _check = new TimeCheck();
@@ -365,6 +368,9 @@ namespace DungeonestCrab.Dungeon.Crawl {
             [HideIf("UniformMovementTime")] [SerializeField] float StrafeTime = 0.45f;
             [HideIf("UniformMovementTime")] [SerializeField] float BackstepTime = 0.5f;
             [SerializeField] float WaitTime = 0.3f;
+            [SerializeField] float BumpPercentage = 0.3f;
+
+            float IMovementConfig.BumpPercentage => BumpPercentage;
 
             public void OnInit() {}
             void IMovementConfig.ActionTriggered(ActionType type, Action action) {}

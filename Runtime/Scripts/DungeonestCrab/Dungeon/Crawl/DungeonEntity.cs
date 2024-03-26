@@ -106,7 +106,7 @@ namespace DungeonestCrab.Dungeon.Crawl {
                 case TurnAction.MoveEast:
                     Vector2Int dir = ActionToMoveDir(action);
                     _lastMove = dir;
-                    yield return DoMove(dir, attempt.isBump, attempt.isWallBump, duration);
+                    yield return DoMove(dir, attempt.isBump, attempt.isWallBump, duration, movementConfig);
                     break;
                 case TurnAction.DoNothing:
                 default:
@@ -120,7 +120,7 @@ namespace DungeonestCrab.Dungeon.Crawl {
             return DungeonGrid.INSTANCE.CanDoMove(this, action);
         }
 
-        private IEnumerator DoMove(Vector2Int dir, bool bump, bool wallBump, float duration) {
+        private IEnumerator DoMove(Vector2Int dir, bool bump, bool wallBump, float duration, DungeonMover.IMovementConfig movementConfig) {
             _lastMove = dir;
             if (dir.sqrMagnitude < 1) {
                 Debug.Log("Tried to move in no direction");
@@ -132,10 +132,10 @@ namespace DungeonestCrab.Dungeon.Crawl {
 
             if (!bump) {
                 OnBeforeMove?.Invoke();
-                yield return MoveComputed(dest, duration);
+                yield return MoveComputed(transform.position + new Vector3(offset.x, 0, offset.y), duration);
                 OnAfterMove?.Invoke();
             } else {
-                yield return MoveBump(dest, wallBump, duration);
+                yield return MoveBump(transform.position + 2 * movementConfig.BumpPercentage * new Vector3(offset.x, 0, offset.y), wallBump, duration);
             }
         }
 

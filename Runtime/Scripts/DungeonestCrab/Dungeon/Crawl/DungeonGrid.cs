@@ -664,7 +664,7 @@ namespace DungeonestCrab.Dungeon.Crawl {
             public readonly Vector2Int Coords;
             public readonly Vector3 WorldPos;
             /// <summary>
-            /// Whether a node or not is walkable. Generally not needed, but used for when an interactable is on an edge betwee two nodes, but only one exists on the grid.
+            /// Whether a node or not is walkable. Generally not needed, but used for when an interactable is on an edge between two nodes, but only one exists on the grid.
             /// </summary>
             public bool Walkable;
             EdgeNode[] Neighbors = new EdgeNode[4];
