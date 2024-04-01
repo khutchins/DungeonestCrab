@@ -509,9 +509,12 @@ namespace DungeonestCrab.Dungeon.Crawl {
 
         public static DungeonInteractable InteractableForMove(Node.EdgeNode to, bool manualInteraction) {
             if (to == null) return null;
-            DungeonInteractable interact = to.Edge.Interactables.Where(x => !manualInteraction || !x.IgnoreInteractButton).FirstOrDefault();
+            bool CanInteract(DungeonInteractable x) {
+                return (manualInteraction && !x.IgnoreInteractButton) || (!manualInteraction && x.ForceTriggerOnBump);
+            }
+            DungeonInteractable interact = to.Edge.Interactables.Where(CanInteract).FirstOrDefault();
             if (interact != null) return interact;
-            return to.Node.Interactables.Where(x => !manualInteraction || !x.IgnoreInteractButton).FirstOrDefault();
+            return to.Node.Interactables.Where(CanInteract).FirstOrDefault();
         }
 
         private void MaybeAdd(Dictionary<object, List<DesiredMove>> dict, object key, DesiredMove move) {
