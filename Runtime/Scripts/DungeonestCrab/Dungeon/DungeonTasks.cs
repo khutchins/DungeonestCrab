@@ -60,4 +60,12 @@ namespace DungeonestCrab.Dungeon {
             SceneName = sceneName;
         }
     }
+
+    public class SplashTextTask : ITask {
+        public readonly string text;
+
+        public SplashTextTask(string text) {
+            this.text = text;
+        }
+    }
 }

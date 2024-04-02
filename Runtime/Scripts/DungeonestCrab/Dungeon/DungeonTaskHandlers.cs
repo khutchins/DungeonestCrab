@@ -18,6 +18,7 @@ namespace DungeonestCrab.Dungeon {
         [SerializeField] LineSpecQueue FaderTextQueue;
         [SerializeField] ColorReference BackgroundColor;
         [SerializeField] FloatReference FaderRef;
+        [SerializeField] StringReference SplashText;
 
         private void Awake() {
             FaderRef.Value = 1f;
@@ -28,6 +29,7 @@ namespace DungeonestCrab.Dungeon {
             TaskQueueManager.INSTANCE.AddHandler(typeof(SkyColorTask), SkyColorTaskHandler);
             TaskQueueManager.INSTANCE.AddHandler(typeof(FadeTask), FadeTaskHandler);
             TaskQueueManager.INSTANCE.AddHandler(typeof(SceneLoadTask), SceneLoadTaskHandler);
+            TaskQueueManager.INSTANCE.AddHandler(typeof(SplashTextTask), SplashTextTaskHandler);
         }
 
         IEnumerator FadeTaskHandler(ITask task) {
@@ -48,6 +50,12 @@ namespace DungeonestCrab.Dungeon {
         IEnumerator TextTaskHandler(ITask task) {
             TextTask tt = task as TextTask;
             yield return tt.Queue.EnqueueAndAwait(tt.Text);
+        }
+
+        IEnumerator SplashTextTaskHandler(ITask task) {
+            SplashTextTask tt = task as SplashTextTask;
+            SplashText.Value = tt.text;
+            yield return null;
         }
 
         IEnumerator MusicTaskHandler(ITask task) {

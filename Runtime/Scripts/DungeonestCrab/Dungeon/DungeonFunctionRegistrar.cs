@@ -19,6 +19,9 @@ namespace DungeonestCrab.Dungeon.Pen {
             story.BindExternalFunction("fadeIn", (bool faded, float duration) => {
                 queue.Enqueue(new FadeTask(faded, duration));
             });
+            story.BindExternalFunction("showSplashText", (string text) => {
+                queue.Enqueue(new SplashTextTask(text));
+            });
             story.BindExternalFunction("goToTitle", () => {
                 queue.Enqueue(new SceneLoadTask("MenuScene"));
             });
