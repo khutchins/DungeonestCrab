@@ -184,6 +184,8 @@ namespace DungeonestCrab.Dungeon.Pen {
             return _story.variablesState.GetVariableWithName(variableName);
         }
 
+        public VariablesState AllVariables { get => _story.variablesState; }
+
         public bool GetBoolVariable(string variableName, bool defaultValue = false) {
             Ink.Runtime.Object obj = _story.variablesState.GetVariableWithName(variableName);
             if (!(obj is BoolValue)) {

@@ -1,4 +1,6 @@
+using Ink.Runtime;
 using KH.Console;
+using System.Linq;
 using UnityEngine;
 
 namespace DungeonestCrab.Dungeon.Pen {
@@ -14,33 +16,73 @@ namespace DungeonestCrab.Dungeon.Pen {
                 Debug.LogWarning($"InkStateManager does not exist. Cannot register.");
             }
 
-            instance.RegisterHandler("iget", (cmd) => {
-                string var = ConsoleManager.ExpectString(cmd, 0);
-                return PrintInkValue(null, var);
+            instance.RegisterHandler(new Command() {
+                Name = "ink_get",
+                Description = "Get the value of an ink variable.",
+                RunCallback = (cmd) => {
+                    string var = ConsoleManager.ExpectString(cmd, 0);
+                    return PrintInkValue(null, var);
+                },
+                Autocomplete = (cmd) => {
+                    if (cmd.Length == 2) {
+                        return ink.Manager.AllVariables;
+                    }
+                    return null;
+                }
             });
 
-            instance.RegisterHandler("isetstr", (cmd) => {
-                string var = ConsoleManager.ExpectString(cmd, 0);
-                var val = ConsoleManager.ExpectString(cmd, 1);
-                string output = PrintInkValue("Old Val: ", var) + '\n';
-                ink.Manager.SetStringVariable(var, val);
-                return output + PrintInkValue("New Val: ", var);
+            instance.RegisterHandler(new Command() {
+                Name = "ink_setString",
+                Description = "Sets the ink variable to the given string.",
+                RunCallback = (cmd) => {
+                    string var = ConsoleManager.ExpectString(cmd, 0);
+                    var val = ConsoleManager.ExpectString(cmd, 1);
+                    string output = PrintInkValue("Old Val: ", var) + '\n';
+                    ink.Manager.SetStringVariable(var, val);
+                    return output + PrintInkValue("New Val: ", var);
+                },
+                Autocomplete = (cmd) => {
+                    if (cmd.Length == 2) {
+                        return ink.Manager.AllVariables.Where(x => ink.Manager.GetVariable(x) is StringValue);
+                    }
+                    return null;
+                }
             });
 
-            instance.RegisterHandler("isetfloat", (cmd) => {
-                string var = ConsoleManager.ExpectString(cmd, 0);
-                var val = ConsoleManager.ExpectFloat(cmd, 1);
-                string output = PrintInkValue("Old Val: ", var) + '\n';
-                ink.Manager.SetFloatVariable(var, val);
-                return output + PrintInkValue("New Val: ", var);
+            instance.RegisterHandler(new Command() {
+                Name = "ink_setFloat",
+                Description = "Sets the ink variable to the given float.",
+                RunCallback = (cmd) => {
+                    string var = ConsoleManager.ExpectString(cmd, 0);
+                    var val = ConsoleManager.ExpectFloat(cmd, 1);
+                    string output = PrintInkValue("Old Val: ", var) + '\n';
+                    ink.Manager.SetFloatVariable(var, val);
+                    return output + PrintInkValue("New Val: ", var);
+                },
+                Autocomplete = (cmd) => {
+                    if (cmd.Length == 2) {
+                        return ink.Manager.AllVariables.Where(x => ink.Manager.GetVariable(x) is FloatValue);
+                    }
+                    return null;
+                }
             });
 
-            instance.RegisterHandler("isetint", (cmd) => {
-                string var = ConsoleManager.ExpectString(cmd, 0);
-                var val = ConsoleManager.ExpectInt(cmd, 1);
-                string output = PrintInkValue("Old Val: ", var) + '\n';
-                ink.Manager.SetIntVariable(var, val);
-                return output + PrintInkValue("New Val: ", var);
+            instance.RegisterHandler(new Command() {
+                Name = "ink_setInt",
+                Description = "Sets the ink variable to the given integer.",
+                RunCallback = (cmd) => {
+                    string var = ConsoleManager.ExpectString(cmd, 0);
+                    var val = ConsoleManager.ExpectInt(cmd, 1);
+                    string output = PrintInkValue("Old Val: ", var) + '\n';
+                    ink.Manager.SetIntVariable(var, val);
+                    return output + PrintInkValue("New Val: ", var);
+                },
+                Autocomplete = (cmd) => {
+                    if (cmd.Length == 2) {
+                        return ink.Manager.AllVariables.Where(x => ink.Manager.GetVariable(x) is IntValue);
+                    }
+                    return null;
+                }
             });
         }
 
