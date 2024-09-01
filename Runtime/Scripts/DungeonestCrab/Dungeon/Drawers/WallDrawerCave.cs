@@ -50,7 +50,7 @@ namespace DungeonestCrab.Dungeon.Printer {
                 for (float y = 0; y < VerticesPerSide; y++) {
                     Vector3 vPos = basePos + x * xDelta + y * yDelta;
                     bool perturb = !(ConvergeAtEdges && (x == 0 || y == 0 || x == VerticesPerSide - 1 || y == VerticesPerSide - 1));
-                    vPos = perturb ? vPos - back * InsetForPoint(vPos + position) : vPos;
+                    vPos = perturb ? vPos - back * InsetForPoint(vPos) : vPos;
                     vertices[idx] = vPos;
                     uvs[idx] = new Vector2(x / (VerticesPerSide - 1), y / (VerticesPerSide - 1));
                     ++idx;
