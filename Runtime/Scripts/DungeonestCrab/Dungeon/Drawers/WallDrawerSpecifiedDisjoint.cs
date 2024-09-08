@@ -1,13 +1,19 @@
 using Pomerandomian;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace DungeonestCrab.Dungeon.Printer {
-    [CreateAssetMenu(menuName = "DungeonestCrab/Drawer/Wall - Specified")]
-    public class WallDrawerSpecified : IWallDrawer {
+    [CreateAssetMenu(menuName = "DungeonestCrab/Drawer/Wall - Specified Disjoint")]
+    public class WallDrawerSpecifiedDisjoint : IWallDrawer {
         [SerializeField] WallSpec[] WallConfiguration;
         [SerializeField] Material Material;
+        private WallSpec[] _cache = null;
+
+        private void OnValidate() {
+            _cache = null;
+        }
 
         public override void DrawWall(Transform parent, IRandom random, TileSpec tile, Vector3 position, Vector3Int tileSize, float rot, float minY, float maxY) {
             // This is the base.
@@ -24,8 +30,22 @@ namespace DungeonestCrab.Dungeon.Printer {
             DrawFromConfig(innerWall, position, up, right, back, minY, maxY);
         }
 
-        protected virtual WallSpec[] GetWallConfiguration() {
-            return WallConfiguration;
+        WallSpec[] EnsureCache() {
+            if (_cache != null) return _cache;
+
+            List<WallSpec> wallSpecs = WallConfiguration.ToList();
+
+            List<WallSpec> generatedWallSpecs = new List<WallSpec>();
+
+            for (int i = 0; i < wallSpecs.Count; i++) {
+                WallSpec curr = wallSpecs[i];
+                if (curr.endsUVY != curr.startsUVY) {
+                    generatedWallSpecs.Add(new WallSpec(curr.percentY, curr.outset, curr.endsUVY, curr.endsUVY));
+                }
+                generatedWallSpecs.Add(curr);
+            }
+            _cache = generatedWallSpecs.ToArray();
+            return _cache;
         }
 
         void DrawFromConfig(GameObject wall, Vector3 position, Vector3 up, Vector3 right, Vector3 back, float minY, float maxY) {
@@ -38,19 +58,19 @@ namespace DungeonestCrab.Dungeon.Printer {
             Vector3 basePos = position + -right / 2f + back / 2f;
             int xVerts = 2;
 
-            WallSpec[] wallSpecs = GetWallConfiguration();
+            WallSpec[] specs = EnsureCache();
 
             // Vertices & Mesh
-            var vertices = new Vector3[xVerts * wallSpecs.Length];
-            var uvs = new Vector2[xVerts * wallSpecs.Length];
+            var vertices = new Vector3[xVerts * specs.Length];
+            var uvs = new Vector2[xVerts * specs.Length];
             int idx = 0;
             for (float x = 0; x < xVerts; x++) {
-                for (int y = 0; y < wallSpecs.Length; y++) {
-                    Vector3 vPos = basePos + x * right + wallSpecs[y].percentY * up;
-                    float perturb = wallSpecs[y].outset;
+                for (int y = 0; y < specs.Length; y++) {
+                    Vector3 vPos = basePos + x * right + specs[y].percentY * up;
+                    float perturb = specs[y].outset;
                     vPos = vPos - back * perturb;
                     vertices[idx] = vPos;
-                    uvs[idx] = new Vector2(x, wallSpecs[y].uvY);
+                    uvs[idx] = new Vector2(x, specs[y].startsUVY);
                     ++idx;
                 }
             }
@@ -58,18 +78,18 @@ namespace DungeonestCrab.Dungeon.Printer {
             mesh.uv = uvs;
 
             // Triangles
-            var triangles = new int[wallSpecs.Length * xVerts * 2 * 3];
+            var triangles = new int[specs.Length * xVerts * 2 * 3];
             idx = -1;
             for (int x = 0; x < xVerts - 1; x++) {
-                for (int y = 0; y < wallSpecs.Length - 1; y++) {
-                    int baseNum = x * wallSpecs.Length + y;
+                for (int y = 0; y < specs.Length - 1; y++) {
+                    int baseNum = x * specs.Length + y;
                     triangles[++idx] = baseNum;
                     triangles[++idx] = baseNum + 1;
-                    triangles[++idx] = baseNum + 1 + wallSpecs.Length;
+                    triangles[++idx] = baseNum + 1 + specs.Length;
 
                     triangles[++idx] = baseNum;
-                    triangles[++idx] = baseNum + 1 + wallSpecs.Length;
-                    triangles[++idx] = baseNum + wallSpecs.Length;
+                    triangles[++idx] = baseNum + 1 + specs.Length;
+                    triangles[++idx] = baseNum + specs.Length;
                 }
             }
             mesh.triangles = triangles;
@@ -82,7 +102,15 @@ namespace DungeonestCrab.Dungeon.Printer {
         public class WallSpec {
             public float percentY = 0;
             public float outset = 0;
-            public float uvY = 0;
+            public float endsUVY = 0;
+            public float startsUVY = 0;
+
+            public WallSpec(float percentY, float outset, float endsUVY, float startsUVY) {
+                this.percentY = percentY;
+                this.outset = outset;
+                this.endsUVY = endsUVY;
+                this.startsUVY = startsUVY;
+            }
         }
     }
 }
