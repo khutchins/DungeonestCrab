@@ -2,6 +2,7 @@ using DungeonestCrab.Dungeon.Printer;
 using Pomerandomian;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.PackageManager;
 using UnityEngine;
 
 namespace DungeonestCrab.Dungeon.Printer {
@@ -28,29 +29,34 @@ namespace DungeonestCrab.Dungeon.Printer {
             GameObject innerWall = new GameObject("PerturbedWall");
             innerWall.transform.SetParent(wall.transform, false);
             VerticesPerSide = Mathf.Max(VerticesPerSide, 2);
-            DrawPerturbedWall(innerWall, info.position, up, right, back, info.minY, info.maxY);
+            DrawPerturbedWall(info, innerWall, up, right, back);
         }
 
-        void DrawPerturbedWall(GameObject wall, Vector3 position, Vector3 up, Vector3 right, Vector3 back, float minY, float maxY) {
+        void DrawPerturbedWall(WallInfo info, GameObject wall, Vector3 up, Vector3 right, Vector3 back) {
             var renderer = wall.AddComponent<MeshRenderer>();
             renderer.sharedMaterial = Material;
             var filter = wall.AddComponent<MeshFilter>();
             var mesh = new Mesh {
                 name = "Wall"
             };
-            Vector3 basePos = position + -right / 2f + back / 2f;
+            Vector3 basePos = info.position + -right / 2f + back / 2f;
             Vector3 xDelta = right / (VerticesPerSide - 1);
             Vector3 yDelta = up / (VerticesPerSide - 1);
+
+            float leftMod = GetLeftMod(info.wallDraws);
+            float rightMod = GetRightMod(info.wallDraws);
 
             // Vertices & Mesh
             var vertices = new Vector3[VerticesPerSide * VerticesPerSide];
             var uvs = new Vector2[VerticesPerSide * VerticesPerSide];
             int idx = 0;
             for (float x = 0; x < VerticesPerSide; x++) {
+                float xOffset = x == 0 ? leftMod : (x == VerticesPerSide - 1 ? rightMod : 0);
                 for (float y = 0; y < VerticesPerSide; y++) {
-                    Vector3 vPos = basePos + x * xDelta + y * yDelta;
                     bool perturb = !(ConvergeAtEdges && (x == 0 || y == 0 || x == VerticesPerSide - 1 || y == VerticesPerSide - 1));
-                    vPos = perturb ? vPos - back * InsetForPoint(vPos) : vPos;
+                    Vector3 vPos = basePos + x * xDelta + y * yDelta;
+                    float inset = perturb ? InsetForPoint(vPos) : 0;
+                    vPos = !perturb ? vPos : vPos - back * inset + inset * xOffset * right;
                     vertices[idx] = vPos;
                     uvs[idx] = new Vector2(x / (VerticesPerSide - 1), y / (VerticesPerSide - 1));
                     ++idx;

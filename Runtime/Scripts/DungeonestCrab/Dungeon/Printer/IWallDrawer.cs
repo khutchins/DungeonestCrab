@@ -53,5 +53,21 @@ namespace DungeonestCrab.Dungeon.Printer {
 		protected static bool GetIsAdjacent(int packed, WallAdjacency adjacency) {
 			return (packed & (int)adjacency) > 0;
 		}
+
+		protected static float GetLeftMod(int wallDraws) {
+			return GetIsAdjacent(wallDraws, WallAdjacency.BottomLeft)
+				? 1
+				: (GetIsAdjacent(wallDraws, WallAdjacency.Left)
+					? 0
+					: GetIsAdjacent(wallDraws, WallAdjacency.TopLeft) ? -1 : 0);
+		}
+
+		protected static float GetRightMod(int wallDraws) {
+            return GetIsAdjacent(wallDraws, WallAdjacency.BottomRight)
+				? -1
+                : (GetIsAdjacent(wallDraws, WallAdjacency.Right)
+					? 0
+                    : GetIsAdjacent(wallDraws, WallAdjacency.TopRight) ? 1 : 0);
+        }
     }
 }

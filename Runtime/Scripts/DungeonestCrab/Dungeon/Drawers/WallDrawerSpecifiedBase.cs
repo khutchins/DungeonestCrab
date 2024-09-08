@@ -37,17 +37,8 @@ namespace DungeonestCrab.Dungeon.Printer {
 
             WallSpec[] wallSpecs = GetWallConfiguration();
 
-            float leftMod = GetIsAdjacent(info.wallDraws, WallAdjacency.BottomLeft) 
-                ? 1 
-                : (GetIsAdjacent(info.wallDraws, WallAdjacency.Left) 
-                    ? 0 
-                    : GetIsAdjacent(info.wallDraws, WallAdjacency.TopLeft) ? -1 : 0);
-
-            float rightMod = GetIsAdjacent(info.wallDraws, WallAdjacency.BottomRight)
-                ? -1
-                : (GetIsAdjacent(info.wallDraws, WallAdjacency.Right)
-                    ? 0
-                    : GetIsAdjacent(info.wallDraws, WallAdjacency.TopRight) ? 1 : 0);
+            float leftMod = GetLeftMod(info.wallDraws);
+            float rightMod = GetRightMod(info.wallDraws);
 
             // Vertices & Mesh
             var vertices = new Vector3[xVerts * wallSpecs.Length];
