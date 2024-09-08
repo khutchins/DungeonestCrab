@@ -32,14 +32,14 @@ namespace DungeonestCrab.Dungeon.Printer {
                 (RequireSameTerrain ? tile.AreTerrainsTheSameInDirections(adjacency) : true);
         }
 
-        public override GameObject DrawFlat(Transform parent, IRandom random, TileSpec tileSpec) {
+        public override GameObject DrawFlat(FlatInfo info) {
             if (DrawerNESW == null) {
-                Debug.LogWarning($"DrawerNESW must be set on flat drawer for terrain {tileSpec.Terrain.ID}");
+                Debug.LogWarning($"DrawerNESW must be set on flat drawer for terrain {info. tileSpec.Terrain.ID}");
             }
-            bool n = GetAdjacency(tileSpec, TileSpec.Adjacency.N);
-            bool e = GetAdjacency(tileSpec, TileSpec.Adjacency.E);
-            bool s = GetAdjacency(tileSpec, TileSpec.Adjacency.S);
-            bool w = GetAdjacency(tileSpec, TileSpec.Adjacency.W);
+            bool n = GetAdjacency(info.tileSpec, TileSpec.Adjacency.N);
+            bool e = GetAdjacency(info.tileSpec, TileSpec.Adjacency.E);
+            bool s = GetAdjacency(info.tileSpec, TileSpec.Adjacency.S);
+            bool w = GetAdjacency(info.tileSpec, TileSpec.Adjacency.W);
 
             IFlatDrawer drawer = DrawerNESW;
             float rotation = 0;
@@ -86,7 +86,7 @@ namespace DungeonestCrab.Dungeon.Printer {
             } else {
                 drawer = DrawerNoneComputed;
             }
-            GameObject go = drawer.DrawFlat(parent, random, tileSpec);
+            GameObject go = drawer.DrawFlat(info);
             go.transform.localEulerAngles = new Vector3(0, rotation, 0);
             return go;
         }

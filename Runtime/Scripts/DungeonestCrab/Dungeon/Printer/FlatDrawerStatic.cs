@@ -11,15 +11,15 @@ namespace DungeonestCrab.Dungeon.Printer {
         [HideIf("@this.Prefab != null")]
         [SerializeField] AssetProviderPrefab PrefabProvider;
 
-        public override GameObject DrawFlat(Transform parent, IRandom random, TileSpec tileSpec) {
+        public override GameObject DrawFlat(FlatInfo info) {
             GameObject prefab;
             if (Prefab != null) {
                 prefab = Prefab;
-            } else if (PrefabProvider == null || (prefab = PrefabProvider.GetAsset(random)) == null) {
-                Debug.LogWarning($"No floor prefabs specified for {tileSpec.Terrain.ID}.");
+            } else if (PrefabProvider == null || (prefab = PrefabProvider.GetAsset(info.random)) == null) {
+                Debug.LogWarning($"No floor prefabs specified for {info.tileSpec.Terrain.ID}.");
                 return new GameObject();
             }
-            return Instantiate(prefab, parent);
+            return Instantiate(prefab, info.parent);
         }
 
         private void OnValidate() {

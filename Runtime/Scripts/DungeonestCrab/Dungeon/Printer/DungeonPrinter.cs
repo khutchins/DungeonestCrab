@@ -75,7 +75,12 @@ namespace DungeonestCrab.Dungeon.Printer {
 				}
 
 				if (tileSpec.Tile == Tile.Wall && tileSpec.Terrain.WallHeight < tileSpec.CeilingOffset && tileSpec.Terrain.WallCapDrawer != null) {
-					GameObject go = tileSpec.Terrain.WallCapDrawer.DrawFlat(EnvironmentHolder, dg.ConsistentRNG, tileSpec);
+					IFlatDrawer.FlatInfo info = new IFlatDrawer.FlatInfo {
+						parent = EnvironmentHolder,
+						random = dg.ConsistentRNG,
+						tileSpec = tileSpec,
+					};
+					GameObject go = tileSpec.Terrain.WallCapDrawer.DrawFlat(info);
 					go.transform.localPosition = OriginForTile(tileSpec, tileSpec.Terrain.WallHeight);
 					go.name = $"Wall Cap: ({x}, {y})";
 				}
@@ -335,7 +340,7 @@ namespace DungeonestCrab.Dungeon.Printer {
 			bool ceilingless = dg.Trait == Trait.CeilinglessPit || dg.Trait == Trait.Ceilingless || !tileSpec.HasCeiling;
 			if (entityReplacesCeiling || ceilingless) return;
 
-			GameObject go = tileSpec.Terrain.CeilingDrawer.DrawFlat(EnvironmentHolder, dg.ConsistentRNG, tileSpec);
+			GameObject go = tileSpec.Terrain.CeilingDrawer.DrawFlat(new IFlatDrawer.FlatInfo { parent = EnvironmentHolder, random = dg.ConsistentRNG, tileSpec = tileSpec });
 			go.transform.localPosition = OriginForTile(tileSpec, (ceilZ - 1) * _tileHeightMult);
 			go.name = $"Ceiling: ({tileSpec.Coords.x}, {tileSpec.Coords.y}) [{tileSpec.Terrain}]";
 		}
@@ -349,11 +354,16 @@ namespace DungeonestCrab.Dungeon.Printer {
 			TerrainSO terrain = tileSpec.Terrain;
 
             GameObject go;
+			IFlatDrawer.FlatInfo flatInfo = new IFlatDrawer.FlatInfo {
+				parent = EnvironmentHolder,
+				random = dg.ConsistentRNG,
+				tileSpec = tileSpec
+			};
 			if (tileSpec.DrawAsFloor) {
-				go = terrain.FloorDrawer.DrawFlat(EnvironmentHolder, dg.ConsistentRNG, tileSpec);
+				go = terrain.FloorDrawer.DrawFlat(flatInfo);
 				go.name = $"Floor: ({tileSpec.Coords.x}, {tileSpec.Coords.y}) [{terrain}]";
 			} else if (type == Tile.Wall) {
-				go = terrain.WallFloorDrawer.DrawFlat(EnvironmentHolder, dg.ConsistentRNG, tileSpec);
+				go = terrain.WallFloorDrawer.DrawFlat(flatInfo);
 				go.name = $"Floor [Lower]: ({tileSpec.Coords.x}, {tileSpec.Coords.y}) [{terrain}]";
 			} else {
 				// Unset tile.

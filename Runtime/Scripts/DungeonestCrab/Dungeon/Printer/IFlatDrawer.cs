@@ -8,6 +8,12 @@ using UnityEngine;
 namespace DungeonestCrab.Dungeon.Printer {
     [InlineEditor]
     public abstract class IFlatDrawer : ScriptableObject {
-        public abstract GameObject DrawFlat(Transform parent, IRandom random, TileSpec tileSpec);
+        public struct FlatInfo {
+            public Transform parent;
+            public IRandom random;
+            public TileSpec tileSpec;
+        }
+
+        public abstract GameObject DrawFlat(FlatInfo info);
     }
 }
