@@ -12,6 +12,7 @@ namespace DungeonestCrab.Dungeon.Printer {
             public Transform parent;
             public IRandom random;
             public TileSpec tileSpec;
+            public Vector3 tileSize;
         }
 
         public abstract GameObject DrawFlat(FlatInfo info);

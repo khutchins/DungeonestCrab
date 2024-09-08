@@ -79,6 +79,7 @@ namespace DungeonestCrab.Dungeon.Printer {
 						parent = EnvironmentHolder,
 						random = dg.ConsistentRNG,
 						tileSpec = tileSpec,
+						tileSize = TileSize
 					};
 					GameObject go = tileSpec.Terrain.WallCapDrawer.DrawFlat(info);
 					go.transform.localPosition = OriginForTile(tileSpec, tileSpec.Terrain.WallHeight);
@@ -340,7 +341,7 @@ namespace DungeonestCrab.Dungeon.Printer {
 			bool ceilingless = dg.Trait == Trait.CeilinglessPit || dg.Trait == Trait.Ceilingless || !tileSpec.HasCeiling;
 			if (entityReplacesCeiling || ceilingless) return;
 
-			GameObject go = tileSpec.Terrain.CeilingDrawer.DrawFlat(new IFlatDrawer.FlatInfo { parent = EnvironmentHolder, random = dg.ConsistentRNG, tileSpec = tileSpec });
+			GameObject go = tileSpec.Terrain.CeilingDrawer.DrawFlat(new IFlatDrawer.FlatInfo { parent = EnvironmentHolder, random = dg.ConsistentRNG, tileSpec = tileSpec, tileSize = TileSize });
 			go.transform.localPosition = OriginForTile(tileSpec, (ceilZ - 1) * _tileHeightMult);
 			go.name = $"Ceiling: ({tileSpec.Coords.x}, {tileSpec.Coords.y}) [{tileSpec.Terrain}]";
 		}
@@ -357,14 +358,13 @@ namespace DungeonestCrab.Dungeon.Printer {
 			IFlatDrawer.FlatInfo flatInfo = new IFlatDrawer.FlatInfo {
 				parent = EnvironmentHolder,
 				random = dg.ConsistentRNG,
-				tileSpec = tileSpec
+				tileSpec = tileSpec,
+				tileSize = TileSize,
 			};
 			if (tileSpec.DrawAsFloor) {
-				go = terrain.FloorDrawer.DrawFlat(flatInfo);
+				IFlatDrawer drawer = type == Tile.Floor ? terrain.FloorDrawer : terrain.WallFloorDrawer;
+				go = drawer.DrawFlat(flatInfo);
 				go.name = $"Floor: ({tileSpec.Coords.x}, {tileSpec.Coords.y}) [{terrain}]";
-			} else if (type == Tile.Wall) {
-				go = terrain.WallFloorDrawer.DrawFlat(flatInfo);
-				go.name = $"Floor [Lower]: ({tileSpec.Coords.x}, {tileSpec.Coords.y}) [{terrain}]";
 			} else {
 				// Unset tile.
 				return;
