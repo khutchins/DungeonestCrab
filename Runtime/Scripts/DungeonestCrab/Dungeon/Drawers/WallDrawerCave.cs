@@ -12,23 +12,23 @@ namespace DungeonestCrab.Dungeon.Printer {
         [Range(0, 0.5f)][SerializeField] float MaxInset = 0.1f;
         [SerializeField] Material Material;
 
-        public override void DrawWall(Transform parent, IRandom random, TileSpec tile, Vector3 position, Vector3Int tileSize, float rot, float minY, float maxY) {
+        public override void DrawWall(WallInfo info) {
             // This is the base.
-            GameObject wall = new GameObject($"Wall ({tile.Coords.x}, {tile.Coords.y})");
-            wall.transform.SetParent(parent);
+            GameObject wall = new GameObject($"Wall ({info.tileSpec.Coords.x}, {info.tileSpec.Coords.y})");
+            wall.transform.SetParent(info.parent);
             //wall.transform.localPosition = new Vector3(position.x, 0, position.z);
             //wall.transform.localEulerAngles = new Vector3(0, rot, 0);
 
-            Quaternion angle = Quaternion.AngleAxis(rot, Vector3.up);
-            Vector3 up = angle * new Vector3(0, tileSize.y, 0);
-            Vector3 right = angle * new Vector3(tileSize.x, 0, 0);
-            Vector3 back = angle * new Vector3(0, 0, tileSize.z);
+            Quaternion angle = Quaternion.AngleAxis(info.rotation, Vector3.up);
+            Vector3 up = angle * new Vector3(0, info.tileSize.y, 0);
+            Vector3 right = angle * new Vector3(info.tileSize.x, 0, 0);
+            Vector3 back = angle * new Vector3(0, 0, info.tileSize.z);
 
             // Convert this back to being on the outside, as having the actual hard position will allow me to do some sort of hash to determine a position.
             GameObject innerWall = new GameObject("PerturbedWall");
             innerWall.transform.SetParent(wall.transform, false);
             VerticesPerSide = Mathf.Max(VerticesPerSide, 2);
-            DrawPerturbedWall(innerWall, position, up, right, back, minY, maxY);
+            DrawPerturbedWall(innerWall, info.position, up, right, back, info.minY, info.maxY);
         }
 
         void DrawPerturbedWall(GameObject wall, Vector3 position, Vector3 up, Vector3 right, Vector3 back, float minY, float maxY) {

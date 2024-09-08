@@ -211,7 +211,17 @@ namespace DungeonestCrab.Dungeon.Printer {
 
 		private void DrawWallSingle(Transform parent, IRandom rand, TileSpec style, Vector3 loc, float rot, float from, float to) {
 			if (from >= to) return;
-			style.Terrain.WallDrawer.DrawWall(parent, rand, style, loc, TileSize, rot, from, to);
+            IWallDrawer.WallInfo info = new IWallDrawer.WallInfo {
+                parent = parent,
+                random = rand,
+                tileSpec = style,
+                position = loc,
+                rotation = rot,
+                tileSize = TileSize,
+                minY = from,
+                maxY = to
+            };
+            style.Terrain.WallDrawer.DrawWall(info);
 		}
 
 		private void SetFarPlaneFromFog() {

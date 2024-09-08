@@ -9,7 +9,17 @@ using UnityEngine;
 namespace DungeonestCrab.Dungeon.Printer {
 	[InlineEditor]
 	public abstract class IWallDrawer : ScriptableObject {
-		public abstract void DrawWall(Transform parent, IRandom random, TileSpec tile, Vector3 position, Vector3Int tileSize, float rot, float minY, float maxY);
-		public virtual void DrawCorner(Transform parent, IRandom random, TileSpec tile, Vector3 position, Vector3Int tileSize, float rot, float minY, float maxY, int adjacencies) { }
+		public struct WallInfo {
+			public Transform parent;
+            public IRandom random;
+			public TileSpec tileSpec;
+			public Vector3 position;
+			public Vector3Int tileSize;
+			public float rotation;
+			public float minY;
+			public float maxY;
+        }
+
+		public abstract void DrawWall(WallInfo wallInfo);
     }
 }

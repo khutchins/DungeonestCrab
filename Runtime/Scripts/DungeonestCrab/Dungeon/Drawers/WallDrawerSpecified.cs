@@ -9,19 +9,19 @@ namespace DungeonestCrab.Dungeon.Printer {
         [SerializeField] WallSpec[] WallConfiguration;
         [SerializeField] Material Material;
 
-        public override void DrawWall(Transform parent, IRandom random, TileSpec tile, Vector3 position, Vector3Int tileSize, float rot, float minY, float maxY) {
+        public override void DrawWall(WallInfo info) {
             // This is the base.
-            GameObject wall = new GameObject($"Wall ({tile.Coords.x}, {tile.Coords.y})");
-            wall.transform.SetParent(parent);
+            GameObject wall = new GameObject($"Wall ({info.tileSpec.Coords.x}, {    info.tileSpec.Coords.y})");
+            wall.transform.SetParent(info.parent);
 
-            Quaternion angle = Quaternion.AngleAxis(rot, Vector3.up);
-            Vector3 up = angle * new Vector3(0, tileSize.y, 0);
-            Vector3 right = angle * new Vector3(tileSize.x, 0, 0);
-            Vector3 back = angle * new Vector3(0, 0, tileSize.z);
+            Quaternion angle = Quaternion.AngleAxis(info.rotation, Vector3.up);
+            Vector3 up = angle * new Vector3(0, info.tileSize.y, 0);
+            Vector3 right = angle * new Vector3(info.tileSize.x, 0, 0);
+            Vector3 back = angle * new Vector3(0, 0, info.tileSize.z);
 
             GameObject innerWall = new GameObject("DrawnWall");
             innerWall.transform.SetParent(wall.transform, false);
-            DrawFromConfig(innerWall, position, up, right, back, minY, maxY);
+            DrawFromConfig(innerWall, info.position, up, right, back, info.minY, info.maxY);
         }
 
         protected virtual WallSpec[] GetWallConfiguration() {

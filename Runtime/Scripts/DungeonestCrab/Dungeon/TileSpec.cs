@@ -11,11 +11,11 @@ namespace DungeonestCrab.Dungeon {
 	}
 
 	public class TileSpec : IEquatable<TileSpec> {
-		public static string DRAW_STYLE_FLOOR = "drawStyle:floor";
-		public static string DRAW_STYLE_WALL = "drawStyle:wall";
-		public static string DRAW_STYLE_ALL = "drawStyle:all";
-		public static string DRAW_STYLE_NONE = "drawStyle:none";
-		public static string STYLE_PREFIX = "style";
+		public const string DRAW_STYLE_FLOOR = "drawStyle:floor";
+		public const string DRAW_STYLE_WALL = "drawStyle:wall";
+		public const string DRAW_STYLE_ALL = "drawStyle:all";
+		public const string DRAW_STYLE_NONE = "drawStyle:none";
+		public const string STYLE_PREFIX = "style";
 
 		public readonly Vector2Int Coords;
 		public Tile Tile;

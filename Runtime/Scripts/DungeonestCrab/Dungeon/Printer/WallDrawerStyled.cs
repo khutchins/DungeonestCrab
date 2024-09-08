@@ -16,14 +16,14 @@ namespace DungeonestCrab.Dungeon.Printer {
 			public IWallDrawer Drawer;
 		}
 
-		public override void DrawWall(Transform parent, IRandom random, TileSpec tile, Vector3 position, Vector3Int tileSize, float rot, float minY, float maxY) {
-			string style = tile.GetTagType(TileSpec.STYLE_PREFIX);
+		public override void DrawWall(WallInfo info) {
+			string style = info.tileSpec.GetTagType(TileSpec.STYLE_PREFIX);
 
 			Override over = Styles.FirstOrDefault(x => x.Style == style);
 			if (over != null) {
-				over.Drawer.DrawWall(parent, random, tile, position, tileSize, rot, minY, maxY);
+				over.Drawer.DrawWall(info);
 			} else {
-				Default.DrawWall(parent, random, tile, position, tileSize, rot, minY, maxY);
+				Default.DrawWall(info);
 			}
 		}
 	}
