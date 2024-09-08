@@ -20,34 +20,49 @@ namespace DungeonestCrab.Dungeon.Printer {
 
             GameObject innerWall = new GameObject("DrawnWall");
             innerWall.transform.SetParent(wall.transform, false);
-            DrawFromConfig(innerWall, info.position, up, right, back, info.minY, info.maxY);
+            DrawFromConfig(info, innerWall, up, right, back);
         }
 
         protected abstract WallSpec[] GetWallConfiguration();
 
-        void DrawFromConfig(GameObject wall, Vector3 position, Vector3 up, Vector3 right, Vector3 back, float minY, float maxY) {
+        void DrawFromConfig(WallInfo info, GameObject wall, Vector3 up, Vector3 right, Vector3 back) {
             var renderer = wall.AddComponent<MeshRenderer>();
             renderer.sharedMaterial = Material;
             var filter = wall.AddComponent<MeshFilter>();
             var mesh = new Mesh {
                 name = "Wall"
             };
-            Vector3 basePos = position + -right / 2f + back / 2f;
+            Vector3 basePos = info.position + -right / 2f + back / 2f;
             int xVerts = 2;
 
             WallSpec[] wallSpecs = GetWallConfiguration();
+
+            float leftMod = GetIsAdjacent(info.wallDraws, WallAdjacency.BottomLeft) 
+                ? 1 
+                : (GetIsAdjacent(info.wallDraws, WallAdjacency.Left) 
+                    ? 0 
+                    : GetIsAdjacent(info.wallDraws, WallAdjacency.TopLeft) ? -1 : 0);
+
+            float rightMod = GetIsAdjacent(info.wallDraws, WallAdjacency.BottomRight)
+                ? -1
+                : (GetIsAdjacent(info.wallDraws, WallAdjacency.Right)
+                    ? 0
+                    : GetIsAdjacent(info.wallDraws, WallAdjacency.TopRight) ? 1 : 0);
 
             // Vertices & Mesh
             var vertices = new Vector3[xVerts * wallSpecs.Length];
             var uvs = new Vector2[xVerts * wallSpecs.Length];
             int idx = 0;
             for (float x = 0; x < xVerts; x++) {
+                float xOffset = x == 0 ? leftMod : (x == xVerts - 1 ? rightMod : 0);
                 for (int y = 0; y < wallSpecs.Length; y++) {
-                    Vector3 vPos = basePos + x * right + wallSpecs[y].percentY * up;
-                    float perturb = wallSpecs[y].outset;
-                    vPos = vPos - back * perturb;
+                    float compX = x + xOffset * wallSpecs[y].outset;
+                    Vector3 xBase = basePos + compX * right;
+                    Vector3 vPos = xBase + wallSpecs[y].percentY * up;
+                    float outset = wallSpecs[y].outset;
+                    vPos = vPos - back * outset;
                     vertices[idx] = vPos;
-                    uvs[idx] = new Vector2(x, wallSpecs[y].uvY);
+                    uvs[idx] = new Vector2(compX, wallSpecs[y].uvY);
                     ++idx;
                 }
             }

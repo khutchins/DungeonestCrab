@@ -8,7 +8,7 @@ namespace DungeonestCrab.Dungeon.Printer {
     [CreateAssetMenu(menuName = "DungeonestCrab/Drawer/Wall - Specified Disjoint")]
     public class WallDrawerSpecifiedDisjoint : WallDrawerSpecifiedBase {
         [SerializeField] WallSpecDisjoint[] WallConfiguration;
-        private WallDrawerSpecifiedBase.WallSpec[] _cache = null;
+        private WallSpec[] _cache = null;
 
         private void OnValidate() {
             _cache = null;

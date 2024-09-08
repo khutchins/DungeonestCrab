@@ -36,7 +36,7 @@ namespace DungeonestCrab.Dungeon.Printer {
 			_tileFloorSize = TileSize.ToVectorXZ();
 			_tileHeightMult = TileSize.y;
 			MakeHolders(this.transform);
-		} 
+		}
 
 		public void Print(TheDungeon dg) {
 			_dungeon = dg;
@@ -158,6 +158,50 @@ namespace DungeonestCrab.Dungeon.Printer {
 			DrawWall(dg, tile, adjTile);
 		}
 
+		private bool DrawsStandardWalls(TileSpec tile, TileSpec adjTile) {
+			return tile != null && adjTile != null && tile.DrawAdjacentWalls && adjTile.DrawWalls;
+		}
+
+		private Vector2Int LeftWallOffset(TileSpec tile, TileSpec adjTile) {
+			Vector2 offset = adjTile.Coords - tile.Coords;
+			var rotated = Quaternion.Euler(0, 0, -90) * offset;
+			return Vector2Int.RoundToInt(rotated);
+		}
+
+		private Vector2Int RotatedV2I(Vector2Int vector, float rotation) {
+            var rotated = Quaternion.Euler(0, 0, rotation) * new Vector2(vector.x, vector.y);
+            return Vector2Int.RoundToInt(rotated);
+        }
+
+		/// <summary>
+		/// Returns the adjacencies for the wall tile.
+		/// It's packed as 
+		/// XWX
+		/// XFX
+		/// Where F is the floor (always 0) and W is the wall (always 1).
+		/// Packing order is:
+		/// 012
+		/// 345
+		/// </summary>
+		private int WallTileAdjacencies(TheDungeon dg, TileSpec tile, TileSpec adjTile) {
+			Vector2Int offset = adjTile.Coords - tile.Coords;
+			Vector2Int leftOffset = RotatedV2I(offset, 90);
+
+			TileSpec left = dg.GetTileSpecSafe(tile.Coords + leftOffset);
+			TileSpec leftForward = dg.GetTileSpecSafe(left.Coords + offset);
+			TileSpec right = dg.GetTileSpecSafe(tile.Coords - leftOffset);
+            TileSpec rightForward = dg.GetTileSpecSafe(right.Coords + offset);
+
+            return IWallDrawer.PackWallAdjacencies(
+                DrawsStandardWalls(leftForward, adjTile),
+                DrawsStandardWalls(rightForward, adjTile),
+                DrawsStandardWalls(left, leftForward),
+                DrawsStandardWalls(right, rightForward),
+				DrawsStandardWalls(tile, left),
+				DrawsStandardWalls(tile, right)
+            );
+		}
+
 		/// <summary>
 		/// Draws a wall on tile in the direction of adjTile.
 		/// </summary>
@@ -182,46 +226,55 @@ namespace DungeonestCrab.Dungeon.Printer {
 
 			Vector3 loc = OriginForTile(tile);
 
-			if (tile.DrawAsFloor) {
-				// Draw wall segments below the floor.
-				DrawWallSingle(EnvironmentHolder, dg.ConsistentRNG, tile, loc, rot, -adjGroundOffset, -groundOffset);
-			}
+            IWallDrawer.WallInfo info = new IWallDrawer.WallInfo {
+                parent = EnvironmentHolder,
+                random = dg.ConsistentRNG,
+                position = loc,
+                rotation = rot,
+                tileSize = TileSize,
+            };
 
-			// The wall is only drawn if this tile is not itself a wall.
-			if (tile.DrawAdjacentWalls) {
-				// Draw the wall segments up to the wall height.
-				if (drawStandardWalls) {
-					DrawWallSingle(EnvironmentHolder, dg.ConsistentRNG, tileDrawStyle, loc, rot, 0, wallHeight);
-				}
-			}
+            if (tile.DrawAsFloor) {
+                // Draw wall segments below the floor.
+                info.tileSpec = tile;
+                info.minY = -adjGroundOffset;
+                info.maxY = -groundOffset;
+                DrawWallSingle(info);
+            }
+
+            // The wall is only drawn if this tile is not itself a wall. 
+            // Draw the wall segments up to the wall height.
+            if (DrawsStandardWalls(tile, adjTile)) {
+				info.tileSpec = tileDrawStyle;
+				info.minY = 0;
+				info.maxY = wallHeight;
+				info.wallDraws = WallTileAdjacencies(dg, tile, adjTile);
+                DrawWallSingle(info);
+            }
 
 			// Draw any wall segments to reach the height of an adjacent wall (in the style of the adjacent wall).
 			if (drawStandardWalls) {
 				float start = tile.DrawAsFloor ? wallHeight : 0;
-				DrawWallSingle(EnvironmentHolder, dg.ConsistentRNG, tileDrawStyle, loc, rot, Math.Max(start, adjWallHeight), Math.Min(ceilingOffset, wallHeight));
-			}
+                info.tileSpec = tileDrawStyle;
+                info.minY = Math.Max(start, adjWallHeight);
+				info.maxY = Math.Min(ceilingOffset, wallHeight);
+                DrawWallSingle(info);
+            }
 
 			// Add higher walls if they have a tile from the bottom to come from (normal wall) or from the top (ceiling).
 			if (tile.DrawAsFloor) {
 				if (drawStandardWalls || hasCeiling) {
-					DrawWallSingle(EnvironmentHolder, dg.ConsistentRNG, tileDrawStyle, loc, rot, ceilingOffset, adjWallHeight);
+                    info.tileSpec = tileDrawStyle;
+                    info.minY = ceilingOffset;
+                    info.maxY = adjWallHeight;
+                    DrawWallSingle(info);
 				}
 			}
 		}
 
-		private void DrawWallSingle(Transform parent, IRandom rand, TileSpec style, Vector3 loc, float rot, float from, float to) {
-			if (from >= to) return;
-            IWallDrawer.WallInfo info = new IWallDrawer.WallInfo {
-                parent = parent,
-                random = rand,
-                tileSpec = style,
-                position = loc,
-                rotation = rot,
-                tileSize = TileSize,
-                minY = from,
-                maxY = to
-            };
-            style.Terrain.WallDrawer.DrawWall(info);
+		private void DrawWallSingle(IWallDrawer.WallInfo info) {
+			if (info.minY >= info.maxY) return;
+            info.tileSpec.Terrain.WallDrawer.DrawWall(info);
 		}
 
 		private void SetFarPlaneFromFog() {
