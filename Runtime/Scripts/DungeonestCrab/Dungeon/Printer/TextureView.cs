@@ -138,6 +138,7 @@ public class TextureViewEditor : Editor {
         }
 
         Texture2D rotatedTexture = new Texture2D(h, w, originalTexture.format, false);
+        rotatedTexture.filterMode = originalTexture.filterMode;
         rotatedTexture.SetPixels32(rotated);
         rotatedTexture.Apply();
         return rotatedTexture;
@@ -153,6 +154,7 @@ public class TextureViewEditor : Editor {
         }
         Vector2Int size = target.TextureSize;
         Texture2D newTex = new Texture2D((int)size.x, (int)size.y, (bigTex as Texture2D).format, false);
+        newTex.filterMode = bigTex.filterMode;
 
         Rect texCoords = new Rect(bigTex.width, bigTex.height, 0, 0);
         foreach (var vec in target.UV) {
