@@ -18,7 +18,7 @@ public class TextureView : ScriptableObject, ITextureView {
     [Tooltip("The size in tiles.")]
     [SerializeField] Vector2 Size = new Vector2(1,1);
     [Tooltip("How many times to rotate the texture (not visualized).")]
-    [SerializeField] int Turns = 0;
+    [SerializeField] public int Turns = 0;
     public Material Material => _material;
 
     public Vector2[] UV => DirectionalUV(Offset.x, Offset.y, Size.x, Size.y, Tiles.x, Tiles.y, Turns);
@@ -101,6 +101,31 @@ public class TextureViewEditor : Editor {
         return new Vector2(size.x * value, size.y * value);
     }
 
+    Texture2D RotateTexture(Texture2D originalTexture, bool clockwise) {
+        // The performance of this is non-optimal (especially how I'm generating multiple
+        // intermediate textures, but this is just for the inspector, so I'll wait for it
+        // to be a problem there.
+        Color32[] original = originalTexture.GetPixels32();
+        Color32[] rotated = new Color32[original.Length];
+        int w = originalTexture.width;
+        int h = originalTexture.height;
+
+        int iRotated, iOriginal;
+
+        for (int j = 0; j < h; ++j) {
+            for (int i = 0; i < w; ++i) {
+                iRotated = (i + 1) * h - j - 1;
+                iOriginal = clockwise ? original.Length - 1 - (j * w + i) : j * w + i;
+                rotated[iRotated] = original[iOriginal];
+            }
+        }
+
+        Texture2D rotatedTexture = new Texture2D(h, w, originalTexture.format, false);
+        rotatedTexture.SetPixels32(rotated);
+        rotatedTexture.Apply();
+        return rotatedTexture;
+    }
+
     private Texture2D CreateTexture(TextureView target) {
         if (target == null) return null;
 
@@ -128,7 +153,10 @@ public class TextureViewEditor : Editor {
 
         Graphics.CopyTexture(bigTex, 0, 0, (int)texCoords.x, (int)texCoords.y, (int)texCoords.width, (int)texCoords.height, newTex, 0, 0, 0, 0);
 
-        return newTex;
+        if (target.Turns == 0) return newTex;
+        if (target.Turns == 3) return RotateTexture(newTex, false);
+        if (target.Turns == 1) return RotateTexture(newTex, true);
+        else return RotateTexture(RotateTexture(newTex, false), false);
     }
 }
 #endif
