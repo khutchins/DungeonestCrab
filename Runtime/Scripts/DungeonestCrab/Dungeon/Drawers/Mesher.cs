@@ -72,8 +72,8 @@ namespace DungeonestCrab.Dungeon.Printer {
         /// <param name="uv">UV in (0,1) space.</param>
         /// <param name="view">View to convert coordinates to.</param>
         /// <returns></returns>
-        public int AddVert(TextureView view, Vector3 vert, Vector2 uv) {
-            return AddVert(view.Material, vert, view.ConvertToLocalSpace(uv));
+        public int AddVert(ITextureView view, Vector3 vert, Vector2 uv) {
+            return AddVert(view.Material, vert, view.ConvertToLocalUVSpace(uv));
         }
 
         public int AddVert(Material material, Vector3 vert, Vector2 uv) {
@@ -85,7 +85,7 @@ namespace DungeonestCrab.Dungeon.Printer {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void AddTriangle(TextureView tv, int v1, int v2, int v3) {
+        public void AddTriangle(ITextureView tv, int v1, int v2, int v3) {
             AddTriangle(tv.Material, v1, v2, v3);
         }
 
@@ -98,7 +98,7 @@ namespace DungeonestCrab.Dungeon.Printer {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void GenerateRect(TextureView tv, int v1, int v2, int v3, int v4) {
+        public void GenerateRect(ITextureView tv, int v1, int v2, int v3, int v4) {
             GenerateRect(tv.Material, v1, v2, v3, v4);
         }
 
