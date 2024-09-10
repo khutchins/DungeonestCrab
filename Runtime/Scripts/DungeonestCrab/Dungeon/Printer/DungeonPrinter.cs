@@ -197,9 +197,9 @@ namespace DungeonestCrab.Dungeon.Printer {
 			Vector2Int leftOffset = RotatedV2I(offset, 90);
 
 			TileSpec left = dg.GetTileSpecSafe(tile.Coords + leftOffset);
-			TileSpec leftForward = dg.GetTileSpecSafe(left.Coords + offset);
+			TileSpec leftForward = left != null ? dg.GetTileSpecSafe(left.Coords + offset) : null;
 			TileSpec right = dg.GetTileSpecSafe(tile.Coords - leftOffset);
-            TileSpec rightForward = dg.GetTileSpecSafe(right.Coords + offset);
+            TileSpec rightForward = right != null ? dg.GetTileSpecSafe(right.Coords + offset) : null;
 
             return IWallDrawer.PackWallAdjacencies(
                 DrawsStandardWalls(leftForward, adjTile),
