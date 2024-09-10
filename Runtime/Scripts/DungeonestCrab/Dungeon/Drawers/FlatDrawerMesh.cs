@@ -5,8 +5,6 @@ using UnityEngine;
 
 namespace DungeonestCrab.Dungeon.Printer {
     public abstract class FlatDrawerMesh : IFlatDrawer {
-        [SerializeField] public Material Material;
-
         public override GameObject DrawFlat(FlatInfo info) {
             GameObject gameObject = new GameObject($"Flat {info.tileSpec.Coords}");
             GameObject drawObject = gameObject;
@@ -15,7 +13,7 @@ namespace DungeonestCrab.Dungeon.Printer {
                 drawObject.transform.SetParent(gameObject.transform, false);
                 drawObject.transform.position = new Vector3(-info.tileSize.x / 2f, 0, -info.tileSize.z / 2f);
             }
-            Mesher mesher = new Mesher(drawObject, Material, GenerateCollider);
+            Mesher mesher = new Mesher(drawObject, GenerateCollider);
             Draw(info, mesher);
             mesher.Finish();
             return gameObject;

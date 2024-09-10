@@ -45,7 +45,7 @@ namespace DungeonestCrab.Dungeon.Printer {
                     Vector3 vPos = xBase + wallSpecs[y].percentY * up;
                     float outset = wallSpecs[y].outset;
                     vPos = vPos - back * outset;
-                    mesher.AddVert(vPos, new Vector2(compX, wallSpecs[y].uvY), TextureView);
+                    mesher.AddVert(TextureView, vPos, new Vector2(compX, wallSpecs[y].uvY));
                 }
             }
 
@@ -54,8 +54,8 @@ namespace DungeonestCrab.Dungeon.Printer {
             for (int x = 0; x < xVerts - 1; x++) {
                 for (int y = 0; y < wallSpecs.Length - 1; y++) {
                     int baseNum = x * wallSpecs.Length + y;
-                    mesher.AddTriangle(baseNum, baseNum + 1, baseNum + 1 + wallSpecs.Length);
-                    mesher.AddTriangle(baseNum, baseNum + 1 + wallSpecs.Length, baseNum + wallSpecs.Length);
+                    mesher.AddTriangle(TextureView.Material, baseNum, baseNum + 1, baseNum + 1 + wallSpecs.Length);
+                    mesher.AddTriangle(TextureView.Material, baseNum, baseNum + 1 + wallSpecs.Length, baseNum + wallSpecs.Length);
                 }
             }
             mesher.Finish();

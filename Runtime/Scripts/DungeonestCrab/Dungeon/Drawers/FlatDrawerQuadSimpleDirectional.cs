@@ -13,6 +13,7 @@ namespace DungeonestCrab.Dungeon.Printer {
         [InlineEditor][SerializeField] TextureView FloorN;
 
         protected Dictionary<int, Vector2[]> _directionalUVs;
+        protected Dictionary<int, Material> _directionalMats;
 
         private void OnEnable() {
             RecomputeGarbage();
@@ -42,6 +43,24 @@ namespace DungeonestCrab.Dungeon.Printer {
                 { 0b1101, FloorNES.TurnedUV(0) },
                 { 0b1111, FloorNESW.UV },
             };
+            _directionalMats = new Dictionary<int, Material>() {
+                { 0b0000, FloorNESW.Material },
+                { 0b1000, FloorN.Material },
+                { 0b0100, FloorN.Material },
+                { 0b0010, FloorN.Material },
+                { 0b0001, FloorN.Material },
+                { 0b1100, FloorNE.Material },
+                { 0b0110, FloorNE.Material },
+                { 0b0011, FloorNE.Material },
+                { 0b1001, FloorNE.Material },
+                { 0b1010, FloorNS.Material },
+                { 0b0101, FloorNS.Material },
+                { 0b1110, FloorNES.Material },
+                { 0b0111, FloorNES.Material },
+                { 0b1011, FloorNES.Material },
+                { 0b1101, FloorNES.Material },
+                { 0b1111, FloorNESW.Material },
+            };
         }
 
         public override bool DrawAtCenter { get => false; }
@@ -62,12 +81,13 @@ namespace DungeonestCrab.Dungeon.Printer {
             if (info.tileSpec.AreTileTypesTheSameInDirections(TileSpec.Adjacency.S)) neighbors |= DSUTH;
             if (info.tileSpec.AreTileTypesTheSameInDirections(TileSpec.Adjacency.W)) neighbors |= DWEST;
 
+            Material mat = _directionalMats[neighbors];
             var uvs = _directionalUVs[neighbors];
-            mesher.GenerateRect(
-                mesher.AddVert(new Vector3(0, 0, 0), uvs[0]),
-                mesher.AddVert(new Vector3(info.tileSize.x, 0, 0), uvs[3]),
-                mesher.AddVert(new Vector3(0, 0, info.tileSize.z), uvs[1]),
-                mesher.AddVert(new Vector3(info.tileSize.x, 0, info.tileSize.z), uvs[2])
+            mesher.GenerateRect(mat, 
+                mesher.AddVert(mat, new Vector3(0, 0, 0), uvs[0]),
+                mesher.AddVert(mat, new Vector3(info.tileSize.x, 0, 0), uvs[3]),
+                mesher.AddVert(mat, new Vector3(0, 0, info.tileSize.z), uvs[1]),
+                mesher.AddVert(mat, new Vector3(info.tileSize.x, 0, info.tileSize.z), uvs[2])
             );
         }
 

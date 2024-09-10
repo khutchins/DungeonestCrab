@@ -1,7 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using UnityEditor.PackageManager;
 using UnityEngine;
+using UnityEngine.XR;
 
 namespace DungeonestCrab.Dungeon.Printer {
     public class Mesher {
@@ -10,11 +13,29 @@ namespace DungeonestCrab.Dungeon.Printer {
         private MeshFilter _filter;
         private MeshCollider _collider;
 
-        private List<Vector3> _verts = new List<Vector3>();
-        private List<Vector2> _uvs = new List<Vector2>();
-        private List<int> _triangles = new List<int>();
+        public class MeshInstance {
+            public Material material;
+            public List<Vector3> verts = new List<Vector3>();
+            public List<Vector2> uvs = new List<Vector2>();
+            public List<int> triangles = new List<int>();
 
-        public Mesher(GameObject host, Material material, bool addCollider = false) {
+            public MeshInstance(Material material) { this.material = material; }
+            
+            public Mesh MakeMesh() {
+                Mesh mesh = new Mesh {
+                    name = "Mesh",
+                    vertices = verts.ToArray(),
+                    triangles = triangles.ToArray(),
+                    uv = uvs.ToArray()
+                };
+                mesh.RecalculateNormals();
+                return mesh;
+            }
+        }
+
+        private Dictionary<Material, MeshInstance> _instances = new Dictionary<Material, MeshInstance>();
+
+        public Mesher(GameObject host, bool addCollider = false) {
             _host = host;
             if (_host.TryGetComponent(out MeshFilter mf)) {
                 _filter = mf;
@@ -33,7 +54,15 @@ namespace DungeonestCrab.Dungeon.Printer {
                     _collider = _host.AddComponent<MeshCollider>();
                 }
             }
-            _renderer.sharedMaterial = material;
+        }
+
+        private MeshInstance EnsureInstance(Material material) {
+            if (_instances.TryGetValue(material, out MeshInstance instance)) {
+                return instance;
+            }
+            MeshInstance newInstance = new MeshInstance(material);
+            _instances[material] = newInstance;
+            return newInstance;
         }
 
         /// <summary>
@@ -43,28 +72,46 @@ namespace DungeonestCrab.Dungeon.Printer {
         /// <param name="uv">UV in (0,1) space.</param>
         /// <param name="view">View to convert coordinates to.</param>
         /// <returns></returns>
-        public int AddVert(Vector3 vert, Vector2 uv, TextureView view) {
-            return AddVert(vert, view.ConvertToLocalSpace(uv));
+        public int AddVert(TextureView view, Vector3 vert, Vector2 uv) {
+            return AddVert(view.Material, vert, view.ConvertToLocalSpace(uv));
         }
 
-        public int AddVert(Vector3 vert, Vector2 uv) {
-            int value = _verts.Count;
-            _verts.Add(vert);
-            _uvs.Add(uv);
+        public int AddVert(Material material, Vector3 vert, Vector2 uv) {
+            var instance = EnsureInstance(material);
+            int value = instance.verts.Count;
+            instance.verts.Add(vert);
+            instance.uvs.Add(uv);
             return value;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void AddTriangle(int v1, int v2, int v3) {
-            _triangles.Add(v1);
-            _triangles.Add(v2);
-            _triangles.Add(v3);
+        public void AddTriangle(TextureView tv, int v1, int v2, int v3) {
+            AddTriangle(tv.Material, v1, v2, v3);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void GenerateRect(int v1, int v2, int v3, int v4) {
-            AddTriangle(v3, v2, v1);
-            AddTriangle(v3, v4, v2);
+        public void AddTriangle(Material material, int v1, int v2, int v3) {
+            var instance = EnsureInstance(material);
+            instance.triangles.Add(v1);
+            instance.triangles.Add(v2);
+            instance.triangles.Add(v3);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void GenerateRect(TextureView tv, int v1, int v2, int v3, int v4) {
+            GenerateRect(tv.Material, v1, v2, v3, v4);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void GenerateRect(Material material, int v1, int v2, int v3, int v4) {
+            var instance = EnsureInstance(material);
+            instance.triangles.Add(v3);
+            instance.triangles.Add(v2);
+            instance.triangles.Add(v1);
+
+            instance.triangles.Add(v3);
+            instance.triangles.Add(v4);
+            instance.triangles.Add(v2);
         }
 
         public static Vector3[] MakeRing(int sides, float offset) {
@@ -95,18 +142,38 @@ namespace DungeonestCrab.Dungeon.Printer {
         }
 
         public void Finish() {
-            Mesh mesh = new Mesh {
-                name = "Mesh",
-                vertices = _verts.ToArray(),
-                triangles = _triangles.ToArray(),
-                uv = _uvs.ToArray()
-            };
-            mesh.RecalculateNormals();
+            if (_instances.Count == 1) {
+                var entry = _instances.First().Value;
+                Mesh mesh = entry.MakeMesh();
 
-            _filter.mesh = mesh;
-            if (_collider != null) {
-                _collider.sharedMesh = mesh;
+                _filter.mesh = mesh;
+                _renderer.sharedMaterial = entry.material;
+                if (_collider != null) {
+                    _collider.sharedMesh = mesh;
+                }
+            } else {
+                
+                MeshInstance[] entries = _instances.Select(x => x.Value).ToArray();
+                Material[] materials = new Material[entries.Length];
+                var combine = new CombineInstance[entries.Length];
+                for (int i = 0; i < entries.Length; i++) {
+                    combine[i].mesh = entries[i].MakeMesh();
+                    combine[i].subMeshIndex = 0;
+                    materials[i] = entries[i].material;
+                }
+
+                _renderer.sharedMaterials = materials;
+
+                Mesh mesh = new Mesh();
+                mesh.name = "Combined Mesh";
+                mesh.CombineMeshes(combine, false, false);
+                mesh.RecalculateBounds();
+                _filter.sharedMesh = mesh;
+                if (_collider != null) {
+                    _collider.sharedMesh = mesh;
+                }
             }
+            
         }
     }
 }

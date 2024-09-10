@@ -25,11 +25,11 @@ namespace DungeonestCrab.Dungeon.Printer {
         public override bool DrawAtCenter { get => false; }
 
         public override void Draw(FlatInfo info, Mesher mesher) {
-            mesher.GenerateRect(
-                mesher.AddVert(new Vector3(0, 0, 0), _uv[0]),
-                mesher.AddVert(new Vector3(info.tileSize.x, 0, 0), _uv[3]),
-                mesher.AddVert(new Vector3(0, 0, info.tileSize.z), _uv[1]),
-                mesher.AddVert(new Vector3(info.tileSize.x, 0, info.tileSize.z), _uv[2])
+            mesher.GenerateRect(FloorTexture.Material,
+                mesher.AddVert(FloorTexture.Material, new Vector3(0, 0, 0), _uv[0]),
+                mesher.AddVert(FloorTexture.Material, new Vector3(info.tileSize.x, 0, 0), _uv[3]),
+                mesher.AddVert(FloorTexture.Material, new Vector3(0, 0, info.tileSize.z), _uv[1]),
+                mesher.AddVert(FloorTexture.Material, new Vector3(info.tileSize.x, 0, info.tileSize.z), _uv[2])
             );
         }
     }
