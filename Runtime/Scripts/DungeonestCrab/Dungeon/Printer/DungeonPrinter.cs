@@ -346,7 +346,8 @@ namespace DungeonestCrab.Dungeon.Printer {
 
 			GameObject go = tileSpec.Terrain.CeilingDrawer.DrawFlat(new IFlatDrawer.FlatInfo { parent = EnvironmentHolder, random = dg.ConsistentRNG, tileSpec = tileSpec, tileSize = TileSize, hasCeiling = true, ceilingHeight = tileSpec.CeilingOffset + 1 });
             go.transform.SetParent(EnvironmentHolder, false);
-            go.transform.localPosition = OriginForTile(tileSpec, (ceilZ - 1) * _tileHeightMult);
+            go.transform.localPosition = OriginForTile(tileSpec, ceilZ);
+			go.transform.localScale = new Vector3(1, -1, 1);
 			go.name = $"Ceiling: ({tileSpec.Coords.x}, {tileSpec.Coords.y}) [{tileSpec.Terrain}]";
 		}
 
