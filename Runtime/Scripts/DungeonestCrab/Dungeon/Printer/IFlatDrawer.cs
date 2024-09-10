@@ -13,6 +13,8 @@ namespace DungeonestCrab.Dungeon.Printer {
             public IRandom random;
             public TileSpec tileSpec;
             public Vector3 tileSize;
+            public bool hasCeiling;
+            public float ceilingHeight;
         }
 
         public abstract GameObject DrawFlat(FlatInfo info);

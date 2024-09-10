@@ -52,7 +52,7 @@ namespace DungeonestCrab.Dungeon.Printer {
             _triangles.Add(v2);
         }
 
-        private static Vector3[] MakeRing(int sides, float offset) {
+        public static Vector3[] MakeRing(int sides, float offset) {
             sides = Mathf.Max(sides, 1);
             float anglePer = Mathf.PI * 2 / sides;
             Vector3[] ring = new Vector3[sides];
