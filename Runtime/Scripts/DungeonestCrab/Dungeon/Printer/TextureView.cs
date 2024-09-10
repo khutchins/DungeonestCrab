@@ -37,6 +37,13 @@ public class TextureView : ScriptableObject, ITextureView {
         return TurnUV(unaltered, turns);
     }
 
+    public Vector2 ConvertToLocalSpace(Vector2 position) {
+        var uv = UV;
+        var px = Vector2.Lerp(Vector2.zero, uv[1] - uv[0], position.x);
+        var py = Vector2.Lerp(Vector2.zero, uv[3] - uv[0], position.y);
+        return px + py + uv[0];
+    }
+
     private static Vector2[] TurnUV(Vector2[] uv, int count) {
         count %= 4;
         if (count == 0) return uv;

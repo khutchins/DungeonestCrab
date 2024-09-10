@@ -1,4 +1,5 @@
 using Pomerandomian;
+using Sirenix.OdinInspector;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,7 +7,7 @@ using UnityEngine;
 namespace DungeonestCrab.Dungeon.Printer {
     [CreateAssetMenu(menuName = "DungeonestCrab/Drawer/Wall - Specified")]
     public abstract class WallDrawerSpecifiedBase : IWallDrawer {
-        [SerializeField] Material Material;
+        [InlineEditor][SerializeField] TextureView TextureView;
 
         public override void DrawWall(WallInfo info) {
             // This is the base.
@@ -26,12 +27,7 @@ namespace DungeonestCrab.Dungeon.Printer {
         protected abstract WallSpec[] GetWallConfiguration();
 
         void DrawFromConfig(WallInfo info, GameObject wall, Vector3 up, Vector3 right, Vector3 back) {
-            var renderer = wall.AddComponent<MeshRenderer>();
-            renderer.sharedMaterial = Material;
-            var filter = wall.AddComponent<MeshFilter>();
-            var mesh = new Mesh {
-                name = "Wall"
-            };
+            Mesher mesher = new Mesher(wall, TextureView.Material);
             Vector3 basePos = info.position + -right / 2f + back / 2f;
             int xVerts = 2;
 
@@ -41,9 +37,6 @@ namespace DungeonestCrab.Dungeon.Printer {
             float rightMod = GetRightMod(info.wallDraws);
 
             // Vertices & Mesh
-            var vertices = new Vector3[xVerts * wallSpecs.Length];
-            var uvs = new Vector2[xVerts * wallSpecs.Length];
-            int idx = 0;
             for (float x = 0; x < xVerts; x++) {
                 float xOffset = x == 0 ? leftMod : (x == xVerts - 1 ? rightMod : 0);
                 for (int y = 0; y < wallSpecs.Length; y++) {
@@ -52,33 +45,20 @@ namespace DungeonestCrab.Dungeon.Printer {
                     Vector3 vPos = xBase + wallSpecs[y].percentY * up;
                     float outset = wallSpecs[y].outset;
                     vPos = vPos - back * outset;
-                    vertices[idx] = vPos;
-                    uvs[idx] = new Vector2(compX, wallSpecs[y].uvY);
-                    ++idx;
+                    mesher.AddVert(vPos, new Vector2(compX, wallSpecs[y].uvY), TextureView);
                 }
             }
-            mesh.vertices = vertices;
-            mesh.uv = uvs;
 
             // Triangles
             var triangles = new int[wallSpecs.Length * xVerts * 2 * 3];
-            idx = -1;
             for (int x = 0; x < xVerts - 1; x++) {
                 for (int y = 0; y < wallSpecs.Length - 1; y++) {
                     int baseNum = x * wallSpecs.Length + y;
-                    triangles[++idx] = baseNum;
-                    triangles[++idx] = baseNum + 1;
-                    triangles[++idx] = baseNum + 1 + wallSpecs.Length;
-
-                    triangles[++idx] = baseNum;
-                    triangles[++idx] = baseNum + 1 + wallSpecs.Length;
-                    triangles[++idx] = baseNum + wallSpecs.Length;
+                    mesher.AddTriangle(baseNum, baseNum + 1, baseNum + 1 + wallSpecs.Length);
+                    mesher.AddTriangle(baseNum, baseNum + 1 + wallSpecs.Length, baseNum + wallSpecs.Length);
                 }
             }
-            mesh.triangles = triangles;
-            mesh.RecalculateNormals();
-
-            filter.mesh = mesh;
+            mesher.Finish();
         }
 
         [System.Serializable]

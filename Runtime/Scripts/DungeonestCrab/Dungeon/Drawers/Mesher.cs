@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace DungeonestCrab.Dungeon.Printer {
@@ -35,6 +36,17 @@ namespace DungeonestCrab.Dungeon.Printer {
             _renderer.sharedMaterial = material;
         }
 
+        /// <summary>
+        /// Adds the vert with the given UV in (0, 1) space to texture view space.
+        /// </summary>
+        /// <param name="vert">Vertex</param>
+        /// <param name="uv">UV in (0,1) space.</param>
+        /// <param name="view">View to convert coordinates to.</param>
+        /// <returns></returns>
+        public int AddVert(Vector3 vert, Vector2 uv, TextureView view) {
+            return AddVert(vert, view.ConvertToLocalSpace(uv));
+        }
+
         public int AddVert(Vector3 vert, Vector2 uv) {
             int value = _verts.Count;
             _verts.Add(vert);
@@ -42,14 +54,17 @@ namespace DungeonestCrab.Dungeon.Printer {
             return value;
         }
 
-        public void GenerateRect(int v1, int v2, int v3, int v4) {
-            _triangles.Add(v3);
-            _triangles.Add(v2);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void AddTriangle(int v1, int v2, int v3) {
             _triangles.Add(v1);
-
-            _triangles.Add(v3);
-            _triangles.Add(v4);
             _triangles.Add(v2);
+            _triangles.Add(v3);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void GenerateRect(int v1, int v2, int v3, int v4) {
+            AddTriangle(v3, v2, v1);
+            AddTriangle(v3, v4, v2);
         }
 
         public static Vector3[] MakeRing(int sides, float offset) {
