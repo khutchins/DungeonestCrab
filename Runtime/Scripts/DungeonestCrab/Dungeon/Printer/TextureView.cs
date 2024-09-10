@@ -56,15 +56,39 @@ public class TextureViewEditor : Editor {
 
         // Draw default inspector
         DrawDefaultInspector();
+        DrawPreview(view);
+        DrawFullTexture(view);
+    }
 
-        EditorGUILayout.LabelField("Texture Preview", EditorStyles.boldLabel);
-
+    private void DrawFullTexture(TextureView view) {
+        if (view.Material == null) return;
         Texture2D mainTex = view.Material.GetTexture("_MainTex") as Texture2D;
         if (mainTex == null) return;
+
+        EditorGUILayout.LabelField($"Base Texture ({mainTex.width}, {mainTex.height})", EditorStyles.boldLabel);
+        var size = ScaledMinSize(new Vector2(128, 128), view.TextureSize);
+        Rect texRect = GUILayoutUtility.GetRect(size.x, size.y);
+        EditorGUI.DrawTextureTransparent(texRect, mainTex, ScaleMode.ScaleToFit, 0, 0);
+    }
+
+    private void DrawPreview(TextureView view) {
+
+        if (view.Material == null) {
+            EditorGUILayout.LabelField($"Texture Preview", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("No material.");
+            return;
+        }
+        Texture2D mainTex = view.Material.GetTexture("_MainTex") as Texture2D;
+        if (mainTex == null) {
+            EditorGUILayout.LabelField($"Texture Preview", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("No _MainTex component. Should still work, but won't preview.");
+            return;
+        }
 
         if (_texture == null || GUI.changed) {
             _texture = CreateTexture(view);
         }
+        EditorGUILayout.LabelField($"Texture Preview {view.TextureSize}", EditorStyles.boldLabel);
         var size = ScaledMinSize(new Vector2(128, 128), view.TextureSize);
         Rect texRect = GUILayoutUtility.GetRect(size.x, size.y);
         EditorGUI.DrawTextureTransparent(texRect, _texture, ScaleMode.ScaleToFit, 0, 0);
