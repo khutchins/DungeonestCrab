@@ -22,6 +22,11 @@ public class TextureView : ScriptableObject, ITextureView {
     public Material Material => _material;
 
     public Vector2[] UV => DirectionalUV(Offset.x, Offset.y, Size.x, Size.y, Tiles.x, Tiles.y, Turns);
+
+    public Vector2[] TurnedUV(int turnCount) {
+        return TurnUV(UV, turnCount);
+    }
+
     public static Vector2[] DirectionalUV(float x, float y, float w, float h, int tx, int ty, int turns = 0) {
         float sx = x * 1f / tx;
         float ex = (x + w) * 1f / tx;
@@ -29,11 +34,16 @@ public class TextureView : ScriptableObject, ITextureView {
         float ey = 1 - ((y + h) * 1f / ty);
 
         Vector2[] unaltered = new Vector2[4] { new Vector2(sx, sy), new Vector2(ex, sy), new Vector2(ex, ey), new Vector2(sx, ey) };
-        if (turns == 0) return unaltered;
+        return TurnUV(unaltered, turns);
+    }
+
+    private static Vector2[] TurnUV(Vector2[] uv, int count) {
+        count %= 4;
+        if (count == 0) return uv;
         Vector2[] turned = new Vector2[4];
         for (int i = 0; i < 4; i++) {
-            int mi = (i + turns) % 4;
-            turned[i] = unaltered[mi];
+            int mi = (i + count) % 4;
+            turned[i] = uv[mi];
         }
         return turned;
     }

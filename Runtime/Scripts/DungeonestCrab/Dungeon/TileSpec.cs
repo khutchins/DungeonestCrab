@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace DungeonestCrab.Dungeon {
@@ -165,12 +166,19 @@ namespace DungeonestCrab.Dungeon {
 				   EqualityComparer<List<Entity>>.Default.Equals(Entities, other.Entities);
 		}
 
-		public bool AreTerrainsTheSameInDirections(Adjacency directions) {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool AreTerrainsTheSameInDirections(Adjacency directions) {
 			return (_cachedTerrainAdjacencies & directions) == directions;
 		}
 
-		public bool AreTileTypesTheSameInDirections(Adjacency directions) {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool AreTileTypesTheSameInDirections(Adjacency directions) {
 			return (_cachedTileAdjacencies & directions) == directions;
+		}
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool AreTileAndTerrainTheSameInDirections(Adjacency directions) {
+			return AreTileTypesTheSameInDirections(directions) && AreTerrainsTheSameInDirections(directions);
 		}
 
 		public void SetTileAdjacencies(Adjacency adjacencies) {
