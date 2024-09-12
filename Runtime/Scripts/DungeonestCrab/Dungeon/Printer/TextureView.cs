@@ -56,6 +56,7 @@ namespace DungeonestCrab.Dungeon.Printer {
 
 #if UNITY_EDITOR
     [CustomEditor(typeof(TextureView))]
+    [CanEditMultipleObjects]
     public class TextureViewEditor : Editor {
         private Texture _texture;
 
