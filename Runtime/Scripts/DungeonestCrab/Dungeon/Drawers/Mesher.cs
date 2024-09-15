@@ -2,9 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using UnityEditor.PackageManager;
 using UnityEngine;
-using UnityEngine.XR;
 
 namespace DungeonestCrab.Dungeon.Printer {
     public class Mesher {
@@ -95,6 +93,50 @@ namespace DungeonestCrab.Dungeon.Printer {
             instance.triangles.Add(v1);
             instance.triangles.Add(v2);
             instance.triangles.Add(v3);
+        }
+
+        /// <summary>
+        /// Generates pillar.
+        /// </summary>
+        /// <param name="material">Material</param>
+        /// <param name="v1">(x, y)</param>
+        /// <param name="v2">(x + 1, y)</param>
+        /// <param name="v3">(x, y + 1)</param>
+        /// <param name="v4">(x + 1, y + 1)</param>
+        /// <param name="uvs">UVs for the vertices</param>
+        public void GeneratePillar(Material material, Vector3 center, float width, float height, Vector2[] uvs) {
+            Vector2 offset = new Vector3(width, 0, 0);
+            for (int i = 0; i < 4; i++) {
+                Vector3 rotated = Quaternion.AngleAxis(i * 90, Vector3.up) * offset;
+                Vector3 mid = center + rotated;
+                Vector3 upperMid = mid + new Vector3(0, height, 0);
+                Vector3 right = Vector3.Cross(rotated, Vector3.up);
+
+                GenerateRect(material,
+                    AddVert(material, mid - right, uvs[0]),
+                    AddVert(material, mid + right, uvs[1]),
+                    AddVert(material, upperMid - right, uvs[2]),
+                    AddVert(material, upperMid + right, uvs[3])
+                );
+            }
+        }
+
+        /// <summary>
+        /// Generates a rect and adds the given vectors.
+        /// </summary>
+        /// <param name="material">Material</param>
+        /// <param name="v1">(x, y)</param>
+        /// <param name="v2">(x + 1, y)</param>
+        /// <param name="v3">(x, y + 1)</param>
+        /// <param name="v4">(x + 1, y + 1)</param>
+        /// <param name="uvs">UVs for the vertices</param>
+        public void GenerateRect(Material material, Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4, Vector2[] uvs) {
+            GenerateRect(material,
+                AddVert(material, v1, uvs[0]),
+                AddVert(material, v2, uvs[1]),
+                AddVert(material, v3, uvs[2]),
+                AddVert(material, v4, uvs[3])
+            );
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

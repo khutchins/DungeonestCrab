@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace DungeonestCrab.Dungeon.Printer {
-    [CreateAssetMenu(menuName = "DungeonestCrab/Drawer/Wall - Specified")]
     public abstract class WallDrawerSpecifiedBase : IWallDrawer {
         [InlineEditor][SerializeField] TextureView TextureView;
 
