@@ -24,5 +24,17 @@ namespace DungeonestCrab.Dungeon.Printer {
         public virtual bool DrawAtCenter { get => true; }
 
         public abstract void Draw(FlatInfo info, Mesher mesher);
+
+        private void OnValidate() {
+            RecomputeCache();
+        }
+
+        private void OnEnable() {
+            RecomputeCache();
+        }
+
+        protected virtual void RecomputeCache() {
+
+        }
     }
 }

@@ -15,15 +15,7 @@ namespace DungeonestCrab.Dungeon.Printer {
         protected Dictionary<int, Vector2[]> _directionalUVs;
         protected Dictionary<int, Material> _directionalMats;
 
-        private void OnEnable() {
-            RecomputeGarbage();
-        }
-
-        private void OnValidate() {
-            RecomputeGarbage();
-        }
-
-        void RecomputeGarbage() {
+        protected override void RecomputeCache() {
             // N E S W
             _directionalUVs = new Dictionary<int, Vector2[]>() {
                 { 0b0000, FloorNESW.UV },

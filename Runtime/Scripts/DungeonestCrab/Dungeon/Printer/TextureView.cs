@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -37,14 +33,35 @@ namespace DungeonestCrab.Dungeon.Printer {
             return TextureViewHelpers.TurnUV(unaltered, turns);
         }
 
-        public Vector2 ConvertToLocalUVSpace(Vector2 position) {
-            var uv = UV;
-            var px = Vector2.Lerp(Vector2.zero, uv[1] - uv[0], position.x);
-            var py = Vector2.Lerp(Vector2.zero, uv[3] - uv[0], position.y);
-            return px + py + uv[0];
+        public Vector2[] SubUV(float x, float y, float w, float h, int tx, int ty, int turns = 0) {
+            float sx = x * 1f / tx;
+            float ex = (x + w) * 1f / tx;
+            float sy = (y * 1f / ty);
+            float ey = ((y + h) * 1f / ty);
+
+            Vector2[] unaltered = ConvertToLocalUVSpace(new Vector2(sx, sy), new Vector2(ex, ey));
+            return TextureViewHelpers.TurnUV(unaltered, turns);
         }
 
-        
+        public Vector2 ConvertToLocalUVSpace(Vector2 position) {
+            return Lerp(position.x, position.y);
+        }
+
+        public Vector2[] ConvertToLocalUVSpace(Vector2 startPos, Vector2 endPos) {
+            return new Vector2[4] {
+                Lerp(startPos.x, startPos.y),
+                Lerp(endPos.x, startPos.y),
+                Lerp(endPos.x, endPos.y),
+                Lerp(startPos.x, endPos.y)
+            };
+        }
+
+        public Vector2 Lerp(float xPercent, float yPercent) {
+            var uv = UV;
+            var px = Vector2.Lerp(Vector2.zero, uv[1] - uv[0], xPercent);
+            var py = Vector2.Lerp(Vector2.zero, uv[3] - uv[0], yPercent);
+            return px + py + uv[0];
+        }
 
         public Vector2Int TextureSize {
             get {
