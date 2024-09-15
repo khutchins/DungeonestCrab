@@ -44,44 +44,36 @@ namespace DungeonestCrab.Dungeon.Printer {
             }
 
             // See https://www.rpgmakerweb.com/blog/classic-tutorial-how-autotiles-work.
-            _uvs = new List<List<Vector2[]>>();
-
-            // NW
-            _uvs.Add(new List<Vector2[]>());
-            // Inner
-            _uvs[NW].Add(UVsForXY(2, 0));
-            // Outer
-            _uvs[NW].Add(UVsForXY(0, 2));
-            // X-side
-            _uvs[NW].Add(UVsForXY(0, 4));
-            // Y-side
-            _uvs[NW].Add(UVsForXY(2, 2));
-            // All
-            _uvs[NW].Add(UVsForXY(2, 4));
-
-            // NE
-            _uvs.Add(new List<Vector2[]>());
-            _uvs[NE].Add(UVsForXY(3, 0));
-            _uvs[NE].Add(UVsForXY(3, 2));
-            _uvs[NE].Add(UVsForXY(3, 4));
-            _uvs[NE].Add(UVsForXY(1, 2));
-            _uvs[NE].Add(UVsForXY(1, 4));
-
-            // SW
-            _uvs.Add(new List<Vector2[]>());
-            _uvs[SW].Add(UVsForXY(2, 1));
-            _uvs[SW].Add(UVsForXY(0, 5));
-            _uvs[SW].Add(UVsForXY(0, 3));
-            _uvs[SW].Add(UVsForXY(2, 5));
-            _uvs[SW].Add(UVsForXY(2, 3));
-
-            // SE
-            _uvs.Add(new List<Vector2[]>());
-            _uvs[SE].Add(UVsForXY(3, 1));
-            _uvs[SE].Add(UVsForXY(3, 5));
-            _uvs[SE].Add(UVsForXY(3, 3));
-            _uvs[SE].Add(UVsForXY(1, 5));
-            _uvs[SE].Add(UVsForXY(1, 3));
+            _uvs = new List<List<Vector2[]>> {
+                new List<Vector2[]> { // NW
+                    UVsForXY(2, 0), // Inner
+                    UVsForXY(0, 2), // Outer
+                    UVsForXY(0, 4), // X-Side
+                    UVsForXY(2, 2), // Y-Side
+                    UVsForXY(2, 4)  // All
+                },
+                new List<Vector2[]> { // NE
+                    UVsForXY(3, 0),
+                    UVsForXY(3, 2),
+                    UVsForXY(3, 4),
+                    UVsForXY(1, 2),
+                    UVsForXY(1, 4)
+                },
+                new List<Vector2[]> { // SW
+                    UVsForXY(2, 1),
+                    UVsForXY(0, 5),
+                    UVsForXY(0, 3),
+                    UVsForXY(2, 5),
+                    UVsForXY(2, 3)
+                },
+                new List<Vector2[]> { // SE
+                    UVsForXY(3, 1),
+                    UVsForXY(3, 5),
+                    UVsForXY(3, 3),
+                    UVsForXY(1, 5),
+                    UVsForXY(1, 3)
+                }
+            };
         }
 
         public override bool DrawAtCenter { get => false; }
