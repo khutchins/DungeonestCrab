@@ -283,7 +283,9 @@ namespace DungeonestCrab.Dungeon.Printer {
 
 		private void DrawWallSingle(IWallDrawer.WallInfo info) {
 			if (info.minY >= info.maxY) return;
-            info.tileSpec.Terrain.WallDrawer.DrawWall(info);
+			if (info.tileSpec.Terrain.WallDrawer != null) {
+				info.tileSpec.Terrain.WallDrawer.DrawWall(info);
+			}
 		}
 
 		private void SetFarPlaneFromFog() {

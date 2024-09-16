@@ -7,6 +7,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 	[System.Serializable]
 	public class SourceMazeHaphazard : ISource {
 		[SerializeField] int _maxMoveDistance = 3;
+		[SerializeField] int _moveMultiplier = 1;
 		[SerializeField] float _insertionAttemptsPerTile = 2f;
 
 		Vector2Int _currentPosition;
@@ -23,10 +24,11 @@ namespace DungeonestCrab.Dungeon.Generator {
 		}
 
 		public override void Generate(Stamp stamp, IRandom rand) {
+			_moveMultiplier = Mathf.Max(_moveMultiplier, 1);
 			_currentPosition = new Vector2Int(rand.Next(stamp.W), rand.Next(stamp.H));
 			int attempts = Mathf.FloorToInt(stamp.W * stamp.H * _insertionAttemptsPerTile);
 			for (int i = 0; i < attempts; i++) {
-				GrowInDirection(stamp, rand.Next(_maxMoveDistance) + 1, rand.FromEnum<Dir>());
+				GrowInDirection(stamp, (rand.Next(Mathf.FloorToInt(_maxMoveDistance/_moveMultiplier)) + 1) * _moveMultiplier, rand.FromEnum<Dir>());
 			}
 		}
 
