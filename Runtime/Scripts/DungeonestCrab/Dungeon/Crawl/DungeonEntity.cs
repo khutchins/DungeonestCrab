@@ -127,15 +127,15 @@ namespace DungeonestCrab.Dungeon.Crawl {
                 yield break;
             }
 
-            Vector2 offset = DungeonGrid.INSTANCE.CanonicalOffset(dir.ToVectorX0Y());
-            Vector3 dest = this.transform.position + new Vector3(offset.x, 0, offset.y);
+            Vector3 offset = DungeonGrid.INSTANCE.CanonicalOffset(dir.ToVectorX0Y()).ToVectorX0Y();
+            Vector3 dest = this.transform.position + offset;
 
             if (!bump) {
                 OnBeforeMove?.Invoke();
-                yield return MoveComputed(transform.position + new Vector3(offset.x, 0, offset.y), duration);
+                yield return MoveComputed(transform.position + offset, duration);
                 OnAfterMove?.Invoke();
             } else {
-                yield return MoveBump(transform.position + 2 * movementConfig.BumpPercentage * new Vector3(offset.x, 0, offset.y), wallBump, duration);
+                yield return MoveBump(transform.position + 2 * movementConfig.BumpPercentage * offset, wallBump, duration);
             }
         }
 
