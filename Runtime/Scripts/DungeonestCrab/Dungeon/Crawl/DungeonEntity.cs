@@ -39,9 +39,12 @@ namespace DungeonestCrab.Dungeon.Crawl {
         protected float _angle;
         protected Vector2Int _lastMove;
         protected bool _inMovement = false;
+        protected Vector3? _positionOverride;
 
         public DungeonGrid.GridItemInfo GridItemInfo() {
-            return DungeonGrid.INSTANCE.InfoForLocation(transform.position);
+            Vector3 pos = transform.position;
+            if (_positionOverride.HasValue) pos = _positionOverride.Value;
+            return DungeonGrid.INSTANCE.InfoForLocation(pos);
         }
 
         private Vector2Int ActionToMoveDir(TurnAction action) {
@@ -59,8 +62,7 @@ namespace DungeonestCrab.Dungeon.Crawl {
         }
 
         public virtual TurnAction GetTurnAction() {
-            DungeonEntityMover mover = GetComponent<DungeonEntityMover>();
-            if (mover != null) {
+            if (TryGetComponent<DungeonEntityMover>(out var mover)) {
                 return mover.GetTurnAction();
             }
             return TurnAction.DoNothing;
@@ -154,7 +156,7 @@ namespace DungeonestCrab.Dungeon.Crawl {
         IEnumerator MoveComputed(Vector3 dest, float duration) {
             Vector3 start = this.transform.position;
 
-            OnWillMove(duration);
+            OnWillMove(dest, duration);
             yield return EZTween.DoPercentAction((float newPercent) => {
                 this.transform.position = Vector3.Lerp(start, dest, newPercent);
             }, duration, EZTween.Curve.CubicEaseInOut);
@@ -166,7 +168,7 @@ namespace DungeonestCrab.Dungeon.Crawl {
 
             bool handledWallBump = false;
 
-            OnWillMove(duration);
+            OnWillMove(dest, duration);
             yield return EZTween.DoPercentAction((float newPercent) => {
                 if (newPercent < 0.5f) {
                     this.transform.position = Vector3.Lerp(start, dest, newPercent);
@@ -210,7 +212,7 @@ namespace DungeonestCrab.Dungeon.Crawl {
             _angle = newAngle;
         }
 
-        protected virtual void OnWillMove(float duration) {
+        protected virtual void OnWillMove(Vector3 destination, float duration) {
 
         }
 

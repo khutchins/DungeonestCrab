@@ -150,18 +150,24 @@ namespace DungeonestCrab.Dungeon.Crawl {
         }
 
         protected override void OnDidRotate() {
-            FootstepSound?.PlayOneShot();
+            MaybePlay(FootstepSound);
         }
 
-        protected override void OnWillMove(float duration) {
+        protected override void OnWillMove(Vector3 destination, float duration) {
+            if (MovementConfig.InstantlyUpdatesPosition) _positionOverride = destination;
         }
 
         protected override void OnDidMove() {
-            FootstepSound?.PlayOneShot();
+            _positionOverride = null;
+            MaybePlay(FootstepSound);
         }
 
         protected override void OnWallBump() {
-            WallMoveSound?.PlayOneShot();
+            MaybePlay(WallMoveSound);
+        }
+
+        private void MaybePlay(AudioEvent aevent) {
+            if (aevent != null) aevent.PlayOneShot();
         }
 
         ActionType TypeForAction(Action action) {
@@ -315,6 +321,7 @@ namespace DungeonestCrab.Dungeon.Crawl {
             bool AllowAutoRepeat(ActionType type, Action action);
             void ActionTriggered(ActionType type, Action action);
             float BumpPercentage { get; }
+            bool InstantlyUpdatesPosition { get; }
         }
 
         [System.Serializable]
@@ -328,6 +335,8 @@ namespace DungeonestCrab.Dungeon.Crawl {
             private TimeCheck _check;
 
             public float BumpPercentage => 0;
+
+            public bool InstantlyUpdatesPosition => true;
 
             public void OnInit() {
                 _check = new TimeCheck();
@@ -369,6 +378,9 @@ namespace DungeonestCrab.Dungeon.Crawl {
             [HideIf("UniformMovementTime")] [SerializeField] float BackstepTime = 0.5f;
             [SerializeField] float WaitTime = 0.3f;
             [SerializeField] float BumpPercentage = 0.3f;
+            [SerializeField] bool InstantlyUpdatesPosition = true;
+
+            bool IMovementConfig.InstantlyUpdatesPosition => InstantlyUpdatesPosition;
 
             float IMovementConfig.BumpPercentage => BumpPercentage;
 
