@@ -1,9 +1,12 @@
 using UnityEngine;
+#if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.AssetImporters;
+#endif
 using System.IO;
 
 namespace DungeonestCrab.Dungeon.TiledLoader {
+#if UNITY_EDITOR
     [ScriptedImporter(1, "tmx")]
     public class TmxImporter : ScriptedImporter {
         public override void OnImportAsset(AssetImportContext ctx) {
@@ -12,4 +15,5 @@ namespace DungeonestCrab.Dungeon.TiledLoader {
             ctx.SetMainObject(subAsset);
         }
     }
+#endif
 }
