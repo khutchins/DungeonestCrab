@@ -79,7 +79,11 @@ namespace DungeonestCrab.Dungeon.Generator {
 			return true;
 		}
 
-		public int StyleAt(DirectedPoint pt) {
+        public int StyleAt(Vector2Int pt) {
+            return Styles[pt.y, pt.x];
+        }
+
+        public int StyleAt(DirectedPoint pt) {
 			return Styles[pt.y, pt.x];
 		}
 

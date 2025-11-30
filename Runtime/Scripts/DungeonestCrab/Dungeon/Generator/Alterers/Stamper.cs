@@ -1,7 +1,8 @@
-﻿using UnityEngine;
-using Pomerandomian;
+﻿using Pomerandomian;
 using Sirenix.OdinInspector;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Networking.Types;
 
 namespace DungeonestCrab.Dungeon {
 
@@ -199,42 +200,56 @@ namespace DungeonestCrab.Dungeon {
 
 namespace DungeonestCrab.Dungeon.Generator {
 	public class Stamper : IAlterer {
-		private readonly ISource source;
-		private readonly bool passTerrains;
-		private readonly TerrainSO terrain;
-		private readonly Bounds bounds;
+		private readonly ISource _source;
+        private readonly Bounds _bounds;
+        private readonly bool _protectExistingTerrain;
+		private readonly TerrainSO _terrainToApply;
+		private readonly bool _preserveFloors;
+		private readonly bool _preserveWalls;
 
-		public Stamper(ISource source, TerrainSO terrain, bool passTerrains, Bounds bounds) {
-			this.source = source;
-			this.terrain = terrain;
-			this.passTerrains = passTerrains;
-			this.bounds = bounds;
+		public Stamper(ISource source, TerrainSO terrain, bool protectExistingTerrain, Bounds bounds, bool preserveFloors = false, bool preserveWalls = false) {
+			this._source = source;
+			this._terrainToApply = terrain;
+			this._protectExistingTerrain = protectExistingTerrain;
+			this._bounds = bounds;
+			_preserveFloors = preserveFloors;
+			_preserveWalls = preserveWalls;
 		}
 
-		public bool Modify(TheDungeon generator, IRandom rand) {
-			AppliedBounds appliedBounds = bounds.Apply(generator.Bounds);
-			Stamp stamp = new Stamp(generator, passTerrains, appliedBounds);
+        public bool Modify(TheDungeon generator, IRandom rand) {
+            Bounds actualBounds = _bounds ?? new FullBounds();
+            AppliedBounds applied = actualBounds.Apply(generator.Bounds);
+            Stamp stamp = new Stamp(generator, _protectExistingTerrain, applied);
 
-			source.Generate(stamp, rand);
-			Debug.Log("Stamping " + source + ":\n" + TheDungeon.Visualize(stamp.Tiles));
+            _source.Generate(stamp, rand);
+			Debug.Log("Stamping " + _source + ":\n" + TheDungeon.Visualize(stamp.Tiles));
 
-			foreach (Vector2Int adjPoint in appliedBounds.AllTiles(generator)) {
-				int y = appliedBounds.y, x = appliedBounds.x;
-				TileSpec tile = generator.GetTileSpecSafe(adjPoint);
-				int mx = adjPoint.x - x, my = adjPoint.y - y;
-				Tile at = stamp.At(mx, my);
-				if (at != Tile.Unset && !tile.Immutable) {
-					tile.Tile = at;
-					tile.Terrain = terrain;
-					tile.Style = stamp.StyleAt(mx, my);
-				}
-			}
+            foreach (Vector2Int pt in stamp.All()) {
+                Tile newTile = stamp.At(pt);
+
+                if (newTile == Tile.Unset) continue;
+
+                Vector2Int dungeonPt = new Vector2Int(pt.x + applied.x, pt.y + applied.y);
+                TileSpec existingSpec = generator.GetTileSpecSafe(dungeonPt);
+
+                if (existingSpec != null && !existingSpec.Immutable) {
+                    if (_preserveFloors && existingSpec.Tile == Tile.Floor) continue;
+                    if (_preserveWalls && existingSpec.Tile == Tile.Wall) continue;
+
+                    existingSpec.Tile = newTile;
+                    existingSpec.Style = stamp.StyleAt(pt);
+
+                    if (_terrainToApply != null) {
+                        existingSpec.Terrain = _terrainToApply;
+                    }
+                }
+            }
 			return true;
 		}
 
 		public bool[,] DebugModify(int w, int h, IRandom rand) {
 			Stamp stamp = new Stamp(w, h);
-			source.Generate(stamp, rand);
+			_source.Generate(stamp, rand);
 
 			bool[,] tiles = new bool[w, h];
 

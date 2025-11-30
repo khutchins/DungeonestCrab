@@ -27,23 +27,14 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
             return d;
         }
 
-        public override TheDungeon GenerateRuntime(IRandom random, TheDungeon incomingDungeon = null) {
-            // Start node IGNORES incomingDungeon and creates a new one
-            TheDungeon newDungeon = new TheDungeon(Width, Height, random);
-            newDungeon.Trait = DungeonTrait;
+        public override bool GenerateRuntime(IRandom random, TheDungeon incomingDungeon) {
+            incomingDungeon.Trait = DungeonTrait;
 
-            NodePort outPort = GetOutputPort("Output");
-            if (outPort.IsConnected) {
-                DungeonNode nextNode = outPort.Connection.node as DungeonNode;
-                if (nextNode != null) {
-                    return nextNode.GenerateRuntime(random, newDungeon);
-                }
-            }
-            return newDungeon;
+            return base.GenerateRuntime(random, incomingDungeon);
         }
 
-        protected override void ApplyNodeLogic(TheDungeon dungeon, IRandom random) {
-            // No logic, purely structural
+        protected override bool ApplyNodeLogic(TheDungeon dungeon, IRandom random) {
+            return true;
         }
     }
 }

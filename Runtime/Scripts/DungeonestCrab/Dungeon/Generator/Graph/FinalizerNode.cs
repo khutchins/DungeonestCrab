@@ -6,13 +6,12 @@ using Pomerandomian;
 namespace DungeonestCrab.Dungeon.Generator.Graph {
     [CreateNodeMenu("Dungeon/Finalizer")]
     public class FinalizerNode : DungeonNode {
-        // Input Only
         [Input(ShowBackingValue.Never, ConnectionType.Override)] public DungeonConnection Input;
 
         public TerrainSO DefaultTerrain;
 
         public override object GetValue(NodePort port) {
-            return null; // Finalizer has no outputs
+            return null;
         }
 
         public override TheDungeon GetPreviewDungeon() {
@@ -30,24 +29,8 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
             return _cachedPreview;
         }
 
-        public override TheDungeon GenerateRuntime(IRandom random, TheDungeon incomingDungeon) {
-            if (incomingDungeon == null) return null;
-
-            ApplyNodeLogic(incomingDungeon, random);
-
-            // End of the line, return the result
-            return incomingDungeon;
-        }
-
-        protected override void ApplyNodeLogic(TheDungeon dungeon, IRandom random) {
-            if (DefaultTerrain == null) return;
-
-            foreach (TileSpec tile in dungeon.AllTiles()) {
-                // If the tile is being used (Wall or Floor) but has no specific terrain yet, apply default
-                if (tile.Tile != Tile.Unset) {
-                    tile.SetTerrainIfNull(DefaultTerrain);
-                }
-            }
+        protected override bool ApplyNodeLogic(TheDungeon dungeon, IRandom random) {
+            return new Finalizer(DefaultTerrain).Modify(dungeon, random);
         }
     }
 }

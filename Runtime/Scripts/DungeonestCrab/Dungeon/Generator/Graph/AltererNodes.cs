@@ -7,8 +7,8 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
 
     [CreateNodeMenu("Dungeon/Actions/Prune Dead Ends")]
     public class DeadEndPrunerNode : DungeonPassNode {
-        protected override void ApplyNodeLogic(TheDungeon dungeon, IRandom random) {
-            new DeadEndPruner().Modify(dungeon, random);
+        protected override bool ApplyNodeLogic(TheDungeon dungeon, IRandom random) {
+            return new DeadEndPruner().Modify(dungeon, random);
         }
     }
 
@@ -19,11 +19,11 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         public TerrainSO TerrainToSet;
         public int Range = 0;
 
-        protected override void ApplyNodeLogic(TheDungeon dungeon, IRandom random) {
+        protected override bool ApplyNodeLogic(TheDungeon dungeon, IRandom random) {
             IMatcher matcher = GetInputValue<IMatcher>("Matcher", null);
             if (matcher == null) matcher = TileMatcher.MatchingAll();
 
-            new TerrainSetter(matcher, Range, TerrainToSet).Modify(dungeon, random);
+            return new TerrainSetter(matcher, Range, TerrainToSet).Modify(dungeon, random);
         }
     }
 
@@ -32,8 +32,8 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         public TerrainSO Terrain;
         [Range(0, 1)] public float ExtraJunctionChance = 0.1f;
 
-        protected override void ApplyNodeLogic(TheDungeon dungeon, IRandom random) {
-            new AdjacentCombiner(Terrain, ExtraJunctionChance).Modify(dungeon, random);
+        protected override bool ApplyNodeLogic(TheDungeon dungeon, IRandom random) {
+            return new AdjacentCombiner(Terrain, ExtraJunctionChance).Modify(dungeon, random);
         }
     }
 }

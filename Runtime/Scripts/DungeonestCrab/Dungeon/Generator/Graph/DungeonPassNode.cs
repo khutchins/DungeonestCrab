@@ -33,25 +33,5 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
             _cachedPreview = workingDungeon;
             return _cachedPreview;
         }
-
-        // Runtime Logic
-        public override TheDungeon GenerateRuntime(IRandom random, TheDungeon incomingDungeon) {
-            if (incomingDungeon == null) {
-                Debug.LogError($"Node {name} received null dungeon at runtime.");
-                return null;
-            }
-
-            ApplyNodeLogic(incomingDungeon, random);
-
-            NodePort outPort = GetOutputPort("Output");
-            if (outPort.IsConnected) {
-                DungeonNode nextNode = outPort.Connection.node as DungeonNode;
-                if (nextNode != null) {
-                    return nextNode.GenerateRuntime(random, incomingDungeon);
-                }
-            }
-
-            return incomingDungeon;
-        }
     }
 }

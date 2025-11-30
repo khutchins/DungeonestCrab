@@ -8,11 +8,12 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
     public class GenericAltererNode : DungeonPassNode {
         public AltererSO AltererScriptableObject;
 
-        protected override void ApplyNodeLogic(TheDungeon dungeon, IRandom random) {
+        protected override bool ApplyNodeLogic(TheDungeon dungeon, IRandom random) {
             if (AltererScriptableObject != null) {
                 IAlterer alterer = AltererScriptableObject.ToAlterer();
-                alterer.Modify(dungeon, random);
+                return alterer.Modify(dungeon, random);
             }
+            return false;
         }
     }
 }

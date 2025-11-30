@@ -45,8 +45,23 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
 
         public abstract TheDungeon GetPreviewDungeon();
 
-        public abstract TheDungeon GenerateRuntime(IRandom random, TheDungeon incomingDungeon);
+        public virtual bool GenerateRuntime(IRandom random, TheDungeon dungeon) {
+            if (!ApplyNodeLogic(dungeon, random)) {
+                Debug.LogWarning($"Generation failed at node: {name}");
+                return false;
+            }
 
-        protected abstract void ApplyNodeLogic(TheDungeon dungeon, IRandom random);
+            NodePort outPort = GetOutputPort("Output");
+            if (outPort != null && outPort.IsConnected) {
+                DungeonNode nextNode = outPort.Connection.node as DungeonNode;
+                if (nextNode != null) {
+                    return nextNode.GenerateRuntime(random, dungeon);
+                }
+            }
+
+            return true;
+        }
+
+        protected abstract bool ApplyNodeLogic(TheDungeon dungeon, IRandom random);
     }
 }

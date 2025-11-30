@@ -21,7 +21,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         public float AdditionalCarveCost = 0f;
         public float NoiseMultiplier = 1f;
 
-        protected override void ApplyNodeLogic(TheDungeon dungeon, IRandom random) {
+        protected override bool ApplyNodeLogic(TheDungeon dungeon, IRandom random) {
             INoiseSource noise = GetInputValue<INoiseSource>("CarveNoise", null);
 
             IAlterer combiner = new AStarCombiner(
@@ -33,7 +33,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
                 NoiseMultiplier
             );
 
-            combiner.Modify(dungeon, random);
+            return combiner.Modify(dungeon, random);
         }
     }
 }

@@ -28,11 +28,11 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
     public class AddEntityPercentNode : EntityPassNode {
         [Range(0, 1)] public float Percent = 0.1f;
 
-        protected override void ApplyNodeLogic(TheDungeon dungeon, IRandom random) {
+        protected override bool ApplyNodeLogic(TheDungeon dungeon, IRandom random) {
             EntitySource source = GetEntitySource();
-            if (source == null) return;
+            if (source == null) return false;
 
-            new AddEntityPercent(source, GetMatcher(), AvoidBlockingPath, Percent)
+            return new AddEntityPercent(source, GetMatcher(), AvoidBlockingPath, Percent)
                 .Modify(dungeon, random);
         }
     }
@@ -43,11 +43,9 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         public int TargetCount = 5;
         [Range(0, 1)] public float Chance = 1f;
 
-        protected override void ApplyNodeLogic(TheDungeon dungeon, IRandom random) {
+        protected override bool ApplyNodeLogic(TheDungeon dungeon, IRandom random) {
             EntitySource source = GetEntitySource();
-            if (source == null) return;
-
-            new AddEntity(source, GetMatcher(), AvoidBlockingPath, MinCount, TargetCount, Chance)
+            return new AddEntity(source, GetMatcher(), AvoidBlockingPath, MinCount, TargetCount, Chance)
                 .Modify(dungeon, random);
         }
     }
@@ -63,9 +61,9 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         public bool ToFarthestPoint = true;
         public Vector2Int SpecificDestination;
 
-        protected override void ApplyNodeLogic(TheDungeon dungeon, IRandom random) {
+        protected override bool ApplyNodeLogic(TheDungeon dungeon, IRandom random) {
             EntitySource source = GetEntitySource();
-            if (source == null) return;
+            if (source == null) return false;
 
             // Ideally this would come from some finder logic.
             Vector2Int start = new Vector2Int(1, 1);
@@ -78,7 +76,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
                 builder = AddEntitiesAlongPath.Builder.ForShortestPath(source, start, SpecificDestination);
             }
 
-            builder.SetMatcher(GetMatcher())
+            return builder.SetMatcher(GetMatcher())
                    .SetAngles(SetAngles, StartOffset)
                    .SetAdditionalYRotation(YRotation)
                    .Build()
