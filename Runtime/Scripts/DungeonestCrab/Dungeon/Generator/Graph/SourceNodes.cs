@@ -20,20 +20,20 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         public Texture2D GetPreviewTexture() => PreviewTexture;
 
         public override void UpdatePreview() {
-            int w = 64; int h = 64;
-            ValidatePreviewTexture(w, h);
+            Vector2Int size = GetDimensions();
+            ValidatePreviewTexture(size.x, size.y);
 
-            Stamp stamp = new Stamp(w, h);
+            Stamp stamp = new Stamp(size.x, size.y);
             ISource source = GetSource();
             if (source != null) source.Generate(stamp, new SystemRandom(12345));
 
-            Color[] cols = new Color[w * h];
-            for (int y = 0; y < h; y++) {
-                for (int x = 0; x < w; x++) {
+            Color[] cols = new Color[size.x * size.y];
+            for (int y = 0; y < size.y; y++) {
+                for (int x = 0; x < size.x; x++) {
                     Tile t = stamp.At(x, y);
-                    if (t == Tile.Wall) cols[y * w + x] = Color.black;
-                    else if (t == Tile.Floor) cols[y * w + x] = Color.white;
-                    else cols[y * w + x] = new Color(0.25f, 0.25f, 0.25f);
+                    if (t == Tile.Wall) cols[y * size.x + x] = Color.black;
+                    else if (t == Tile.Floor) cols[y * size.x + x] = Color.white;
+                    else cols[y * size.x + x] = new Color(0.25f, 0.25f, 0.25f);
                 }
             }
             PreviewTexture.SetPixels(cols);

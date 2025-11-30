@@ -10,8 +10,6 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         [Output(ShowBackingValue.Never, ConnectionType.Override)] public DungeonConnection Output;
 
         [Header("Settings")]
-        public int Width = 40;
-        public int Height = 40;
         public Trait DungeonTrait = Trait.None;
 
         public override object GetValue(NodePort port) {
@@ -20,7 +18,8 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         }
 
         public override TheDungeon GetPreviewDungeon() {
-            TheDungeon d = new TheDungeon(Width, Height, new SystemRandom(12345));
+            Vector2Int size = GetDimensions();
+            TheDungeon d = new TheDungeon(size.x, size.y, new SystemRandom(12345));
             d.Trait = DungeonTrait;
             UpdateTexture(d);
             _cachedPreview = d;

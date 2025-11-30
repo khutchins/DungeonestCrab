@@ -8,6 +8,11 @@ using XNode;
 namespace DungeonestCrab.Dungeon.Generator.Graph {
     [CreateAssetMenu(fileName = "New Generator Graph", menuName = "DungeonestCrab/Generator Graph")]
     public class GeneratorGraph : NodeGraph {
+        [Header("Global Configuration")]
+        public int Width = 40;
+        public int Height = 40;
+
+        [Header("Generation Settings")]
         [Tooltip("How many times to retry if a node returns failure.")]
         public int MaxAttempts = 20;
 
@@ -18,7 +23,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         public TheDungeon Generate(IRandom rng) {
             StartNode start = nodes.FirstOrDefault(x => x is StartNode) as StartNode;
             for (int i = 0; i < MaxAttempts; i++) {
-                TheDungeon dungeon = new TheDungeon(start.Width, start.Height, rng);
+                TheDungeon dungeon = new TheDungeon(Width, Height, rng);
 
                 bool success = start.GenerateRuntime(rng, dungeon);
 

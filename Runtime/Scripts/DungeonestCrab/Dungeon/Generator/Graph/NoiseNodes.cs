@@ -17,19 +17,18 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         public Texture2D GetPreviewTexture() => PreviewTexture;
 
         public override void UpdatePreview() {
-            int w = 64;
-            int h = 64;
-            ValidatePreviewTexture(w, h);
+            Vector2Int size = GetDimensions();
+            ValidatePreviewTexture(size.x, size.y);
 
             INoiseSource noise = CreateNoiseSource();
 
             noise.SetSeed(12345);
 
-            Color[] cols = new Color[w * h];
-            for (int y = 0; y < h; y++) {
-                for (int x = 0; x < w; x++) {
+            Color[] cols = new Color[size.x * size.y];
+            for (int y = 0; y < size.y; y++) {
+                for (int x = 0; x < size.x; x++) {
                     float val = noise.At(x, y);
-                    cols[y * w + x] = new Color(val, val, val);
+                    cols[y * size.x + x] = new Color(val, val, val);
                 }
             }
             PreviewTexture.SetPixels(cols);

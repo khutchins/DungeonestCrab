@@ -17,20 +17,20 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         public Texture2D GetPreviewTexture() => PreviewTexture;
 
         public override void UpdatePreview() {
-            int w = 64; int h = 64;
-            ValidatePreviewTexture(w, h);
+            Vector2Int size = GetDimensions();
+            ValidatePreviewTexture(size.x, size.y);
 
-            AppliedBounds full = new AppliedBounds(0, 0, w, h);
+            AppliedBounds full = new AppliedBounds(0, 0, size.x, size.y);
             Bounds b = GetBounds();
             AppliedBounds result = b.Apply(full);
 
-            Color[] cols = new Color[w * h];
-            for (int y = 0; y < h; y++) {
-                for (int x = 0; x < w; x++) {
+            Color[] cols = new Color[size.x * size.y];
+            for (int y = 0; y < size.y; y++) {
+                for (int x = 0; x < size.x; x++) {
                     bool inside = x >= result.x && x < result.x + result.w &&
                                   y >= result.y && y < result.y + result.h;
 
-                    cols[y * w + x] = inside ? Color.white : Color.black;
+                    cols[y * size.x + x] = inside ? Color.white : Color.black;
                 }
             }
             PreviewTexture.SetPixels(cols);

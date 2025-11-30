@@ -19,5 +19,13 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
                 };
             }
         }
+
+        public Vector2Int GetDimensions() {
+            if (graph is GeneratorGraph gg) {
+                return new Vector2Int(gg.Width, gg.Height);
+            }
+            // If not in the graph.
+            return new Vector2Int(40, 40);
+        }
     }
 }

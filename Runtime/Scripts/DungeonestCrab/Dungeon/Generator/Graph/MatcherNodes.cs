@@ -18,8 +18,8 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         // Visualize what matches against a generic floor grid, which probably isn't very interesting.
         public Texture2D GetPreviewTexture() => PreviewTexture;
         public override void UpdatePreview() {
-            int w = 64; int h = 64;
-            ValidatePreviewTexture(w, h);
+            Vector2Int size = GetDimensions();
+            ValidatePreviewTexture(size.x, size.y);
 
             IMatcher matcher = GetMatcher();
 
@@ -30,7 +30,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
             Color cMatch = Color.white;
             Color cNoMatch = Color.black;
 
-            Color[] cols = new Color[w * h];
+            Color[] cols = new Color[size.x * size.y];
             for (int i = 0; i < cols.Length; i++) {
                 bool isWall = (i % 2 == 0);
                 cols[i] = matcher.Matches(isWall ? wallSpec : floorSpec) ? cMatch : cNoMatch;
