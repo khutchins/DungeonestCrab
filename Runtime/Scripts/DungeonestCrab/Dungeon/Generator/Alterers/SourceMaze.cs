@@ -61,7 +61,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 					if (rand.WithPercentChance(this._straightBias) && adjs.Where(x => x.dir == lastDir).Count() > 0) {
 						next = adjs.Where(x => x.dir == lastDir).First();
 					} else {
-						next = rand.FromList<DirectedPoint>(adjs);
+						next = rand.From(adjs);
 					}
 					DirectedPoint between = DirectedPoint.between(cell, next);
 					stamp.MaybeSetAt(next.x, next.y, _tileToSet);
@@ -109,7 +109,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 						continue;
 					}
 
-					Vector2Int neighborToRemove = rand.FromList<Vector2Int>(validNeighbors);
+					Vector2Int neighborToRemove = rand.From(validNeighbors);
 					stamp.MaybeSetAt(neighborToRemove, _tileToSet);
 					deadEnds.RemoveAt(idx);
 					set++;

@@ -18,9 +18,10 @@ namespace DungeonestCrab.Dungeon.Generator {
 		/// <param name="tile"></param>
 		/// <param name="maxMoveDistance"></param>
 		/// <param name="insertionAttempts"></param>
-		public SourceMazeHaphazard(Tile tile = Tile.Floor, int maxMoveDistance = 3, float insertionAttemptsPerTile = 2f) : base(tile) {
+		public SourceMazeHaphazard(Tile tile = Tile.Floor, int maxMoveDistance = 3, float insertionAttemptsPerTile = 2f, int moveMultiplier = 1) : base(tile) {
 			_maxMoveDistance = maxMoveDistance;
 			_insertionAttemptsPerTile = insertionAttemptsPerTile;
+			_moveMultiplier = moveMultiplier;
 		}
 
 		public override void Generate(Stamp stamp, IRandom rand) {

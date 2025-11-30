@@ -1,3 +1,4 @@
+using DungeonestCrab.Dungeon.Generator.Graph;
 using Pomerandomian;
 using Sirenix.OdinInspector;
 using System.Collections;
@@ -6,22 +7,29 @@ using UnityEngine;
 
 namespace DungeonestCrab.Dungeon.Generator {
     public class TestGenerator : BaseGenerator {
-        public DungeonSpecSO DungeonToGenerate;
+        public GeneratorGraph DungeonToGenerate;
 
         [Header("Testing")]
         public bool RandomizeSeed = false;
         [DisableIf("RandomizeSeed")]
         public int Seed = 313;
 
-        public override TheGenerator CreateGenerator() {
-            return new TheGenerator(DungeonToGenerate.ToDungeonSpec());
-        }
-
         public override IRandom GetRandom() {
             if (RandomizeSeed) {
                 Seed = new SystemRandom().Next(1000000);
             }
             return new SystemRandom(Seed);
+        }
+
+        protected override TheDungeon Make() {
+            IRandom rand = GetRandom();
+
+            if (DungeonToGenerate != null) {
+                return DungeonToGenerate.Generate(rand);
+            } else {
+                Debug.LogWarning("No generator assigned.");
+                return null;
+            }
         }
 
         [Button("Generate Test Dungeon")]

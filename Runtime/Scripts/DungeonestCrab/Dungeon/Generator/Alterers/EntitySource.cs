@@ -22,7 +22,7 @@ namespace DungeonestCrab.Dungeon {
 		/// <param name="random"></param>
 		/// <returns></returns>
         public virtual Pair GetPair(IRandom random) {
-			return random.FromArray(_pairs);
+			return random.From(_pairs);
 		}
 
 		/// <summary>

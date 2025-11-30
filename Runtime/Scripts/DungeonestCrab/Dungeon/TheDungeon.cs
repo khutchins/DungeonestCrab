@@ -56,7 +56,47 @@ namespace DungeonestCrab.Dungeon {
 			this.NonConsistentRNG = inconsistentRNG ?? new SystemRandom();
 		}
 
-		private TileSpec[,] CreateTiles() {
+        public TheDungeon Clone() {
+            return new TheDungeon(this);
+        }
+
+        private TheDungeon(TheDungeon other) {
+            Size = other.Size;
+            Bounds = new AppliedBounds(other.Bounds.x, other.Bounds.y, other.Bounds.w, other.Bounds.h);
+            Trait = other.Trait;
+            FogDensity = other.FogDensity;
+            FogColor = other.FogColor;
+
+			ConsistentRNG = other.ConsistentRNG.Split(0);
+            NonConsistentRNG = new SystemRandom();
+
+            _tiles = new TileSpec[Size.y, Size.x];
+            TilesWithEntities = new HashSet<TileSpec>();
+            Entities = new List<Entity>();
+
+            for (int y = 0; y < Size.y; y++) {
+                for (int x = 0; x < Size.x; x++) {
+                    var source = other._tiles[y, x];
+                    var clone = new TileSpec(source.Coords, source.Tile, source.Terrain, source.Style, source.Immutable);
+
+                    foreach (var ent in source.Entities) {
+                        Entity entClone = new Entity(ent.Tile, ent.EntityIndex, ent.Type, ent.Code, ent.EntityID, ent.YAngle);
+                        clone.AddEntity(entClone);
+                        Entities.Add(entClone);
+                    }
+
+                    if (clone.Entities.Count > 0) TilesWithEntities.Add(clone);
+                    _tiles[y, x] = clone;
+                }
+            }
+
+			// Reset caches
+            _pathMap = new float[Size.y, Size.x];
+            _cachedRegionMap = null;
+        }
+
+
+        private TileSpec[,] CreateTiles() {
 			TileSpec[,] tiles = new TileSpec[Size.y, Size.x];
 			for (int y = 0; y < Size.y; y++) {
 				for (int x = 0; x < Size.x; x++) {

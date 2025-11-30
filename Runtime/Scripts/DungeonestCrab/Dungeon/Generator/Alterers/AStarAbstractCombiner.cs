@@ -94,7 +94,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 
 			List<Vector2Int> pointsToConnect = new List<Vector2Int>();
 			for (int i = 0; i <= maxRegions; i++) {
-				pointsToConnect.Add(rand.FromList<Vector2Int>(pointMap[i]));
+				pointsToConnect.Add(rand.From(pointMap[i]));
 			}
 			return pointsToConnect;
 		}

@@ -71,7 +71,7 @@ namespace DungeonestCrab.Dungeon.Generator {
         public override void Generate(Stamp stamp, IRandom rand) {
 			int w = stamp.W;
 			int h = stamp.H;
-			Sides startSide = rand.FromList(_startSides);
+			Sides startSide = rand.From(_startSides);
 			Dir start = FromSide(startSide);
 			List<Sides> remaining = new List<Sides>();
 			remaining.AddRange(_endSides);
@@ -80,7 +80,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 				remaining.Add(startSide == Sides.Top ? Sides.Bottom : Sides.Top);
 			}
 
-			Dir end = FromSide(rand.FromList(remaining));
+			Dir end = FromSide(rand.From(remaining));
 
 			RiverPoint startPoint = ControlPoint(start, w, h, rand);
 			RiverPoint mid = ControlPoint(w, h, rand);

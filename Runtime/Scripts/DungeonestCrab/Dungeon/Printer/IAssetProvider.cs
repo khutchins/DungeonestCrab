@@ -28,9 +28,9 @@ namespace DungeonestCrab.Dungeon.Printer {
                 case ProviderType.Single:
                     return Object;
                 case ProviderType.Random:
-                    return random.FromArray(Objects);
+                    return random.From(Objects);
                 case ProviderType.RandomWithShares:
-                    return random.FromArrayWithOdds(ObjectAndShares);
+                    return random.FromWithOdds(ObjectAndShares);
             }
             return default;
         }

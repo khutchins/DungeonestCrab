@@ -52,7 +52,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 					Debug.LogError("Out of connectors. Not all regions are connected!");
 					return true;
 				}
-				Vector2Int connector = rand.FromList<Vector2Int>(connectors);
+				Vector2Int connector = rand.From(connectors);
 				generator.AddJunction(connector, _terrain);
 
 				// Get all regions connected by connector

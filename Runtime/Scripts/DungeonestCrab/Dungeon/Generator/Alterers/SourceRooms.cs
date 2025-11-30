@@ -29,7 +29,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 
 			for (int i = 0; i < roomTries; i++) {
 
-				IRoomSpec spec = rand.FromArrayWithOdds(specs, odds);
+				IRoomSpec spec = rand.FromWithOdds(specs, odds);
 
 				int innerW = rand.Next(spec.MinX, spec.MaxX + 1);
 				int innerH = rand.Next(spec.MinY, spec.MaxY + 1);

@@ -12,9 +12,15 @@ namespace DungeonestCrab.Dungeon.Generator {
     public abstract class BaseGenerator : MonoBehaviour {
 		[SerializeField] bool GenerateOnAwake = true;
 
-		public abstract TheGenerator CreateGenerator();
+		public virtual TheGenerator CreateGenerator() { return null; }
 
-		public virtual IRandom GetRandom() {
+        protected virtual TheDungeon Make() {
+            TheGenerator generator = CreateGenerator();
+            IRandom random = GetRandom();
+            return generator.Generate(random);
+        }
+
+        public virtual IRandom GetRandom() {
 			return new SystemRandom();
 		}
 
@@ -37,11 +43,5 @@ namespace DungeonestCrab.Dungeon.Generator {
 		public void ClearTest() {
 			Printer.ClearGeneratedTestDungeon();
 		}
-
-		protected TheDungeon Make() {
-			TheGenerator generator = CreateGenerator();
-			IRandom random = GetRandom();
-			return generator.Generate(random);
-		}
-	}
+    }
 }

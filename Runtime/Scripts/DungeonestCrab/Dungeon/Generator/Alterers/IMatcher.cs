@@ -68,4 +68,16 @@ namespace DungeonestCrab.Dungeon.Generator {
             return new TileMatcher(tile, false, terrain, false, 0, true);
         }
     }
+
+    public class AndMatcher : IMatcher {
+        private readonly IMatcher[] _matchers;
+        public AndMatcher(params IMatcher[] matchers) { _matchers = matchers; }
+
+        public bool Matches(TileSpec tile) {
+            foreach (var m in _matchers) {
+                if (!m.Matches(tile)) return false;
+            }
+            return true;
+        }
+    }
 }

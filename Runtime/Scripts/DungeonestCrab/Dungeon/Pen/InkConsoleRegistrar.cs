@@ -1,5 +1,6 @@
 using Ink.Runtime;
 using KH.Console;
+using KH.Script;
 using System.Linq;
 using UnityEngine;
 

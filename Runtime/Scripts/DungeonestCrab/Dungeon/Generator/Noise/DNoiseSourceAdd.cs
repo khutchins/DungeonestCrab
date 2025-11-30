@@ -9,7 +9,9 @@ namespace KH.Noise {
 	/// not careful.
 	/// </summary>
 	public class DNoiseSourceAdd : IDNoiseSource {
-		public override float At(float x, float y) {
+        public DNoiseSourceAdd(params INoiseSource[] sources) : base(sources) { }
+
+        public override float At(float x, float y) {
 			float val = 0;
 			foreach (INoiseSource source in _sources) {
 				val += source.At(x, y);
