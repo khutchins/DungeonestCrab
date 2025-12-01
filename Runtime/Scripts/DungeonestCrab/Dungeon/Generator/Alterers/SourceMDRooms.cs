@@ -19,7 +19,7 @@ namespace DungeonestCrab.Dungeon.Generator {
             _percentRooms = percentRooms;
         }
 
-        public Stamp CreateRoom(IRoomSpec spec, int x, int y, int w, int h, IRandom rand) {
+        public Stamp CreateRoom(RoomStrategy spec, int x, int y, int w, int h, IRandom rand) {
 			Stamp stamp = new Stamp(x, y, w, h);
 			spec.StampRoom(stamp, rand);
 			return stamp;

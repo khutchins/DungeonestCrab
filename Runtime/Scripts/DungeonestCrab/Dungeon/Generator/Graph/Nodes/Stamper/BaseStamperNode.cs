@@ -7,7 +7,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         [Input(ShowBackingValue.Never, ConnectionType.Override)] public BoundsConnection Bounds;
 
         [Tooltip("If checked, the source algorithm will see existing terrain as 'occupied' and may choose to avoid it.")]
-        public bool ProtectExistingTerrain = false;
+        public bool ProtectExistingTerrain = true;
         [Tooltip("If checked, floors won't be overwritten.")]
         public bool PreserveFloors = false;
         [Tooltip("If checked, walls won't be overwritten.")]
