@@ -4,9 +4,16 @@ using XNode;
 namespace DungeonestCrab.Dungeon.Generator.Graph {
 
     public abstract class BasePreviewNode : Node {
-        [HideInInspector] public bool ShowPreview = true;
+        public enum PreviewMode {
+            Geometry,
+            Terrain,
+            Style,
+            Regions
+        }
 
+        [HideInInspector] public bool ShowPreview = true;
         [HideInInspector] public Texture2D PreviewTexture;
+        [HideInInspector] public PreviewMode ViewMode = PreviewMode.Geometry;
 
         public abstract void UpdatePreview();
 
