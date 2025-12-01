@@ -20,6 +20,9 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         public float FogDensity = 0.01f;
         public Color FogColor = Color.black;
 
+        [Header("Editor Debug")]
+        public int DebugSeed = 0;
+
         public TheDungeon Generate(int seed) {
             return Generate(new SystemRandom(seed));
         }

@@ -19,7 +19,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
             TheDungeon workingDungeon = inputDungeon != null ? inputDungeon.Clone() : null;
 
             if (workingDungeon != null) {
-                ApplyNodeLogic(workingDungeon, new SystemRandom(12345));
+                ApplyNodeLogic(workingDungeon, new SystemRandom(GetPreviewSeed()));
                 UpdateTexture(workingDungeon);
             } else {
                 PreviewTexture = null;

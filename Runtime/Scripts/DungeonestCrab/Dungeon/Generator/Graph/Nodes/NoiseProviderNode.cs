@@ -20,7 +20,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
 
             INoiseSource noise = CreateNoiseSource();
 
-            noise.SetSeed(12345);
+            noise.SetSeed(GetPreviewSeed());
 
             Color[] cols = new Color[size.x * size.y];
             for (int y = 0; y < size.y; y++) {

@@ -34,5 +34,12 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
             // If not in the graph.
             return new Vector2Int(40, 40);
         }
+
+        protected int GetPreviewSeed() {
+            if (graph is DungeonGraph dg) {
+                return dg.DebugSeed + this.GetInstanceID();
+            }
+            return 0;
+        }
     }
 }

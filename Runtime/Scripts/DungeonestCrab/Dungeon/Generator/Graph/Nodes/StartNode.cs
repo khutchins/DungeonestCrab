@@ -20,7 +20,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
 
         public override TheDungeon GetPreviewDungeon() {
             Vector2Int size = GetDimensions();
-            TheDungeon dungeon = new TheDungeon(size.x, size.y, new SystemRandom(12345));
+            TheDungeon dungeon = new TheDungeon(size.x, size.y, new SystemRandom(GetPreviewSeed()));
             if (Traits != null) dungeon.Traits.AddRange(Traits);
             UpdateTexture(dungeon);
             _cachedPreview = dungeon;
