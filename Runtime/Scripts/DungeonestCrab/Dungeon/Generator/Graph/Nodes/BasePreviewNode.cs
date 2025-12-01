@@ -7,6 +7,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         public enum PreviewMode {
             Geometry,
             Terrain,
+            GeometryAndTerrain,
             Style,
             Regions
         }

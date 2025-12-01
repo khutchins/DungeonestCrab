@@ -37,7 +37,10 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
                             }
                             break;
                         case PreviewMode.Terrain:
-                            colors[i] = GetHashColor(tile.Terrain);
+                            colors[i] = GetTerrainColor(tile);
+                            break;
+                        case PreviewMode.GeometryAndTerrain:
+                            colors[i] = GetGeometryTerrainColor(tile);
                             break;
                         case PreviewMode.Style:
                             colors[i] = GetHashColor(tile.GetTags().FirstOrDefault());
@@ -57,6 +60,28 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
             if (tile.Tile == Tile.Wall) return Color.black;
             if (tile.Tile == Tile.Floor) return Color.white;
             return new Color(0.25f, 0.25f, 0.25f); // Unset
+        }
+
+        private Color GetTerrainColor(TileSpec tile) {
+            return GetHashColor(tile.Terrain);
+        }
+
+        private Color GetGeometryTerrainColor(TileSpec tile) {
+            if (tile == null) return Color.black;
+
+            Color baseColor = GetTerrainColor(tile);
+
+            switch (tile.Tile) {
+                case Tile.Floor:
+                    return baseColor;
+
+                case Tile.Wall:
+                    return new Color(baseColor.r * 0.3f, baseColor.g * 0.3f, baseColor.b * 0.3f, 1f);
+
+                case Tile.Unset:
+                default:
+                    return new Color(baseColor.r * 0.1f, baseColor.g * 0.1f, baseColor.b * 0.1f, 1f);
+            }
         }
 
         private Color GetRegionColor(int regionId) {
