@@ -60,7 +60,11 @@ namespace DungeonestCrab.Dungeon.Generator {
 			for (i = 0; i < targetAmt && spawnablePoints.Count > 0; i++) {
 				Vector2Int pt = spawnablePoints[0];
 				EntitySource.Pair pair = source.GetPair(rand);
-				generator.AddEntity(new Entity(pt, i, pair.Entity, pair.Code));
+                if (pair == null) {
+                    Debug.LogWarning($"EntitySource {source} returned null.");
+                    return false;
+                }
+                generator.AddEntity(new Entity(pt, i, pair.Entity, pair.Code));
 				spawnablePoints.RemoveAll(pt2 => pt == pt2 || pt2.AdjacenciesWithDiag().Contains(pt));
 			}
 			Debug.Log(string.Format("Generated {0} entity of target {1}", i, targetAmt));
