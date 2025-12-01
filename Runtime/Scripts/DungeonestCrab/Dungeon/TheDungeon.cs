@@ -8,18 +8,6 @@ using System.Text;
 using UnityEngine;
 
 namespace DungeonestCrab.Dungeon {
-	public enum Trait {
-		None = -1,
-		// All floors are covered by water
-		Flooded = 0,
-		// No walls above zero, all unset terrain is considered pit.
-		CeilinglessPit = 1,
-		// As long as terrain has been set, will use wall terrain's wall texture
-		// instead of adjacent floor's.
-		InvasiveWalls = 3,
-		// No ceiling. Walls still set if applicable
-		Ceilingless = 6,
-	}
 
 	public class TheDungeon {
 		private TileSpec[,] _tiles;
@@ -27,7 +15,6 @@ namespace DungeonestCrab.Dungeon {
 		public List<Entity> Entities;
 		public readonly AppliedBounds Bounds;
 		public readonly Vector2Int Size;
-		public Trait Trait;
 		public readonly List<DungeonTraitSO> Traits = new();
 		public float FogDensity = 0.01f;
 		public Color FogColor = Color.white;
@@ -65,7 +52,7 @@ namespace DungeonestCrab.Dungeon {
         private TheDungeon(TheDungeon other) {
             Size = other.Size;
             Bounds = new AppliedBounds(other.Bounds.x, other.Bounds.y, other.Bounds.w, other.Bounds.h);
-            Trait = other.Trait;
+			Traits = other.Traits;
             FogDensity = other.FogDensity;
             FogColor = other.FogColor;
 

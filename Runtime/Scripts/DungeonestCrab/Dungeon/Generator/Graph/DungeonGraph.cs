@@ -16,6 +16,10 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         [Tooltip("How many times to retry if a node returns failure.")]
         public int MaxAttempts = 20;
 
+        [Header("Fog Settings")]
+        public float FogDensity = 0.01f;
+        public Color FogColor = Color.black;
+
         public TheDungeon Generate(int seed) {
             return Generate(new SystemRandom(seed));
         }
@@ -23,7 +27,10 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         public TheDungeon Generate(IRandom rng) {
             StartNode start = nodes.FirstOrDefault(x => x is StartNode) as StartNode;
             for (int i = 0; i < MaxAttempts; i++) {
-                TheDungeon dungeon = new TheDungeon(Width, Height, rng);
+                TheDungeon dungeon = new TheDungeon(Width, Height, rng) {
+                    FogColor = FogColor,
+                    FogDensity = FogDensity
+                };
 
                 bool success = start.GenerateRuntime(rng, dungeon);
 

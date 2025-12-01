@@ -1,25 +1,20 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using Pomerandomian;
-using System.Text;
-using System;
-using DungeonestCrab;
-using DungeonestCrab.Dungeon;
 
 namespace DungeonestCrab.Dungeon.Generator {
 
 	public class DungeonSpec {
 		public readonly List<IAlterer> alterers;
-		public readonly Trait trait;
+		public readonly DungeonTraitSO[] traits;
 		public readonly Vector2Int size;
 		public readonly float fogDensity;
 		public readonly Color fogColor;
 
-		public DungeonSpec(Trait trait, Vector2Int size, IAlterer[] alterers, float fogDensity = 0.1F, Color? fogColor = null) {
+		public DungeonSpec(DungeonTraitSO[] traits, Vector2Int size, IAlterer[] alterers, float fogDensity = 0.1F, Color? fogColor = null) {
 			this.alterers = new List<IAlterer>(alterers);
 			this.size = size;
-			this.trait = trait;
+			this.traits = traits;
 			this.fogDensity = fogDensity;
 			this.fogColor = fogColor ?? Color.black;
 		}
@@ -43,7 +38,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 				dungeonFailed = false;
 
 				dungeon = new TheDungeon(_dungeonSpec.size.x, _dungeonSpec.size.y, random);
-				dungeon.Trait = _dungeonSpec.trait;
+				dungeon.Traits.AddRange(_dungeonSpec.traits);
 				dungeon.FogColor = _dungeonSpec.fogColor;
 				dungeon.FogDensity = _dungeonSpec.fogDensity;
 
