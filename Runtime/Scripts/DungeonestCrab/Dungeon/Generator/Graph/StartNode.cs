@@ -1,16 +1,17 @@
+using DungeonestCrab.Dungeon;
+using DungeonestCrab.Dungeon.Printer;
+using Pomerandomian;
+using System.Collections.Generic;
 using UnityEngine;
 using XNode;
-using DungeonestCrab.Dungeon;
-using Pomerandomian;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
     [CreateNodeMenu("Dungeon/Start")]
     public class StartNode : DungeonNode {
-        // Output Only
         [Output(ShowBackingValue.Never, ConnectionType.Override)] public DungeonConnection Output;
 
         [Header("Settings")]
-        public Trait DungeonTrait = Trait.None;
+        public List<DungeonTraitSO> Traits;
 
         public override object GetValue(NodePort port) {
             if (port.fieldName == "Output") return GetPreviewDungeon();
@@ -19,15 +20,15 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
 
         public override TheDungeon GetPreviewDungeon() {
             Vector2Int size = GetDimensions();
-            TheDungeon d = new TheDungeon(size.x, size.y, new SystemRandom(12345));
-            d.Trait = DungeonTrait;
-            UpdateTexture(d);
-            _cachedPreview = d;
-            return d;
+            TheDungeon dungeon = new TheDungeon(size.x, size.y, new SystemRandom(12345));
+            if (Traits != null) dungeon.Traits.AddRange(Traits);
+            UpdateTexture(dungeon);
+            _cachedPreview = dungeon;
+            return dungeon;
         }
 
         public override bool GenerateRuntime(IRandom random, TheDungeon incomingDungeon) {
-            incomingDungeon.Trait = DungeonTrait;
+            if (Traits != null) incomingDungeon.Traits.AddRange(Traits);
 
             return base.GenerateRuntime(random, incomingDungeon);
         }

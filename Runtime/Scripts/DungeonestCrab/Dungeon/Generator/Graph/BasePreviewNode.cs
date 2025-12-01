@@ -21,7 +21,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         }
 
         public Vector2Int GetDimensions() {
-            if (graph is GeneratorGraph gg) {
+            if (graph is DungeonGraph gg) {
                 return new Vector2Int(gg.Width, gg.Height);
             }
             // If not in the graph.

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Pomerandomian;
@@ -22,11 +23,14 @@ namespace DungeonestCrab.Dungeon.Printer {
         public static DungeonPrinter Shared;
 
         private TheDungeon _dungeon;
+        public TheDungeon DungeonInstance => _dungeon;
 
-        Transform EnvironmentHolder;
-        Transform CollisionHolder;
-        Transform StaticEntityHolder;
-        Transform EntityHolder;
+        // Transform Holders
+        public Transform EnvironmentHolder { get; private set; }
+        public Transform CollisionHolder { get; private set; }
+        public Transform StaticEntityHolder { get; private set; }
+        public Transform EntityHolder { get; private set; }
+
         private Transform _testHolder;
         private Vector2Int _tileFloorSize;
         private float _tileHeightMult;
@@ -40,6 +44,14 @@ namespace DungeonestCrab.Dungeon.Printer {
 
         public void Print(TheDungeon dg) {
             _dungeon = dg;
+
+            // Decorator pre-pass.
+            if (dg.Traits != null) {
+                foreach (var trait in dg.Traits) {
+                    trait.DecorateGlobal(dg, this, EnvironmentHolder);
+                }
+            }
+
             foreach (TileSpec tileSpec in dg.AllTiles()) {
                 if (!IsDrawableTile(tileSpec)) {
                     // Tile isn't configured. Means that it shouldn't be rendered.
@@ -49,59 +61,80 @@ namespace DungeonestCrab.Dungeon.Printer {
                     }
                     continue;
                 }
-                int x = tileSpec.Coords.x, y = tileSpec.Coords.y;
 
-                Entity floorReplacingEntity = tileSpec.Entities.FirstOrDefault(t => t.Type.ReplacesFloor);
-                Entity ceilingReplacingEntity = tileSpec.Entities.FirstOrDefault(t => t.Type.ReplacesCeiling);
+                // Establish defaults from Terrain
+                var ruleConfig = new TileRuleConfig(tileSpec);
+
+                // Apply Trait Overrides
+                if (dg.Traits != null) {
+                    foreach (var trait in dg.Traits) {
+                        trait.ModifyTileRules(tileSpec, ref ruleConfig);
+                    }
+                }
 
                 bool walkable = tileSpec.Walkable;
+                Vector3 origin = OriginForCoords(tileSpec.Coords);
                 if (!walkable && ImpassableObject != null) {
-                    var blocker = Instantiate(ImpassableObject, OriginForCoords(tileSpec.Coords), Quaternion.identity, CollisionHolder);
-                    blocker.name = $"Wall Object: ({x}, {y})";
+                    var blocker = Instantiate(ImpassableObject, origin, Quaternion.identity, CollisionHolder);
+                    blocker.name = $"Wall Collider: {tileSpec.Coords}";
                 }
                 if (walkable && WalkableObject != null) {
-                    var blocker = Instantiate(WalkableObject, OriginForCoords(tileSpec.Coords), Quaternion.identity, CollisionHolder);
-                    blocker.name = $"Floor Object: ({x}, {y})";
+                    var blocker = Instantiate(WalkableObject, origin, Quaternion.identity, CollisionHolder);
+                    blocker.name = $"Floor Collider: {tileSpec.Coords}";
                 }
 
-                DrawWall(dg, tileSpec, 0, -1);
-                DrawWall(dg, tileSpec, 0, 1);
-                DrawWall(dg, tileSpec, -1, 0);
-                DrawWall(dg, tileSpec, 1, 0);
+                DrawWall(dg, tileSpec, 0, -1, ruleConfig);
+                DrawWall(dg, tileSpec, 0, 1, ruleConfig);
+                DrawWall(dg, tileSpec, -1, 0, ruleConfig);
+                DrawWall(dg, tileSpec, 1, 0, ruleConfig);
 
                 // Draw ceiling if it's a floorish tile or if the wall is shorter than the ceiling.
-                if (tileSpec.DrawAsFloor || tileSpec.Terrain.WallHeight < tileSpec.CeilingOffset) {
-                    AddCeiling(tileSpec, ceilingReplacingEntity != null, dg, tileSpec.CeilingOffset);
+                if (tileSpec.DrawAsFloor || ruleConfig.WallHeight < ruleConfig.CeilingHeight) {
+                    if (ruleConfig.DrawCeiling && !EntityReplaces(tileSpec, t => t.ReplacesCeiling)) {
+                        AddCeiling(tileSpec, ruleConfig.CeilingHeight);
+                    }
                 }
 
-                if (tileSpec.Tile == Tile.Wall && tileSpec.Terrain.WallHeight < tileSpec.CeilingOffset && tileSpec.Terrain.WallCapDrawer != null) {
+                // Draw Wall Cap (Top of a short wall)
+                if (tileSpec.Tile == Tile.Wall && ruleConfig.WallHeight < ruleConfig.CeilingHeight && tileSpec.Terrain.WallCapDrawer != null) {
                     IFlatDrawer.FlatInfo info = new IFlatDrawer.FlatInfo {
                         parent = EnvironmentHolder,
                         random = dg.ConsistentRNG,
                         tileSpec = tileSpec,
                         tileSize = TileSize,
-                        hasCeiling = tileSpec.HasCeiling,
-                        ceilingHeight = tileSpec.CeilingOffset - tileSpec.Terrain.WallHeight,
+                        hasCeiling = ruleConfig.DrawCeiling,
+                        ceilingHeight = ruleConfig.CeilingHeight - ruleConfig.WallHeight,
                     };
                     GameObject go = tileSpec.Terrain.WallCapDrawer.DrawFlat(info);
                     go.transform.SetParent(EnvironmentHolder, false);
-                    go.transform.localPosition = OriginForTile(tileSpec, tileSpec.Terrain.WallHeight);
-                    go.name = $"Wall Cap: ({x}, {y})";
+                    go.transform.localPosition = OriginForTile(tileSpec, ruleConfig.WallHeight);
+                    go.name = $"Wall Cap: {tileSpec.Coords}";
                 }
 
                 if (tileSpec.DrawAsFloor) {
-                    if (tileSpec.GroundOffset == 0 || walkable) {
-                        AddFloor(tileSpec, tileSpec.Tile, floorReplacingEntity != null, dg, 0);
-                    }
+                    bool replacesFloor = EntityReplaces(tileSpec, t => t.ReplacesFloor);
 
-                    if (tileSpec.GroundOffset != 0) {
-                        AddFloor(tileSpec, Tile.Wall, floorReplacingEntity != null, dg, -tileSpec.GroundOffset);
+                    // Draw floor at Zero (if walkable or default)
+                    if (ruleConfig.GroundOffset == 0 || tileSpec.Walkable) {
+                        AddFloor(tileSpec, tileSpec.Tile, replacesFloor, dg, 0);
+                    }
+                    // Draw sunken floor (if offset)
+                    if (ruleConfig.GroundOffset != 0) {
+                        AddFloor(tileSpec, Tile.Wall, replacesFloor, dg, -ruleConfig.GroundOffset);
                     }
                 }
 
                 foreach (Entity entity in tileSpec.Entities) {
-                    float entityPosition = walkable ? 0 : -tileSpec.GroundOffset;
-                    AddEntity(dg, entity, tileSpec.Coords, entity.Type.RaiseToCeiling ? tileSpec.CeilingOffset - 1 : entityPosition, dg.ConsistentRNG);
+                    float entityZ = walkable ? 0 : -ruleConfig.GroundOffset;
+                    if (entity.Type.RaiseToCeiling) entityZ = ruleConfig.CeilingHeight - 1;
+
+                    AddEntity(dg, entity, tileSpec.Coords, entityZ, dg.ConsistentRNG);
+                }
+
+                if (dg.Traits != null) {
+                    foreach (var trait in dg.Traits) {
+                        trait.DecorateTile(this, tileSpec, origin, EnvironmentHolder);
+                    }
                 }
             }
 
@@ -109,16 +142,13 @@ namespace DungeonestCrab.Dungeon.Printer {
                 MeshMerge.MergeAll(EnvironmentHolder.gameObject);
                 MeshMerge.MergeAll(StaticEntityHolder.gameObject);
             }
+
             OnCreate(dg);
 
             if (dg != null) {
                 RenderSettings.fogDensity = dg.FogDensity;
                 RenderSettings.fogColor = dg.FogColor;
                 if (Camera.main != null) Camera.main.backgroundColor = dg.FogColor;
-            } else {
-                RenderSettings.fogDensity = 0.01F;
-                Color fogColor = Color.white;
-                RenderSettings.fogColor = fogColor;
             }
             SetFarPlaneFromFog();
 
@@ -152,29 +182,26 @@ namespace DungeonestCrab.Dungeon.Printer {
         /// <summary>
         /// Draws a wall for the tile in the direction given by the offsets.
         /// </summary>
-        /// <param name="dg">Dungeon generator</param>
-        /// <param name="tile">Tile representing the "wall" tile</param>
-        /// <param name="xOffset">X offset to check against</param>
-        /// <param name="yOffset">Y offset to check against</param>
-        /// <param name="drawStandardWalls">Whether or not the tile being drawn, in and of itself, should have walls drawn around it.
-        /// Cases where this is true: a wall tile. Cases where it's not: a floor tile or a "draw as floor" wall tile.
-        /// This parameter being false does not affect the presence of lower walls (i.e. walls drawn from being next to a lower
-        /// area) or upper walls (walls drawn from being next to an area with higher walls)</param>
-        private void DrawWall(TheDungeon dg, TileSpec tile, int xOffset, int yOffset) {
+        private void DrawWall(TheDungeon dg, TileSpec tile, int xOffset, int yOffset, TileRuleConfig myRules) {
             TileSpec adjTile = dg.GetTileSpecSafe(tile.Coords + new Vector2Int(xOffset, yOffset));
             // Outside of map bounds or not properly configured.
             if (!IsDrawableTile(adjTile)) return;
-            DrawWall(dg, tile, adjTile);
-        }
 
-        private bool DrawsStandardWalls(TileSpec tile, TileSpec adjTile) {
-            return tile != null && adjTile != null && tile.DrawAdjacentWalls && adjTile.DrawWalls;
-        }
+            // We must apply traits to the neighbor to see if *their* geometry changed.
+            var adjRules = new TileRuleConfig(adjTile);
+            if (dg.Traits != null) {
+                foreach (var t in dg.Traits) t.ModifyTileRules(adjTile, ref adjRules);
+            }
 
-        private Vector2Int LeftWallOffset(TileSpec tile, TileSpec adjTile) {
-            Vector2 offset = adjTile.Coords - tile.Coords;
-            var rotated = Quaternion.Euler(0, 0, -90) * offset;
-            return Vector2Int.RoundToInt(rotated);
+            var wallConfig = new WallStyleConfig(adjTile);
+
+            if (dg.Traits != null) {
+                foreach (var t in dg.Traits) {
+                    t.ResolveWallStyle(tile, adjTile, ref wallConfig);
+                }
+            }
+
+            DrawWallCore(dg, tile, adjTile, xOffset, yOffset, myRules, adjRules, wallConfig);
         }
 
         private Vector2Int RotatedV2I(Vector2Int vector, float rotation) {
@@ -211,28 +238,11 @@ namespace DungeonestCrab.Dungeon.Printer {
             );
         }
 
-        /// <summary>
-        /// Draws a wall on tile in the direction of adjTile.
-        /// </summary>
-        private void DrawWall(TheDungeon dg, TileSpec tile, TileSpec adjTile) {
-            bool drawStandardWalls = adjTile.DrawWalls;
-
-            int xOffset = tile.Coords.x - adjTile.Coords.x;
-            int yOffset = tile.Coords.y - adjTile.Coords.y;
-            int rot = xOffset == 0 ? (yOffset > 0 ? 180 : 0) : (xOffset > 0 ? 270 : 90);
-
-            float ceilingOffset = adjTile.Terrain.CeilingOffset * _tileHeightMult;
-            float wallHeight = adjTile.Terrain.WallHeight * _tileHeightMult;
-            float adjWallHeight = tile.Terrain.WallHeight * _tileHeightMult;
-            float groundOffset = adjTile.Terrain.GroundOffset;
-            float adjGroundOffset = tile.Terrain.GroundOffset;
-
-            bool hasCeiling = dg.Trait != Trait.Ceilingless && dg.Trait != Trait.CeilinglessPit && adjTile.HasCeiling;
-            adjWallHeight = dg.Trait == Trait.CeilinglessPit ? -1 : adjWallHeight;
-
-
-            TileSpec tileDrawStyle = dg.Trait == Trait.InvasiveWalls ? tile : adjTile;
-
+        private void DrawWallCore(
+            TheDungeon dg, TileSpec tile, TileSpec adjTile, int xOffset, int yOffset, 
+                TileRuleConfig myRules, TileRuleConfig adjRules, WallStyleConfig wallStyle) {
+            // Determine Rotation based on direction
+            int rot = xOffset == 0 ? (yOffset > 0 ? 0 : 180) : (xOffset > 0 ? 90 : 270);
             Vector3 loc = OriginForTile(tile);
 
             IWallDrawer.WallInfo info = new IWallDrawer.WallInfo {
@@ -243,46 +253,46 @@ namespace DungeonestCrab.Dungeon.Printer {
                 tileSize = TileSize,
             };
 
+            // If I am a floor, and my neighbor is "deeper" than me (or I am floating), 
+            // I need to draw a wall downwards.
             if (tile.DrawAsFloor) {
-                // Draw wall segments below the floor.
-                info.tileSpec = tile;
-                info.minY = -adjGroundOffset;
-                info.maxY = -groundOffset;
-                DrawWallSingle(info);
+                if (adjRules.GroundOffset > myRules.GroundOffset) {
+                    info.tileSpec = tile;
+                    info.minY = -adjRules.GroundOffset;
+                    info.maxY = -myRules.GroundOffset;
+                    DrawWallSingle(info);
+                }
             }
 
             // The wall is only drawn if this tile is not itself a wall. 
             // Draw the wall segments up to the wall height.
             if (DrawsStandardWalls(tile, adjTile)) {
-                info.tileSpec = tileDrawStyle;
+                info.tileSpec = wallStyle.StyleSource; // Use Resolved Style
                 info.minY = 0;
-                info.maxY = wallHeight;
+                info.maxY = adjRules.WallHeight * _tileHeightMult;
                 info.wallDraws = WallTileAdjacencies(dg, tile, adjTile);
-                DrawWallSingle(info);
-            }
-
-            // Draw any wall segments to reach the height of an adjacent wall (in the style of the adjacent wall).
-            if (drawStandardWalls) {
-                float start = tile.DrawAsFloor ? wallHeight : 0;
-                info.tileSpec = tileDrawStyle;
-                info.minY = Math.Max(start, adjWallHeight);
-                info.maxY = Math.Min(ceilingOffset, wallHeight);
                 DrawWallSingle(info);
             }
 
             // Add higher walls if they have a tile from the bottom to come from (normal wall) or from the top (ceiling).
             if (tile.DrawAsFloor) {
-                if (drawStandardWalls || hasCeiling) {
-                    info.tileSpec = tileDrawStyle;
-                    info.minY = ceilingOffset;
-                    info.maxY = adjWallHeight;
-                    DrawWallSingle(info);
+                if (adjTile.DrawWalls) {
+                    float startHeight = adjRules.WallHeight * _tileHeightMult;
+                    float endHeight = adjRules.CeilingHeight * _tileHeightMult;
+
+                    if (endHeight > startHeight) {
+                        info.tileSpec = wallStyle.StyleSource;
+                        info.minY = startHeight;
+                        info.maxY = endHeight;
+                        DrawWallSingle(info);
+                    }
                 }
             }
         }
 
         private void DrawWallSingle(IWallDrawer.WallInfo info) {
             if (info.minY >= info.maxY) return;
+
             if (info.tileSpec.Terrain.WallDrawer != null) {
                 info.tileSpec.Terrain.WallDrawer.DrawWall(info);
             }
@@ -303,32 +313,29 @@ namespace DungeonestCrab.Dungeon.Printer {
         }
 
         private void MakeHolders(Transform parent) {
-            GameObject envGO = new GameObject("Environment");
-            EnvironmentHolder = envGO.transform;
-            EnvironmentHolder.SetParent(parent);
-            GameObject stentGO = new GameObject("Entities [Static]");
-            StaticEntityHolder = stentGO.transform;
-            StaticEntityHolder.SetParent(parent);
-            GameObject entGO = new GameObject("Entities");
-            EntityHolder = entGO.transform;
-            EntityHolder.SetParent(parent);
-            GameObject colGO = new GameObject("Collisions");
-            CollisionHolder = colGO.transform;
-            CollisionHolder.SetParent(parent);
+            EnvironmentHolder = CreateChild(parent, "Environment");
+            StaticEntityHolder = CreateChild(parent, "Entities [Static]");
+            EntityHolder = CreateChild(parent, "Entities");
+            CollisionHolder = CreateChild(parent, "Collisions");
         }
 
-        private static string TEST_HOLDER_NAME = "TestHolder";
+        private static readonly string TEST_HOLDER_NAME = "TestHolder";
 
+        protected virtual void OnCreate(TheDungeon generator) { }
 
-        protected virtual void OnCreate(TheDungeon generator) {
-
+        private Transform CreateChild(Transform parent, string name) {
+            Transform t = new GameObject(name).transform;
+            t.SetParent(parent);
+            t.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+            return t;
         }
 
         private void AddEntity(TheDungeon dungeon, Entity entity, Vector2Int coords, float z, IRandom rand) {
             GameObject instantiatedObject = entity.Type.Prefab != null ?
-                Instantiate(entity.Type.Prefab)
-                : new GameObject();
-            instantiatedObject.transform.SetParent(entity.Type.CanBeMerged ? StaticEntityHolder : EntityHolder);
+                Instantiate(entity.Type.Prefab) : new GameObject("EntityRoot");
+
+            Transform parent = entity.Type.CanBeMerged ? StaticEntityHolder : EntityHolder;
+            instantiatedObject.transform.SetParent(parent);
             instantiatedObject.transform.localPosition = OriginForCoords(coords) + new Vector3(0, z * _tileHeightMult, 0);
             instantiatedObject.transform.localEulerAngles = new Vector3(0, entity.YAngle, 0);
 
@@ -336,24 +343,29 @@ namespace DungeonestCrab.Dungeon.Printer {
                 init.DoInit(instantiatedObject, entity, rand);
             }
 
-            instantiatedObject.transform.SetParent(entity.Type.CanBeMerged ? StaticEntityHolder : EntityHolder);
-            instantiatedObject.name = $"Entity: {entity.Type.ID} @ ({coords.x}, {coords.y})";
+            instantiatedObject.name = $"Entity: {entity.Type.ID} @ {coords}";
             entity.Code?.Invoke(dungeon, instantiatedObject, entity, rand);
         }
 
-        private void AddCeiling(TileSpec tileSpec, bool entityReplacesCeiling, TheDungeon dg, float ceilZ = 1) {
+        private void AddCeiling(TileSpec tileSpec, float heightUnits) {
             if (tileSpec.Terrain == null) return;
-            bool ceilingless = dg.Trait == Trait.CeilinglessPit || dg.Trait == Trait.Ceilingless || !tileSpec.HasCeiling;
-            if (entityReplacesCeiling || ceilingless) return;
 
-            GameObject go = tileSpec.Terrain.CeilingDrawer.DrawFlat(new IFlatDrawer.FlatInfo { parent = EnvironmentHolder, random = dg.ConsistentRNG, tileSpec = tileSpec, tileSize = TileSize, hasCeiling = true, ceilingHeight = tileSpec.CeilingOffset + 1 });
+            GameObject go = tileSpec.Terrain.CeilingDrawer.DrawFlat(new IFlatDrawer.FlatInfo {
+                parent = EnvironmentHolder,
+                random = _dungeon.ConsistentRNG,
+                tileSpec = tileSpec,
+                tileSize = TileSize,
+                hasCeiling = true,
+                ceilingHeight = heightUnits
+            });
+
             go.transform.SetParent(EnvironmentHolder, false);
-            go.transform.localPosition = OriginForTile(tileSpec, ceilZ);
+            go.transform.localPosition = OriginForTile(tileSpec, heightUnits);
             go.transform.localScale = new Vector3(1, -1, 1);
-            go.name = $"Ceiling: ({tileSpec.Coords.x}, {tileSpec.Coords.y}) [{tileSpec.Terrain}]";
+            go.name = $"Ceiling: {tileSpec.Coords}";
         }
 
-        private void AddFloor(TileSpec tileSpec, Tile type, bool entityReplacesFloor, TheDungeon dg, float floorZ = 0) {
+        private void AddFloor(TileSpec tileSpec, Tile type, bool entityReplacesFloor, TheDungeon dg, float floorZ) {
             if (entityReplacesFloor) return;
 
             if (tileSpec.Terrain == null) {
@@ -367,21 +379,17 @@ namespace DungeonestCrab.Dungeon.Printer {
                 random = dg.ConsistentRNG,
                 tileSpec = tileSpec,
                 tileSize = TileSize,
-                hasCeiling = tileSpec.HasCeiling && dg.Trait != Trait.Ceilingless && dg.Trait != Trait.CeilinglessPit,
+                hasCeiling = tileSpec.HasCeiling, // Use cached?
                 ceilingHeight = tileSpec.CeilingOffset + 1,
             };
-            if (tileSpec.DrawAsFloor) {
-                IFlatDrawer drawer = type == Tile.Floor ? terrain.FloorDrawer : terrain.WallFloorDrawer;
-                go = drawer.DrawFlat(flatInfo);
-                go.transform.SetParent(EnvironmentHolder, false);
-                go.name = $"Floor: ({tileSpec.Coords.x}, {tileSpec.Coords.y}) [{terrain}]";
-            } else {
-                // Unset tile.
-                return;
-            }
 
+            IFlatDrawer drawer = type == Tile.Floor ? terrain.FloorDrawer : terrain.WallFloorDrawer;
+            if (drawer == null) return;
+
+            go = drawer.DrawFlat(flatInfo);
+            go.transform.SetParent(EnvironmentHolder, false);
+            go.name = $"Floor: {tileSpec.Coords} [{terrain}]";
             go.transform.localPosition = OriginForTile(tileSpec, floorZ);
-            return;
         }
 
         private Vector3 OriginForTile(TileSpec tile) {
@@ -397,7 +405,7 @@ namespace DungeonestCrab.Dungeon.Printer {
         }
 
         public Vector3 PointForCoords(Vector2Int coords) {
-            return transform.TransformPoint(new Vector3(coords.x, 0, coords.y));
+            return transform.TransformPoint(OriginForCoords(coords));
         }
 
         public Vector2Int PointForLocalPoint(Vector3 localPos) {
@@ -417,7 +425,18 @@ namespace DungeonestCrab.Dungeon.Printer {
 
         public AudioEvent FootstepForLocalPoint(Vector3 localPos) {
             TerrainSO terrain = TerrainForLocalPoint(localPos);
-            return terrain.GetFootstepSound();
+            if (terrain != null) {
+                return terrain.GetFootstepSound();
+            }
+            return null;
+        }
+
+        private bool DrawsStandardWalls(TileSpec tile, TileSpec adjTile) {
+            return tile != null && adjTile != null && tile.DrawAdjacentWalls && adjTile.DrawWalls;
+        }
+
+        private bool EntityReplaces(TileSpec tile, System.Func<EntitySpec, bool> pred) {
+            return tile.Entities.Any(e => pred(e.Type));
         }
     }
 }

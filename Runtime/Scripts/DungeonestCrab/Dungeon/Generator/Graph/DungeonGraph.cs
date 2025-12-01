@@ -6,8 +6,8 @@ using UnityEngine;
 using XNode;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateAssetMenu(fileName = "New Generator Graph", menuName = "DungeonestCrab/Generator Graph")]
-    public class GeneratorGraph : NodeGraph {
+    [CreateAssetMenu(fileName = "DungeonGraph", menuName = "DungeonestCrab/Dungeon Graph")]
+    public class DungeonGraph : NodeGraph {
         [Header("Global Configuration")]
         public int Width = 40;
         public int Height = 40;

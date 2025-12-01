@@ -1,3 +1,4 @@
+using DungeonestCrab.Dungeon.Printer;
 using Pomerandomian;
 using System;
 using System.Collections;
@@ -27,6 +28,7 @@ namespace DungeonestCrab.Dungeon {
 		public readonly AppliedBounds Bounds;
 		public readonly Vector2Int Size;
 		public Trait Trait;
+		public readonly List<DungeonTraitSO> Traits = new();
 		public float FogDensity = 0.01f;
 		public Color FogColor = Color.white;
 
@@ -95,6 +97,10 @@ namespace DungeonestCrab.Dungeon {
             _cachedRegionMap = null;
         }
 
+        public void AddTrait(DungeonTraitSO trait) {
+			// Not a set because we care about order, probably.
+            if (trait != null && !Traits.Contains(trait)) Traits.Add(trait);
+        }
 
         private TileSpec[,] CreateTiles() {
 			TileSpec[,] tiles = new TileSpec[Size.y, Size.x];

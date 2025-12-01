@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace DungeonestCrab.Dungeon.Generator {
     public class TestGenerator : BaseGenerator {
-        public GeneratorGraph DungeonToGenerate;
+        public DungeonGraph DungeonToGenerate;
 
         [Header("Testing")]
         public bool RandomizeSeed = false;
