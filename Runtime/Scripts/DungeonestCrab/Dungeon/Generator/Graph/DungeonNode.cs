@@ -32,6 +32,9 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
                     switch (ViewMode) {
                         case PreviewMode.Geometry:
                             colors[i] = GetGeometryColor(tile);
+                            if (tile.Entities.Count > 0) {
+                                colors[i] = GetHashColor(tile.Entities[0].Type.ID);
+                            }
                             break;
                         case PreviewMode.Terrain:
                             colors[i] = GetHashColor(tile.Terrain);
@@ -42,15 +45,6 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
                         case PreviewMode.Regions:
                             colors[i] = GetRegionColor(regions[y, x]);
                             break;
-                    }
-                }
-            }
-
-            if (ViewMode == PreviewMode.Geometry) {
-                foreach (var ent in dungeon.Entities) {
-                    if (dungeon.Contains(ent.Tile)) {
-                        int i = ent.Tile.y * dungeon.Size.x + ent.Tile.x;
-                        if (i >= 0 && i < colors.Length) colors[i] = Color.red;
                     }
                 }
             }

@@ -97,6 +97,18 @@ namespace DungeonestCrab.Dungeon.Printer {
             EditorGUI.DrawTextureTransparent(texRect, mainTex, ScaleMode.ScaleToFit, 0, 0);
         }
 
+        public override bool HasPreviewGUI() => true;
+
+        public override void OnPreviewGUI(Rect r, GUIStyle background) {
+            var view = (TextureView)target;
+            if (view == null || view.Material == null) return;
+
+            var tex = _texture ?? CreateTexture(view);
+            if (tex == null) return;
+
+            EditorGUI.DrawPreviewTexture(r, tex, null, ScaleMode.ScaleToFit);
+        }
+
         private void DrawPreview(TextureView view) {
 
             if (view.Material == null) {
