@@ -37,39 +37,4 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
             PreviewTexture.Apply();
         }
     }
-
-    [CreateNodeMenu("Dungeon/Bounds/Full")]
-    public class BoundsFullNode : BoundsProviderNode {
-        public override Bounds GetBounds() => new FullBounds();
-    }
-
-    [CreateNodeMenu("Dungeon/Bounds/Inset (Fixed)")]
-    public class BoundsInsetNode : BoundsProviderNode {
-        public int Left = 1;
-        public int Right = 1;
-        public int Top = 1;
-        public int Bottom = 1;
-
-        public override Bounds GetBounds() => new InsetBounds(Left, Right, Top, Bottom);
-    }
-
-    [CreateNodeMenu("Dungeon/Bounds/Inset (Percent)")]
-    public class BoundsInsetPercentNode : BoundsProviderNode {
-        [Range(0, 1)] public float Left = 0.1f;
-        [Range(0, 1)] public float Right = 0.1f;
-        [Range(0, 1)] public float Top = 0.1f;
-        [Range(0, 1)] public float Bottom = 0.1f;
-
-        public override Bounds GetBounds() => new InsetPercentBounds(Left, Right, Top, Bottom);
-    }
-
-    [CreateNodeMenu("Dungeon/Bounds/Centered (Percent)")]
-    public class BoundsCenteredNode : BoundsProviderNode {
-        [Range(0, 1)] public float CenterX = 0.5f;
-        [Range(0, 1)] public float CenterY = 0.5f;
-        [Range(0, 1)] public float Width = 0.5f;
-        [Range(0, 1)] public float Height = 0.5f;
-
-        public override Bounds GetBounds() => new CenteredBounds(CenterX, CenterY, Width, Height);
-    }
 }
