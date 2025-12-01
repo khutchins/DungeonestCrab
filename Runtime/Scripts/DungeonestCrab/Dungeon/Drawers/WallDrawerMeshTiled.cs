@@ -1,10 +1,12 @@
 using DungeonestCrab.Dungeon.Printer;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace DungeonestCrab.Dungeon.Printer {
     [CreateAssetMenu(menuName = "DungeonestCrab/Drawer/Wall - Mesh Tiled")]
     public class WallDrawerMeshTiled : IWallDrawer {
-        [SerializeField] TextureView Texture;
+        [InlineEditor][SerializeField] TextureView Texture;
+        [Tooltip("If true, will be aligned relative to world Y, not 0.")]
         [SerializeField] bool OffsetTextureByPosition = false;
 
         public override void DrawWall(WallInfo info) {
