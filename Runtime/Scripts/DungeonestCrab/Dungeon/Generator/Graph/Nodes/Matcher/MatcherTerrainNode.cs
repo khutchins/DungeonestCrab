@@ -4,7 +4,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         public TerrainSO Terrain;
 
         public override IMatcher GetMatcher() {
-            return new TileMatcher(Tile.Unset, true, Terrain, false, 0, true);
+            return new TileMatcher(Tile.Unset, true, Terrain, false, null, true);
         }
     }
 }

@@ -11,17 +11,21 @@ namespace DungeonestCrab.Dungeon {
 		Floor = 1,
 	}
 
-	public class TileSpec : IEquatable<TileSpec> {
+	public class TileSpec {
 		public const string DRAW_STYLE_FLOOR = "drawStyle:floor";
 		public const string DRAW_STYLE_WALL = "drawStyle:wall";
 		public const string DRAW_STYLE_ALL = "drawStyle:all";
 		public const string DRAW_STYLE_NONE = "drawStyle:none";
-		public const string STYLE_PREFIX = "style";
+
+        public const string ORIENTATION_NORTH = "orientation:n";
+        public const string ORIENTATION_SOUTH = "orientation:s";
+        public const string ORIENTATION_EAST = "orientation:e";
+        public const string ORIENTATION_WEST = "orientation:w";
+        public const string STYLE_PREFIX = "style";
 
 		public readonly Vector2Int Coords;
 		public Tile Tile;
 		public TerrainSO Terrain;
-		public int Style;
 		public bool Immutable;
 		private HashSet<string> _tags = new HashSet<string>();
 		public List<Entity> Entities = new List<Entity>();
@@ -54,11 +58,18 @@ namespace DungeonestCrab.Dungeon {
 			NE = 1 << 8,
 		}
 
-		public TileSpec(Vector2Int coords, Tile tile, TerrainSO terrain, int style, bool immutable) {
+        public TileSpec(Vector2Int coords, Tile tile, TerrainSO terrain, string[] tags, bool immutable) {
+            Coords = coords;
+            Tile = tile;
+            Terrain = terrain;
+            Immutable = immutable;
+			AddTag(tags);
+        }
+
+        public TileSpec(Vector2Int coords, Tile tile, TerrainSO terrain, bool immutable) {
 			Coords = coords;
 			Tile = tile;
 			Terrain = terrain;
-			Style = style;
 			Immutable = immutable;
 		}
 
@@ -66,24 +77,41 @@ namespace DungeonestCrab.Dungeon {
 			Entities.Add(entity);
 		}
 
-		public void AddTag(string tag) {
-			if (_tags == null) _tags = new HashSet<string>();
-			_tags.Add(tag);
+		public void AddTag(params string[] tags) {
+			foreach (var tag in tags) {
+				_tags.Add(tag);
 
-			if (tag == DRAW_STYLE_ALL) {
-				_drawStyle = DrawStyle.Wall | DrawStyle.Floor;
-			} else if (tag == DRAW_STYLE_FLOOR) {
-				_drawStyle = DrawStyle.Floor;
-			} else if (tag == DRAW_STYLE_WALL) {
-				_drawStyle = DrawStyle.Wall;
-			} else if (tag == DRAW_STYLE_NONE) {
-				_drawStyle = DrawStyle.None;
+				if (tag == DRAW_STYLE_ALL) {
+					_drawStyle = DrawStyle.Wall | DrawStyle.Floor;
+				} else if (tag == DRAW_STYLE_FLOOR) {
+					_drawStyle = DrawStyle.Floor;
+				} else if (tag == DRAW_STYLE_WALL) {
+					_drawStyle = DrawStyle.Wall;
+				} else if (tag == DRAW_STYLE_NONE) {
+					_drawStyle = DrawStyle.None;
+				}
 			}
 		}
 
-		public bool HasTag(string tag) {
-			return _tags != null && _tags.Contains(tag);
-		}
+        public void AddTags(IReadOnlyList<string> tags) {
+            foreach (var tag in tags) {
+                if (!string.IsNullOrEmpty(tag)) _tags.Add(tag);
+            }
+        }
+
+        public void AddTags(IEnumerable<string> tags) {
+            foreach (var tag in tags) {
+                if (!string.IsNullOrEmpty(tag)) _tags.Add(tag);
+            }
+        }
+
+        public void RemoveTag(string tag) {
+            _tags.Remove(tag);
+        }
+
+        public bool HasTag(string tag) {
+            return _tags.Contains(tag);
+        }
 
 		public string GetTagType(string type) {
 			foreach (string tag in _tags) {
@@ -96,7 +124,16 @@ namespace DungeonestCrab.Dungeon {
 			return null;
 		}
 
-		public bool EntityBlocksMovement() {
+        public IEnumerable<string> GetTags() {
+            return _tags;
+        }
+
+        public bool HasAnyTag(params string[] tags) {
+            foreach (var t in tags) if (_tags.Contains(t)) return true;
+            return false;
+        }
+
+        public bool EntityBlocksMovement() {
 			foreach (Entity entity in Entities) {
 				if (entity.Type.BlocksMovement) return true;
 			}
@@ -132,7 +169,7 @@ namespace DungeonestCrab.Dungeon {
 		}
 
 		public float GroundOffset {
-			get => Mathf.Max(Terrain.GroundOffset, Style == (int)PaintStyle.SunkenFlooded ? 0.2F : 0);
+			get => Terrain.GroundOffset;
 		}
 
 		public float TileCarvingCost {
@@ -151,20 +188,20 @@ namespace DungeonestCrab.Dungeon {
 			if (Terrain == null) Terrain = terrain;
 		}
 
-		public override bool Equals(object obj) {
-			if (obj == null || !this.GetType().Equals(obj.GetType())) return false;
-			return Equals((TileSpec)obj);
-		}
+        public override bool Equals(object obj) {
+            if (obj == null || !this.GetType().Equals(obj.GetType())) return false;
+            return Equals((TileSpec)obj);
+        }
 
-		public bool Equals(TileSpec other) {
-			return other != null &&
-				   EqualityComparer<Vector2Int>.Default.Equals(Coords, other.Coords) &&
-				   Tile == other.Tile &&
-				   EqualityComparer<TerrainSO>.Default.Equals(Terrain, other.Terrain) &&
-				   Style == other.Style &&
-				   Immutable == other.Immutable &&
-				   EqualityComparer<List<Entity>>.Default.Equals(Entities, other.Entities);
-		}
+        public bool Equals(TileSpec other) {
+            return other != null &&
+                   EqualityComparer<Vector2Int>.Default.Equals(Coords, other.Coords) &&
+                   Tile == other.Tile &&
+                   EqualityComparer<TerrainSO>.Default.Equals(Terrain, other.Terrain) &&
+                   Immutable == other.Immutable &&
+                   (_tags.Count == other._tags.Count && _tags.SetEquals(other._tags)) &&
+                   EqualityComparer<List<Entity>>.Default.Equals(Entities, other.Entities);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool AreTerrainsTheSameInDirections(Adjacency directions) {
@@ -189,8 +226,10 @@ namespace DungeonestCrab.Dungeon {
 			_cachedTerrainAdjacencies = adjacencies;
 		}
 
-		public override int GetHashCode() {
-			return HashCode.Combine(Coords, Tile, Terrain, Style, Immutable, Entities);
-		}
-	}
+        public override int GetHashCode() {
+            int hash = HashCode.Combine(Coords, Tile, Terrain, Immutable, Entities);
+            foreach (var t in _tags) hash = HashCode.Combine(hash, t);
+            return hash;
+        }
+    }
 }

@@ -236,7 +236,7 @@ namespace DungeonestCrab.Dungeon.Generator {
                     if (_preserveWalls && existingSpec.Tile == Tile.Wall) continue;
 
                     existingSpec.Tile = newTile;
-                    existingSpec.Style = stamp.StyleAt(pt);
+                    existingSpec.AddTags(stamp.StylesAt(pt));
 
                     if (_terrainToApply != null) {
                         existingSpec.Terrain = _terrainToApply;
@@ -254,7 +254,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 
 			for (int iy = 0; iy < h; iy++) {
 				for (int ix = 0; ix < w; ix++) {
-					if (stamp.Tiles[iy, ix] != Tile.Unset) {
+					if (stamp.Tiles[iy, ix].Tile != Tile.Unset) {
 						tiles[ix, iy] = true;
 					}
 				}

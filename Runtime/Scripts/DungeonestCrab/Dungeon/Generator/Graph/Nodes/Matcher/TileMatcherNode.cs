@@ -13,7 +13,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
 
         [Header("Style")]
         public bool CheckStyle = false;
-        public int Style = 0;
+        public string Style = null;
 
         public override IMatcher GetMatcher() {
             return new TileMatcher(

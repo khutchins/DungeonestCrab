@@ -2,6 +2,7 @@ using UnityEngine;
 using XNode;
 using DungeonestCrab.Dungeon;
 using Pomerandomian;
+using System.Linq;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
 
@@ -36,7 +37,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
                             colors[i] = GetHashColor(tile.Terrain);
                             break;
                         case PreviewMode.Style:
-                            colors[i] = GetStyleColor(tile.Style);
+                            colors[i] = GetHashColor(tile.GetTags().FirstOrDefault());
                             break;
                         case PreviewMode.Regions:
                             colors[i] = GetRegionColor(regions[y, x]);
@@ -62,11 +63,6 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
             if (tile.Tile == Tile.Wall) return Color.black;
             if (tile.Tile == Tile.Floor) return Color.white;
             return new Color(0.25f, 0.25f, 0.25f); // Unset
-        }
-
-        private Color GetStyleColor(int styleId) {
-            if (styleId <= 0) return new Color(0.2f, 0.2f, 0.2f);
-            return GetHashColor(styleId);
         }
 
         private Color GetRegionColor(int regionId) {

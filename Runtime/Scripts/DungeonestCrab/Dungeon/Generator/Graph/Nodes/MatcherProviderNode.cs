@@ -24,8 +24,8 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
             IMatcher matcher = GetMatcher();
 
             // Create dummy tile for testing
-            TileSpec floorSpec = new TileSpec(Vector2Int.zero, Tile.Floor, null, 0, false);
-            TileSpec wallSpec = new TileSpec(Vector2Int.zero, Tile.Wall, null, 0, false);
+            TileSpec floorSpec = new TileSpec(Vector2Int.zero, Tile.Floor, null, false);
+            TileSpec wallSpec = new TileSpec(Vector2Int.zero, Tile.Wall, null, false);
 
             Color cMatch = Color.white;
             Color cNoMatch = Color.black;

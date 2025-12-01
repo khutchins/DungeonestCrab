@@ -4,7 +4,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         public Tile Tile = Tile.Floor;
 
         public override IMatcher GetMatcher() {
-            return new TileMatcher(Tile, false, null, true, 0, true);
+            return new TileMatcher(Tile, false, null, true, null, true);
         }
     }
 }

@@ -16,14 +16,14 @@ namespace DungeonestCrab.Dungeon.Generator {
 		readonly float _deadEndOddPerSquare;
 		float _maxTilesPerStripe;
 
-		/// <summary>
-		/// Constructor for the stripe source.
-		/// </summary>
-		/// <param name="tileToSet">Tile to generate</param>
-		/// <param name="stripeDensityPerSide">Percent of tiles per side that should be stripe sources</param>
-		/// <param name="curveOdds">Odds that the track will turn at any given square</param>
-		/// <param name="deadEndOddPerSquare">Odds that the track will terminate at any given square</param>
-		public SourceStripe(Tile tileToSet, float stripeDensityPerSide, float curveOdds, float deadEndOddPerSquare) : base(tileToSet) {
+        /// <summary>
+        /// Constructor for the stripe source.
+        /// </summary>
+        /// <param name="tileToSet">Tile to generate</param>
+        /// <param name="stripeDensityPerSide">Percent of tiles per side that should be stripe sources</param>
+        /// <param name="curveOdds">Odds that the track will turn at any given square</param>
+        /// <param name="deadEndOddPerSquare">Odds that the track will terminate at any given square</param>
+        public SourceStripe(Tile tileToSet, float stripeDensityPerSide, float curveOdds, float deadEndOddPerSquare) : base(tileToSet) {
 			_stripeDensityPerSide = stripeDensityPerSide;
 			_curveOdds = curveOdds;
 			_deadEndOddPerSquare = deadEndOddPerSquare;

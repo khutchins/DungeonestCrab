@@ -65,7 +65,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 					} else if (y == 1 || x == 1 || y == stamp.H - 2 || x == stamp.W - 2) {
 						stamp.MaybeSetAt(x, y, Tile.Floor);
 					} else {
-						stamp.MaybeSetAt(x, y, Tile.Wall, (int)PaintStyle.SunkenFlooded);
+						stamp.MaybeSetAt(x, y, Tile.Wall, "style:sunkenflooded");
 					}
 				}
 			}
@@ -96,9 +96,9 @@ namespace DungeonestCrab.Dungeon.Generator {
 						} else if (y % 2 == 0 && Mathf.Abs((stamp.W - 1) / 2F - x) >= 1) {
 							stamp.MaybeSetAt(x, y, Tile.Wall);
 						} else if (y % 2 == 1) {
-							stamp.MaybeSetAt(x, y, Tile.Floor, (int)PaintStyle.Bookcase);
+							stamp.MaybeSetAt(x, y, Tile.Floor, "style:bookcase");
 						} else {
-							stamp.MaybeSetAt(x, y, Tile.Floor, (int)PaintStyle.BookcaseEnd);
+							stamp.MaybeSetAt(x, y, Tile.Floor, "style:bookcase_end");
 						}
 					}
 				}
@@ -110,9 +110,9 @@ namespace DungeonestCrab.Dungeon.Generator {
 						} else if (x % 2 == 0 && Mathf.Abs((stamp.H-1) / 2F - y) >= 1) {
 							stamp.MaybeSetAt(x, y, Tile.Wall);
 						} else if (x % 2 == 1) {
-							stamp.MaybeSetAt(x, y, Tile.Floor, (int)PaintStyle.Bookcase);
+							stamp.MaybeSetAt(x, y, Tile.Floor, "style:bookcase");
 						} else {
-							stamp.MaybeSetAt(x, y, Tile.Floor, (int)PaintStyle.BookcaseEnd);
+							stamp.MaybeSetAt(x, y, Tile.Floor, "style:bookcase_end");
 						}
 					}
 				}

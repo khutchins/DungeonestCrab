@@ -66,7 +66,7 @@ namespace DungeonestCrab.Dungeon {
             for (int y = 0; y < Size.y; y++) {
                 for (int x = 0; x < Size.x; x++) {
                     var source = other._tiles[y, x];
-                    var clone = new TileSpec(source.Coords, source.Tile, source.Terrain, source.Style, source.Immutable);
+                    var clone = new TileSpec(source.Coords, source.Tile, source.Terrain, source.GetTags().ToArray(), source.Immutable);
 
                     foreach (var ent in source.Entities) {
                         Entity entClone = new Entity(ent.Tile, ent.EntityIndex, ent.Type, ent.Code, ent.EntityID, ent.YAngle);
@@ -93,7 +93,7 @@ namespace DungeonestCrab.Dungeon {
 			TileSpec[,] tiles = new TileSpec[Size.y, Size.x];
 			for (int y = 0; y < Size.y; y++) {
 				for (int x = 0; x < Size.x; x++) {
-					tiles[y, x] = new TileSpec(new Vector2Int(x, y), Tile.Wall, null, 0, x == 0 || x == Size.x - 1 || y == 0 || y == Size.y - 1);
+					tiles[y, x] = new TileSpec(new Vector2Int(x, y), Tile.Wall, null, x == 0 || x == Size.x - 1 || y == 0 || y == Size.y - 1);
 				}
 			}
 			return tiles;
@@ -379,7 +379,20 @@ namespace DungeonestCrab.Dungeon {
 			return str.ToString();
 		}
 
-		private string VisualizeRegions(int[,] regions) {
+        public static string Visualize(TileSpec[,] tiles) {
+            StringBuilder str = new StringBuilder();
+            int h = tiles.GetLength(0);
+            int w = tiles.GetLength(1);
+            for (int y = h - 1; y >= 0; y--) {
+                for (int x = 0; x < w; x++) {
+                    str.Append(TerrainSO.GenericCharForTile(tiles[y, x].Tile));
+                }
+                str.Append("\n");
+            }
+            return str.ToString();
+        }
+
+        private string VisualizeRegions(int[,] regions) {
 			StringBuilder str = new StringBuilder();
 			for (int y = Size.y - 1; y >= 0; y--) {
 				for (int x = 0; x < Size.x; x++) {

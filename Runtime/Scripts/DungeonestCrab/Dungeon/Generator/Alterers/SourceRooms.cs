@@ -62,7 +62,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 		private bool canPlaceRoom(Stamp stamp, int x, int y, int w, int h) {
 			for (int iy = y; iy < y + h; iy++) {
 				for (int ix = x; ix < x + w; ix++) {
-					if (stamp.Tiles[iy, ix] == Tile.Floor) return false;
+					if (stamp.Tiles[iy, ix].Tile == Tile.Floor) return false;
 					if (!stamp.CanSetAt(ix, iy)) return false;
 				}
 			}

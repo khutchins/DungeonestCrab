@@ -26,10 +26,10 @@ namespace DungeonestCrab.Dungeon.Generator {
         private readonly bool _anyTile;
         private readonly TerrainSO _terrain;
         private readonly bool _anyTerrain;
-        private readonly int? _style;
+        private readonly string _style;
         private readonly bool _anyStyle;
 
-        public TileMatcher(Tile tile, bool anyTile, TerrainSO terrain, bool anyTerrain, int style, bool anyStyle) {
+        public TileMatcher(Tile tile, bool anyTile, TerrainSO terrain, bool anyTerrain, string style, bool anyStyle) {
             _tile = tile;
             _anyTile = anyTile;
             _terrain = terrain;
@@ -41,31 +41,31 @@ namespace DungeonestCrab.Dungeon.Generator {
         public bool Matches(TileSpec tile) {
             return (_anyTile || tile.Tile == _tile)
                 && (_anyTerrain || tile.Terrain == _terrain)
-                && (_anyStyle || tile.Style == _style);
+                && (_anyStyle || tile.HasTag(_style));
         }
 
         public static TileMatcher MatchingAll() {
-            return new TileMatcher(Tile.Unset, true, null, true, 0, true);
+            return new TileMatcher(Tile.Unset, true, null, true, null, true);
         }
 
         public static TileMatcher Matching(Tile tile) {
-            return new TileMatcher(tile, false, null, true, 0, true);
+            return new TileMatcher(tile, false, null, true, null, true);
         }
 
         public static TileMatcher Matching(TerrainSO terrain) {
-            return new TileMatcher(Tile.Unset, true, terrain, false, 0, true);
+            return new TileMatcher(Tile.Unset, true, terrain, false, null, true);
         }
 
-        public static TileMatcher Matching(int style) {
+        public static TileMatcher Matching(string style) {
             return new TileMatcher(Tile.Unset, true, null, true, style, false);
         }
 
         public static TileMatcher Matching(Tile tile, TerrainSO terrain) {
-            return new TileMatcher(tile, false, terrain, false, 0, true);
+            return new TileMatcher(tile, false, terrain, false, null, true);
         }
 
         public static TileMatcher Matching(TerrainSO terrain, Tile tile) {
-            return new TileMatcher(tile, false, terrain, false, 0, true);
+            return new TileMatcher(tile, false, terrain, false, null, true);
         }
     }
 
