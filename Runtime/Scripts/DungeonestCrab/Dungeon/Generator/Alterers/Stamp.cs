@@ -1,7 +1,4 @@
-﻿using DungeonestCrab;
-using DungeonestCrab.Dungeon;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace DungeonestCrab.Dungeon.Generator {
@@ -63,15 +60,15 @@ namespace DungeonestCrab.Dungeon.Generator {
 			}
 		}
 
-		public bool MaybeSetAt(Vector2Int pt, Tile tile, int style = (int)PaintStyle.Default) {
+		public bool MaybeSetAt(Vector2Int pt, Tile tile, int style = 0) {
 			return MaybeSetAt(pt.x, pt.y, tile, style);
 		}
 
-		public bool MaybeSetAt(DirectedPoint pt, Tile tile, int style = (int)PaintStyle.Default) {
+		public bool MaybeSetAt(DirectedPoint pt, Tile tile, int style = 0) {
 			return MaybeSetAt(pt.x, pt.y, tile, style);
 		}
 
-		public bool MaybeSetAt(int x, int y, Tile tile, int style = (int)PaintStyle.Default) {
+		public bool MaybeSetAt(int x, int y, Tile tile, int style = 0) {
 			if (!CanSetAt(x, y)) return false;
 
 			Tiles[y, x] = tile;
