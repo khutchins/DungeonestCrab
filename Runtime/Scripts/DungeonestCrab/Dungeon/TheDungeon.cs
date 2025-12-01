@@ -176,7 +176,15 @@ namespace DungeonestCrab.Dungeon {
 			return Entities.FirstOrDefault(x => x.Type == type && (id == null || id == "" || x.EntityID == id));
 		}
 
-		public float TileCarvingCost(TileSpec spec) {
+        public Entity FindEntityWithTag(string tag) {
+            return Entities.FirstOrDefault(e => e.Type.HasTag(tag));
+        }
+
+        public List<Entity> FindEntitiesWithTag(string tag) {
+            return Entities.Where(e => e.Type.HasTag(tag)).ToList();
+        }
+
+        public float TileCarvingCost(TileSpec spec) {
 			return spec.TileCarvingCost;
 		}
 

@@ -1,6 +1,7 @@
 ﻿using Sirenix.OdinInspector;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace DungeonestCrab.Dungeon {
@@ -14,6 +15,7 @@ namespace DungeonestCrab.Dungeon {
         public string ID;
         [PreviewField(50, ObjectFieldAlignment.Right)]
         public GameObject Prefab;
+        public string[] Tags;
         public bool BlocksMovement;
         [Tooltip("Whether or not the mesh can be merged. Use only if the object does not rotate or move at runtime [MOVEMENT INCLUDES BILLBOARDS].")]
         public bool CanBeMerged;
@@ -30,6 +32,10 @@ namespace DungeonestCrab.Dungeon {
         public Sprite MapImage;
         [ShowIf("ShowOnMap")]
         public bool RotateMapImage;
+
+        public bool HasTag(string tag) {
+            return Tags.Contains(tag);
+        }
 
         public class Builder {
             private string _id;
