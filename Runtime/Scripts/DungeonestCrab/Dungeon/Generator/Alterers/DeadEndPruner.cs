@@ -17,7 +17,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 
 		public static IEnumerable<TileSpec> GetDeadEnds(TheDungeon generator) {
 			foreach (TileSpec tile in generator.AllTiles()) {
-				if (tile.Tile != Tile.Floor || tile.Immutable || tile.Style != (int)PaintStyle.Default) continue;
+				if (tile.Tile != Tile.Floor || tile.Immutable || tile.Style != 0) continue;
 				
 				if (generator.CardinalAdjacentWalkableList(tile.Coords).Count(x => x) < 2) {
 					yield return tile;

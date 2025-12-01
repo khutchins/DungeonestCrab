@@ -106,7 +106,7 @@ namespace DungeonestCrab.Dungeon {
 			TileSpec[,] tiles = new TileSpec[Size.y, Size.x];
 			for (int y = 0; y < Size.y; y++) {
 				for (int x = 0; x < Size.x; x++) {
-					tiles[y, x] = new TileSpec(new Vector2Int(x, y), Tile.Wall, null, (int)PaintStyle.Default, x == 0 || x == Size.x - 1 || y == 0 || y == Size.y - 1);
+					tiles[y, x] = new TileSpec(new Vector2Int(x, y), Tile.Wall, null, 0, x == 0 || x == Size.x - 1 || y == 0 || y == Size.y - 1);
 				}
 			}
 			return tiles;

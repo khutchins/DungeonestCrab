@@ -25,7 +25,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 				for (int ix = 0; ix < bounds.w; ix++) {
 					Tiles[iy, ix] = Tile.Unset;
 					ExistingTerrain[iy, ix] = passTerrains ? source.GetTileSpec(ix + bounds.x, iy + bounds.y).Terrain : null;
-					Styles[iy, ix] = (int)PaintStyle.Default;
+					Styles[iy, ix] = 0;
 				}
 			}
 		}
@@ -45,7 +45,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 				for (int ix = 0; ix < w; ix++) {
 					Tiles[iy, ix] = Tile.Unset;
 					ExistingTerrain[iy, ix] = null;
-					Styles[iy, ix] = (int)PaintStyle.Default;
+					Styles[iy, ix] = 0;
 				}
 			}
 		}
@@ -95,8 +95,8 @@ namespace DungeonestCrab.Dungeon.Generator {
 		public void MaybeSetDirectional(int x, int y, Tile tile, Dir dir) {
 			int style = StyleAt(x, y);
 			int newPaintDir = (dir == Dir.Up || dir == Dir.Down) ? (int)PaintStyle.FloorNS : (int)PaintStyle.FloorEW;
-			int computedStyle = (int)PaintStyle.Default;
-			if (style == (int)PaintStyle.Default) {
+			int computedStyle = 0;
+			if (style == 0) {
 				computedStyle = newPaintDir;
 			} else if (style == (int)PaintStyle.FloorEW || style == (int)PaintStyle.FloorNS) {
 				if (newPaintDir != style) {
