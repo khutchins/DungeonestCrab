@@ -18,10 +18,18 @@ namespace DungeonestCrab.Dungeon.Printer {
         }
 
         public Vector2Int PointForWorldPoint(Vector3 worldPoint) {
+            if (_printer == null) {
+                // Probably accessing after scene change.
+                return Vector2Int.zero;
+            }
             return _printer.PointForWorldPoint(worldPoint);
         }
 
         public Vector3 WorldPointForPoint(Vector2Int coords) {
+            if (_printer == null) {
+                // Probably accessing after scene change.
+                return Vector3.zero;
+            }
             return _printer.PointForCoords(coords);
         }
     }
