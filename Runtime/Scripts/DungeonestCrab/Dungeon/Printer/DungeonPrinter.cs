@@ -100,6 +100,8 @@ namespace DungeonestCrab.Dungeon.Printer {
                     }
                 }
 
+                bool walkable = tileSpec.Walkable;
+
                 // Draw Wall Cap (Top of a short wall)
                 if (tileSpec.Tile == Tile.Wall && ruleConfig.WallHeight < ruleConfig.CeilingHeight && tileSpec.Terrain.WallCapDrawer != null) {
                     IFlatDrawer.FlatInfo info = new IFlatDrawer.FlatInfo {
