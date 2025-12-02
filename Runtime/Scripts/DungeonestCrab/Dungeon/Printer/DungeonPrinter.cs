@@ -73,13 +73,17 @@ namespace DungeonestCrab.Dungeon.Printer {
                     }
                 }
 
-                bool walkable = tileSpec.Walkable;
+                // This notably does not check entities when placing the collider.
+                // The expectation (as of now, when I'm rewriting Deeper and Deeper)
+                // is that entities that block a tile will have their own collider,
+                // because otherwise this collider would eat the interactions.
+                bool basicWalkable = tileSpec.Tile == Tile.Floor;
                 Vector3 origin = OriginForCoords(tileSpec.Coords);
-                if (tileSpec.Tile == Tile.Floor && ImpassableObject != null) {
+                if (!basicWalkable && ImpassableObject != null) {
                     var blocker = Instantiate(ImpassableObject, origin, Quaternion.identity, CollisionHolder);
                     blocker.name = $"Wall Collider: {tileSpec.Coords}";
                 }
-                if (walkable && WalkableObject != null) {
+                if (basicWalkable && WalkableObject != null) {
                     var blocker = Instantiate(WalkableObject, origin, Quaternion.identity, CollisionHolder);
                     blocker.name = $"Floor Collider: {tileSpec.Coords}";
                 }
