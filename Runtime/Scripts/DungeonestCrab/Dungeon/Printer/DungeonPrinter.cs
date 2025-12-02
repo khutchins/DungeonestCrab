@@ -62,6 +62,8 @@ namespace DungeonestCrab.Dungeon.Printer {
         private float _tileHeightMult;
 
         protected void Awake() {
+            // Clear any existing generator value.
+            if (GeneratorRef != null) GeneratorRef.Value = null;
             Shared = this;
             _tileFloorSize = TileSize.ToVectorXZ();
             _tileHeightMult = TileSize.y;
