@@ -289,15 +289,15 @@ namespace DungeonestCrab.Dungeon.Printer {
                 tileSize = TileSize,
             };
 
-            // If I am a floor, and my neighbor is "deeper" than me (or I am floating), 
-            // I need to draw a wall downwards.
-            if (tile.DrawAsFloor) {
-                if (adjRules.GroundOffset > myRules.GroundOffset) {
-                    info.tileSpec = tile;
-                    info.minY = -adjRules.GroundOffset;
-                    info.maxY = -myRules.GroundOffset;
-                    DrawWallSingle(info);
-                }
+            // If I draw as floor and my floor-drawing neighbor is goes lower than me,
+            // I need to draw a wall downward.
+            if (myRules.GroundOffset > adjRules.GroundOffset) {
+                info.tileSpec = wallStyle.StyleSource;
+                info.minY = -myRules.GroundOffset;
+                info.maxY = -adjRules.GroundOffset;
+                info.wallDraws = WallTileAdjacencies(dg, tile, adjTile);
+
+                DrawWallSingle(info);
             }
 
             // The wall is only drawn if this tile is not itself a wall. 
