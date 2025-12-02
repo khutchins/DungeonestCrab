@@ -9,7 +9,9 @@ using UnityEngine;
 
 namespace DungeonestCrab.Dungeon {
 
-	public class TheDungeon {
+    public abstract class TheDungeonMixin { }
+
+    public class TheDungeon {
 		private TileSpec[,] _tiles;
 		public HashSet<TileSpec> TilesWithEntities;
 		public List<Entity> Entities;
@@ -34,7 +36,16 @@ namespace DungeonestCrab.Dungeon {
 		private int[,] _cachedRegionMap;
 		private int _cachedMaxRegion = -1;
 
-		public TheDungeon(int w, int h, IRandom consistentRNG = null, IRandom inconsistentRNG = null) {
+		public List<TheDungeonMixin> Mixins = new List<TheDungeonMixin>();
+
+        public T GetMixin<T>() where T : TheDungeonMixin {
+            for (int i = 0; i < Mixins.Count; i++) {
+                if (Mixins[i] is T t) return t;
+            }
+            return null;
+        }
+
+        public TheDungeon(int w, int h, IRandom consistentRNG = null, IRandom inconsistentRNG = null) {
 			Size = new Vector2Int(w, h);
 			Bounds = new AppliedBounds(0, 0, w, h);
 			TilesWithEntities = new HashSet<TileSpec>();

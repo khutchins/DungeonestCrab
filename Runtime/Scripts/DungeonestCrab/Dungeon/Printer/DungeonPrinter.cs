@@ -9,6 +9,19 @@ using KH.Extensions;
 using DungeonestCrab.Dungeon.Audio;
 
 namespace DungeonestCrab.Dungeon.Printer {
+
+    public class DungeonInfoMixin : TheDungeonMixin {
+        private readonly DungeonPrinter _printer;
+
+        public DungeonInfoMixin(DungeonPrinter printer) {
+            _printer = printer;
+        }
+
+        public Vector2Int PointForWorldPoint(Vector3 worldPoint) {
+            return _printer.PointForWorldPoint(worldPoint);
+        }
+    }
+
     [DefaultExecutionOrder(-1)]
     public class DungeonPrinter : MonoBehaviour {
 
@@ -45,6 +58,8 @@ namespace DungeonestCrab.Dungeon.Printer {
 
         public void Print(TheDungeon dg) {
             _dungeon = dg;
+
+            dg.Mixins.Add(new DungeonInfoMixin(this));
 
             // Decorator pre-pass.
             if (dg.Traits != null) {
