@@ -102,7 +102,7 @@ namespace DungeonestCrab.Dungeon.Printer {
                     var blocker = Instantiate(ImpassableObject, origin, Quaternion.identity, CollisionHolder);
                     blocker.name = $"Wall Collider: {tileSpec.Coords}";
                 }
-                if (basicWalkable && WalkableObject != null) {
+                if (basicWalkable && !tileSpec.Entities.Any(x => x.Type.ReplacesFloor) && WalkableObject != null) {
                     var blocker = Instantiate(WalkableObject, origin, Quaternion.identity, CollisionHolder);
                     blocker.name = $"Floor Collider: {tileSpec.Coords}";
                 }
