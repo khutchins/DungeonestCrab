@@ -10,7 +10,6 @@ namespace DungeonestCrab.Dungeon.Printer {
         [SerializeField] bool OffsetTextureByPosition = false;
 
         public override void DrawWall(WallInfo info) {
-            // 1. Create Container
             GameObject wallObj = new GameObject($"TiledWall");
             wallObj.transform.SetParent(info.parent, false);
 
