@@ -20,6 +20,10 @@ namespace DungeonestCrab.Dungeon.Printer {
         public Vector2Int PointForWorldPoint(Vector3 worldPoint) {
             return _printer.PointForWorldPoint(worldPoint);
         }
+
+        public Vector3 WorldPointForPoint(Vector2Int coords) {
+            return _printer.PointForCoords(coords);
+        }
     }
 
     [DefaultExecutionOrder(-1)]

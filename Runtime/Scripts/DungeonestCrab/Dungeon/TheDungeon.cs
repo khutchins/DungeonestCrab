@@ -1,10 +1,12 @@
 using DungeonestCrab.Dungeon.Printer;
+using KH.Graph;
 using Pomerandomian;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEditor.Graphs;
 using UnityEngine;
 
 namespace DungeonestCrab.Dungeon {
@@ -34,6 +36,7 @@ namespace DungeonestCrab.Dungeon {
 
 		private float[,] _pathMap;
 		private int[,] _cachedRegionMap;
+		private DirectedGraph<Vector2Int> _cachedPathGraph;
 		private int _cachedMaxRegion = -1;
 
 		public List<TheDungeonMixin> Mixins = new List<TheDungeonMixin>();
@@ -93,6 +96,7 @@ namespace DungeonestCrab.Dungeon {
 			// Reset caches
             _pathMap = new float[Size.y, Size.x];
             _cachedRegionMap = null;
+			_cachedPathGraph = null;
         }
 
         public void AddTrait(DungeonTraitSO trait) {
@@ -258,11 +262,43 @@ namespace DungeonestCrab.Dungeon {
 			return regions;
 		}
 
-		/// <summary>
-		/// Regenerates all the cached information, like tile adjacencies.
-		/// Might be expensive, so try to only do it when necessary.
-		/// </summary>
-		public void UpdateDungeonComputations() {
+        private DirectedGraph<Vector2Int>.Node NodeFromCoords(DirectedGraph<Vector2Int> graph, Vector2Int c) {
+            return graph.Nodes.Where(x => x.Element.x == c.x && x.Element.y == c.y).FirstOrDefault();
+        }
+
+        public IEnumerable<Vector2Int> FindPath(Vector2Int from, Vector2Int to) {
+			var graph = PathGraph();
+            var path = graph.FindPath(NodeFromCoords(graph, from), NodeFromCoords(graph, to), (Vector2Int c1, Vector2Int c2) => {
+                int dx = c2.x - c1.x;
+                int dy = c2.y - c1.y;
+                return Mathf.Abs(dx) + Mathf.Abs(dy);
+            });
+
+            if (path == null) return null;
+
+            return path.Select(x => x.Element);
+        }
+
+        private DirectedGraph<Vector2Int> PathGraph() {
+			if (_cachedPathGraph != null) return _cachedPathGraph;
+
+            float[,] costMap = new float[this.Size.x, this.Size.y];
+
+            for (int y = 0; y < this.Size.y; y++) {
+                for (int x = 0; x < this.Size.x; x++) {
+					var spec = GetTileSpecSafe(x, y);
+					costMap[x, y] = spec != null && spec.Walkable ? 1 : -1;
+                }
+            }
+            _cachedPathGraph = GraphExtensions.FromCostMap(costMap);
+            return _cachedPathGraph;
+        }
+
+        /// <summary>
+        /// Regenerates all the cached information, like tile adjacencies.
+        /// Might be expensive, so try to only do it when necessary.
+        /// </summary>
+        public void UpdateDungeonComputations() {
 			PopulateTileCaches();
 		}
 
