@@ -75,7 +75,7 @@ namespace DungeonestCrab.Dungeon.Printer {
 
                 bool walkable = tileSpec.Walkable;
                 Vector3 origin = OriginForCoords(tileSpec.Coords);
-                if (!walkable && ImpassableObject != null) {
+                if (tileSpec.Tile == Tile.Floor && ImpassableObject != null) {
                     var blocker = Instantiate(ImpassableObject, origin, Quaternion.identity, CollisionHolder);
                     blocker.name = $"Wall Collider: {tileSpec.Coords}";
                 }
