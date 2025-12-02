@@ -20,7 +20,7 @@ namespace DungeonestCrab.Dungeon.Printer {
             Vector3 forwardDir = angle * Vector3.forward;
 
             float width = info.tileSize.x;
-            Vector3 faceCenter = info.position;
+            Vector3 faceCenter = info.position + forwardDir * (width * 0.5f);
             Vector3 bottomLeftOrigin = faceCenter - (rightDir * width * 0.5f);
 
             Mesher mesher = new Mesher(wallObj, false);

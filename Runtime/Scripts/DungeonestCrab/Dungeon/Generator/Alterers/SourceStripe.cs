@@ -56,7 +56,6 @@ namespace DungeonestCrab.Dungeon.Generator {
 
 		private void CarveStripe(Stamp stamp, DirectedPoint pt, IRandom rand, int currentNum = 0) {
 			DirectedPoint currentPt = pt;
-			int paint = pt.IsVertical() ? (int)PaintStyle.FloorNS : (int)PaintStyle.FloorEW;
 
 			// Should terminate, probably. This will make sure it does.
 			for (int i = currentNum; i < this._maxTilesPerStripe; i++) {

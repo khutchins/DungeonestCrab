@@ -6,6 +6,7 @@ using Pomerandomian;
 using KH.Audio;
 using KH.Tools;
 using KH.Extensions;
+using DungeonestCrab.Dungeon.Audio;
 
 namespace DungeonestCrab.Dungeon.Printer {
     [DefaultExecutionOrder(-1)]
@@ -331,13 +332,20 @@ namespace DungeonestCrab.Dungeon.Printer {
         }
 
         private void AddEntity(TheDungeon dungeon, Entity entity, Vector2Int coords, float z, IRandom rand) {
-            GameObject instantiatedObject = entity.Type.Prefab != null ?
-                Instantiate(entity.Type.Prefab) : new GameObject("EntityRoot");
-
             Transform parent = entity.Type.CanBeMerged ? StaticEntityHolder : EntityHolder;
-            instantiatedObject.transform.SetParent(parent);
-            instantiatedObject.transform.localPosition = OriginForCoords(coords) + new Vector3(0, z * _tileHeightMult, 0);
-            instantiatedObject.transform.localEulerAngles = new Vector3(0, entity.YAngle, 0);
+            Vector3 pos = OriginForCoords(coords) + new Vector3(0, z * _tileHeightMult, 0);
+            Quaternion rot = Quaternion.Euler(0, entity.YAngle, 0);
+
+            GameObject instantiatedObject;
+
+            if (entity.Type.Prefab != null) {
+                instantiatedObject = Instantiate(entity.Type.Prefab, pos, rot, parent);
+            } else {
+                // I don't remember why I have this. Maybe so it doesn't break later steps?
+                instantiatedObject = new GameObject("EntityRoot");
+                instantiatedObject.transform.SetParent(parent, false);
+                instantiatedObject.transform.SetPositionAndRotation(pos, rot);
+            }
 
             foreach (IEntityInit init in instantiatedObject.GetComponentsInChildren<IEntityInit>()) {
                 init.DoInit(instantiatedObject, entity, rand);
@@ -426,7 +434,10 @@ namespace DungeonestCrab.Dungeon.Printer {
         public AudioEvent FootstepForLocalPoint(Vector3 localPos) {
             TerrainSO terrain = TerrainForLocalPoint(localPos);
             if (terrain != null) {
-                return terrain.GetFootstepSound();
+                var mixin = terrain.GetMixin<TerrainAudioMixin>();
+                if (mixin != null) {
+                    return mixin.GetFootstepSound();
+                }
             }
             return null;
         }
