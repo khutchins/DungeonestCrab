@@ -135,7 +135,8 @@ namespace DungeonestCrab.Dungeon.Printer {
                 bool walkable = tileSpec.Walkable;
 
                 // Draw Wall Cap (Top of a short wall)
-                if (tileSpec.Tile == Tile.Wall && ruleConfig.WallHeight < ruleConfig.CeilingHeight && tileSpec.Terrain.WallCapDrawer != null) {
+                bool isVisualWall = !tileSpec.DrawAsFloor && tileSpec.Tile == Tile.Wall;
+                if (isVisualWall && ruleConfig.WallHeight < ruleConfig.CeilingHeight && tileSpec.Terrain.WallCapDrawer != null) {
                     IFlatDrawer.FlatInfo info = new IFlatDrawer.FlatInfo {
                         parent = EnvironmentHolder,
                         random = dg.ConsistentRNG,
@@ -313,19 +314,24 @@ namespace DungeonestCrab.Dungeon.Printer {
                 DrawWallSingle(info);
             }
 
-            // Add higher walls if they have a tile from the bottom to come from (normal wall) or from the top (ceiling).
-            if (tile.DrawAsFloor) {
-                if (adjTile.DrawWalls) {
-                    float startHeight = adjRules.WallHeight * _tileHeightMult;
-                    float endHeight = adjRules.CeilingHeight * _tileHeightMult;
+            float neighborStructureTop = 0;
 
-                    if (endHeight > startHeight) {
-                        info.tileSpec = wallStyle.StyleSource;
-                        info.minY = startHeight;
-                        info.maxY = endHeight;
-                        DrawWallSingle(info);
-                    }
-                }
+            if (DrawsStandardWalls(tile, adjTile)) {
+                // Neighbor is a Wall. Structure goes up to WallHeight.
+                neighborStructureTop = adjRules.WallHeight * _tileHeightMult;
+            } else {
+                // Neighbor is a Floor (Open Air). Structure goes up to its Ceiling.
+                neighborStructureTop = adjRules.CeilingHeight * _tileHeightMult;
+            }
+
+            float myCeiling = myRules.CeilingHeight * _tileHeightMult;
+
+            // Draw if current tile is higher than the neighbor's structure.
+            if (myCeiling > neighborStructureTop) {
+                info.tileSpec = wallStyle.StyleSource;
+                info.minY = neighborStructureTop;
+                info.maxY = myCeiling;
+                DrawWallSingle(info);
             }
         }
 
