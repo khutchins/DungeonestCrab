@@ -16,7 +16,7 @@ namespace DungeonestCrab.Editor {
         private GameObject _previewInstance;
 
         private Vector2 _drag;
-        private Vector2 _lightAngle = new Vector2(50, 50);
+        private Vector2 _lightAngle = Vector2.zero;
         private float _zoomFactor = 1.0f;
 
         private bool _isDirty = true;
@@ -73,9 +73,9 @@ namespace DungeonestCrab.Editor {
             bool changed = false;
 
             if (GUILayout.Button(new GUIContent("R", "Reset Camera"), EditorStyles.miniButton, GUILayout.Width(20))) {
-                _drag = new Vector2(0, -20);
+                _drag = Vector2.zero;
                 _zoomFactor = 1.0f;
-                _lightAngle = new Vector2(50, 50);
+                _lightAngle = Vector2.zero;
                 changed = true;
             }
 
