@@ -11,7 +11,9 @@ namespace DungeonestCrab.Dungeon.Printer {
 
         public override void DrawWall(WallInfo wallInfo) {
             foreach (var wall in WallDrawers) {
-                wall.DrawWall(wallInfo);
+                if (wall != null) {
+                    wall.DrawWall(wallInfo);
+                }
             }
         }
     }
