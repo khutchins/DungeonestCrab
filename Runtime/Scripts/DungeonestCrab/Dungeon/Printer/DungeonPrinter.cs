@@ -314,7 +314,7 @@ namespace DungeonestCrab.Dungeon.Printer {
                 DrawWallSingle(info);
             }
 
-            float neighborStructureTop = 0;
+            float neighborStructureTop;
 
             if (DrawsStandardWalls(tile, adjTile)) {
                 // Neighbor is a Wall. Structure goes up to WallHeight.
