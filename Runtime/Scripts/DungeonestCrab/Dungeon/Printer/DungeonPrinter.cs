@@ -102,6 +102,9 @@ namespace DungeonestCrab.Dungeon.Printer {
                     }
                 }
 
+                List<EntityTileModifierMixin> _tileMods = 
+                    tileSpec.Entities.Select(x => x.Type.GetMixin<EntityTileModifierMixin>()).Where(x => x != null).ToList();
+
                 // This notably does not check entities when placing the collider.
                 // The expectation (as of now, when I'm rewriting Deeper and Deeper)
                 // is that entities that block a tile will have their own collider,
@@ -112,7 +115,7 @@ namespace DungeonestCrab.Dungeon.Printer {
                     var blocker = Instantiate(ImpassableObject, origin, Quaternion.identity, CollisionHolder);
                     blocker.name = $"Wall Collider: {tileSpec.Coords}";
                 }
-                if (basicWalkable && !tileSpec.Entities.Any(x => x.Type.ReplacesFloor) && WalkableObject != null) {
+                if (basicWalkable && !_tileMods.Any(x => x.RemovesFloorCollider) && WalkableObject != null) {
                     var blocker = Instantiate(WalkableObject, origin, Quaternion.identity, CollisionHolder);
                     blocker.name = $"Floor Collider: {tileSpec.Coords}";
                 }
@@ -124,7 +127,7 @@ namespace DungeonestCrab.Dungeon.Printer {
 
                 // Draw ceiling if it's a floorish tile or if the wall is shorter than the ceiling.
                 if (tileSpec.DrawAsFloor || ruleConfig.WallHeight < ruleConfig.CeilingHeight) {
-                    if (ruleConfig.DrawCeiling && !EntityReplaces(tileSpec, t => t.ReplacesCeiling)) {
+                    if (ruleConfig.DrawCeiling && !_tileMods.Any(t => t.ReplacesCeiling)) {
                         AddCeiling(tileSpec, ruleConfig.CeilingHeight);
                     }
                 }
@@ -148,7 +151,7 @@ namespace DungeonestCrab.Dungeon.Printer {
                 }
 
                 if (tileSpec.DrawAsFloor) {
-                    bool replacesFloor = EntityReplaces(tileSpec, t => t.ReplacesFloor);
+                    bool replacesFloor = _tileMods.Any(t => t.ReplacesFloor);
 
                     // Draw floor at Zero (if walkable or default)
                     if (ruleConfig.GroundOffset == 0 || tileSpec.Walkable) {

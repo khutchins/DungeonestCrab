@@ -29,11 +29,7 @@ namespace DungeonestCrab.Dungeon {
         [ListDrawerSettings(ShowIndexLabels = false, ShowFoldout = true)]
         public List<EntityMixin> Mixins = new List<EntityMixin>();
 
-        [Header("Tile Modifiers")]
-        public bool ReplacesCeiling;
-        public bool ReplacesFloor;
         public bool RaiseToCeiling;
-
         public bool HasTag(string tag) {
             return Tags.Contains(tag);
         }
@@ -56,6 +52,7 @@ namespace DungeonestCrab.Dungeon {
             private bool _showOnMap;
             private Sprite _mapImage;
             private bool _rotateMapImage;
+            private List<EntityMixin> _mixins = new List<EntityMixin>();
 
             public Builder(string ID, GameObject prefab) {
                 _id = ID;
@@ -69,6 +66,11 @@ namespace DungeonestCrab.Dungeon {
 
             public Builder SetCanBeMerged(bool canBeMerged = true) {
                 _canBeMerged = canBeMerged;
+                return this;
+            }
+
+            public Builder AddMixin(EntityMixin mixin) {
+                _mixins.Add(mixin);
                 return this;
             }
 
@@ -100,8 +102,6 @@ namespace DungeonestCrab.Dungeon {
                     Prefab = _prefab,
                     BlocksMovement = _blocksMovement,
                     CanBeMerged = _canBeMerged,
-                    ReplacesCeiling = _replacesCeiling,
-                    ReplacesFloor = _replacesFloor,
                     RaiseToCeiling = _raiseToCeiling,
                 };
                 if (_showOnMap) {
@@ -110,6 +110,7 @@ namespace DungeonestCrab.Dungeon {
                         MapImage = _mapImage
                     });
                 }
+                spec.Mixins.AddRange(_mixins);
                 return spec;
             }
         }
