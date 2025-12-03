@@ -113,7 +113,7 @@ namespace DungeonestCrab.Editor {
             if (_previewUtility == null) {
                 _previewUtility = new PreviewRenderUtility();
                 _previewUtility.camera.fieldOfView = 30f;
-                _drag = new Vector2(0, -20);
+                _drag = Vector2.zero;
             }
 
             HandleInput(r);
