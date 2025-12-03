@@ -46,6 +46,13 @@ namespace DungeonestCrab.Dungeon.Printer {
         [SerializeField] Vector3Int TileSize = Vector3Int.one;
         public bool MergeMeshes = true;
 
+        public enum WallDisplayType {
+            ThisTerrain,
+            AdjacentTerrain
+        }
+
+        [SerializeField] WallDisplayType WallsUse = WallDisplayType.AdjacentTerrain;
+
         public static DungeonPrinter Shared;
 
         private TheDungeon _dungeon;
@@ -233,7 +240,7 @@ namespace DungeonestCrab.Dungeon.Printer {
                 foreach (var t in dg.Traits) t.ModifyTileRules(adjTile, ref adjRules);
             }
 
-            var wallConfig = new WallStyleConfig(adjTile);
+            var wallConfig = new WallStyleConfig(WallsUse == WallDisplayType.ThisTerrain ? tile : adjTile);
 
             if (dg.Traits != null) {
                 foreach (var t in dg.Traits) {
