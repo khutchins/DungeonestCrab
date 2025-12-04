@@ -18,12 +18,14 @@ namespace DungeonestCrab.Dungeon.Printer {
     }
 
     public struct WallStyleConfig {
+        public TileSpec UpperStyleSource;
         public TileSpec StyleSource;
-        public bool SuppressWall;
+        public TileSpec LowerStyleSource;
 
-        public WallStyleConfig(TileSpec defaultSource) {
+        public WallStyleConfig(TileSpec lowerSource, TileSpec defaultSource, TileSpec upperSource) {
             StyleSource = defaultSource;
-            SuppressWall = false;
+            LowerStyleSource = lowerSource;
+            UpperStyleSource = upperSource;
         }
     }
 }

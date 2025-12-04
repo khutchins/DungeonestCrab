@@ -3,7 +3,7 @@ using Sirenix.OdinInspector;
 using System;
 using UnityEngine;
 
-namespace DungeonestCrab.Dungeon.Audio {
+namespace DungeonestCrab.Dungeon {
 
     [Serializable]
     public class TerrainAudioMixin : TerrainMixin {

@@ -240,7 +240,24 @@ namespace DungeonestCrab.Dungeon.Printer {
                 foreach (var t in dg.Traits) t.ModifyTileRules(adjTile, ref adjRules);
             }
 
-            var wallConfig = new WallStyleConfig(WallsUse == WallDisplayType.ThisTerrain ? tile : adjTile);
+            var myInvasiveMixin = tile.Terrain.GetMixin<TerrainInvasiveMixin>();
+            var adjInvasiveMixin = adjTile.Terrain.GetMixin<TerrainInvasiveMixin>();
+
+            TileSpec ResolvePriority(Func<TerrainInvasiveMixin, bool> predicate) {
+                bool myPriority = myInvasiveMixin != null && predicate(myInvasiveMixin);
+                bool adjPriority = adjInvasiveMixin != null && predicate(adjInvasiveMixin);
+
+                if (myPriority && !adjPriority) return tile;
+                if (adjPriority && !myPriority) return adjTile;
+
+                return WallsUse == WallDisplayType.ThisTerrain ? tile : adjTile;
+            }
+
+            TileSpec lowerSource = ResolvePriority(m => m.HasPriorityLowerWall);
+            TileSpec standardSource = ResolvePriority(m => m.HasPriorityWall);
+            TileSpec upperSource = ResolvePriority(m => m.HasPriorityUpperWall);
+
+            var wallConfig = new WallStyleConfig(lowerSource, standardSource, upperSource);
 
             if (dg.Traits != null) {
                 foreach (var t in dg.Traits) {
