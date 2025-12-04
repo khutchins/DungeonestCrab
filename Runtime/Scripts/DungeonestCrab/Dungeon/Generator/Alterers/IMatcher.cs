@@ -26,22 +26,22 @@ namespace DungeonestCrab.Dungeon.Generator {
         private readonly bool _anyTile;
         private readonly TerrainSO _terrain;
         private readonly bool _anyTerrain;
-        private readonly string _style;
-        private readonly bool _anyStyle;
+        private readonly string _tag;
+        private readonly bool _anyTag;
 
         public TileMatcher(Tile tile, bool anyTile, TerrainSO terrain, bool anyTerrain, string style, bool anyStyle) {
             _tile = tile;
             _anyTile = anyTile;
             _terrain = terrain;
             _anyTerrain = anyTerrain;
-            _style = style;
-            _anyStyle = anyStyle;
+            _tag = style;
+            _anyTag = anyStyle;
         }
 
         public bool Matches(TileSpec tile) {
             return (_anyTile || tile.Tile == _tile)
                 && (_anyTerrain || tile.Terrain == _terrain)
-                && (_anyStyle || tile.HasTag(_style));
+                && (_anyTag || tile.HasTag(_tag));
         }
 
         public static TileMatcher MatchingAll() {

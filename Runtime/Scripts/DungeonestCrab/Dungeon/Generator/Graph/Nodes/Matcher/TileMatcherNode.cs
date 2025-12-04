@@ -7,19 +7,17 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         public bool CheckTile = true;
         public Tile Tile = Tile.Floor;
 
-        [Header("Terrain")]
-        public bool CheckTerrain = false;
+        [Header("Others")]
+        [Tooltip("Will check terrain if set.")]
         public TerrainSO Terrain;
-
-        [Header("Style")]
-        public bool CheckStyle = false;
-        public string Style = null;
+        [Tooltip("Will check tag if set.")]
+        public string Tag = null;
 
         public override IMatcher GetMatcher() {
             return new TileMatcher(
                 Tile, !CheckTile,
-                Terrain, !CheckTerrain,
-                Style, !CheckStyle
+                Terrain, Terrain == null,
+                Tag, string.IsNullOrEmpty(Tag)
             );
         }
     }
