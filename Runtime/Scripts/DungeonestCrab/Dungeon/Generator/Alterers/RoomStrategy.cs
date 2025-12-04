@@ -19,9 +19,8 @@ namespace DungeonestCrab.Dungeon.Generator {
 
         public abstract void StampRoom(Stamp stamp, IRandom rand);
 
-        // Helper to set tiles (mirrors old logic)
-        protected void Set(Stamp stamp, int x, int y, Tile tile, string tag = null) {
-            stamp.MaybeSetAt(x, y, tile, tag);
+        protected void Set(Stamp stamp, int x, int y, Tile tile, params string[] tags) {
+            stamp.MaybeSetAt(x, y, tile, tags);
         }
     }
 
@@ -133,7 +132,7 @@ namespace DungeonestCrab.Dungeon.Generator {
                     } else if (walkway) {
                         Set(stamp, x, y, Tile.Floor);
                     } else {
-                        Set(stamp, x, y, Tile.Wall, "style:sunken_flooded");
+                        Set(stamp, x, y, Tile.Wall, "style:sunken_flooded", TileSpec.DRAW_STYLE_FLOOR);
                     }
                 }
             }
