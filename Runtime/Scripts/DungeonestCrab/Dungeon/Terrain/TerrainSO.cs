@@ -26,8 +26,6 @@ namespace DungeonestCrab.Dungeon {
 		public float GroundOffset = 0;
 		[Tooltip("How far up the wall tiles should extend.")]
 		public int WallHeight = 1;
-		[Tooltip("Whether or not it should use its floor texture for the lower wall it abutts.")]
-		public bool HasInvasiveLowerWall = false;
 		[Tooltip("Whether or not offset tiles should have shadows drawn on them to give the impression of an endless stretch.")]
 		public bool DrawOffsetShadow = false;
 		[Tooltip("Whether or not the wall of this terrain should be rendered like a floor.")]
