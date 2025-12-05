@@ -11,7 +11,6 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         [Input(ShowBackingValue.Never, ConnectionType.Override)] public DungeonConnection Input;
         [Output(ShowBackingValue.Never, ConnectionType.Override)] public DungeonConnection Output;
 
-        // Editor Logic
         public override object GetValue(NodePort port) {
             if (port.fieldName == "Output") return GetPreviewDungeon();
             return null;
@@ -20,7 +19,6 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         public override TheDungeon GetPreviewDungeon() {
             TheDungeon inputDungeon = GetInputValue<TheDungeon>("Input", null);
 
-            // Clone for preview snapshot isolation
             TheDungeon workingDungeon = inputDungeon != null ? inputDungeon.Clone() : null;
 
             if (workingDungeon != null) {
