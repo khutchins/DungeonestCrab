@@ -1,3 +1,4 @@
+using Pomerandomian;
 using UnityEngine;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
@@ -39,6 +40,8 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
 
                 return _baseProvider.GetCost(dungeon, x, y);
             }
+
+            public void Init(IRandom rand) { }
         }
     }
 }

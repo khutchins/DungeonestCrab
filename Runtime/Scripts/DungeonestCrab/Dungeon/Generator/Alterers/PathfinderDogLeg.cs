@@ -3,7 +3,9 @@ using UnityEngine;
 using Pomerandomian;
 
 namespace DungeonestCrab.Dungeon.Generator {
-    public class PathfinderDogLeg : IPathFinder {
+    public class PathfinderDogleg : IPathFinder {
+
+        public void Init(IRandom rand) { }
         public IEnumerable<Vector2Int> FindPath(TheDungeon dungeon, Vector2Int start, Vector2Int end, IRandom rand) {
             bool xFirst = rand.NextBool();
             List<Vector2Int> path = TryPath(dungeon, start, end, xFirst);

@@ -1,5 +1,6 @@
 using UnityEngine;
 using KH.Noise;
+using Pomerandomian;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
     [CreateNodeMenu("Dungeon/Pathfinding/Costs/Add Noise")]
@@ -35,6 +36,11 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
                 // Don't accidentally make impassable tiles passable.
                 if (c < 0) return c;
                 return c + (_noise.At(x, y) * _multiplier);
+            }
+
+            public void Init(IRandom rand) {
+                _baseProvider.Init(rand);
+                _noise.SetSeed(rand.Next(1_000_000));
             }
         }
     }

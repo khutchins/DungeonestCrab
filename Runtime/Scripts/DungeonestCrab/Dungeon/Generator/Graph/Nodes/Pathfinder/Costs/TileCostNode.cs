@@ -1,16 +1,18 @@
-using UnityEngine;
-using XNode;
 using DungeonestCrab.Dungeon.Generator;
 using KH.Noise;
+using Pomerandomian;
+using UnityEngine;
+using XNode;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
     public interface ITileCostProvider {
         /// <summary>
-        /// Calculates the cost to traverse or carve a specific tile.
+        /// Called at the start of pathfinding. Use this to set seeds on noise functions.
         /// </summary>
-        /// <returns>
-        /// A value >= 0 for the cost (lower is better/faster). 
-        /// A value < 0 (e.g. -1) indicates the tile is impassable/uncarvable.
+        void Init(IRandom rand);
+
+        /// <summary>
+        /// Calculates the cost to traverse or carve a specific tile. Negative is impassable.
         /// </returns>
         float GetCost(TheDungeon d, int x, int y);
     }

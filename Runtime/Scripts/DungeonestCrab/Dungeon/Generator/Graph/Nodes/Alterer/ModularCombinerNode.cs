@@ -24,7 +24,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
             ITileCarver carver = GetInputValue<ITileCarver>("Carver", null);
 
             connector ??= new ConnectorRandom(0.1f);
-            pathfinder ??= new PathfinderDogLeg();
+            pathfinder ??= new PathfinderDogleg();
             carver ??= new CarverStandard(Tile.Floor, DefaultTerrain);
 
             return new ModularCombiner(connector, pathfinder, carver).Modify(dungeon, random);

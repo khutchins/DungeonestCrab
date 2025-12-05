@@ -17,6 +17,12 @@ namespace DungeonestCrab.Dungeon.Generator {
     }
 
     public interface IPathFinder {
+        /// <summary>
+        /// Called before the node is used for one or more path generations.
+        /// Use this to set seed for noise functions or cache data.
+        /// </summary>
+        /// <param name="rand"></param>
+        void Init(IRandom rand);
         IEnumerable<Vector2Int> FindPath(TheDungeon dungeon, Vector2Int start, Vector2Int end, IRandom rand);
     }
 
@@ -36,6 +42,8 @@ namespace DungeonestCrab.Dungeon.Generator {
         }
 
         public bool Modify(TheDungeon dungeon, IRandom rand) {
+            _pathFinder.Init(rand);
+
             int maxRegion;
             int[,] regionMap = dungeon.ComputeRegions(out maxRegion);
 

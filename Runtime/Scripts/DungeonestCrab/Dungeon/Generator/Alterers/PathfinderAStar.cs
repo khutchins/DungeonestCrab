@@ -1,22 +1,27 @@
+using DungeonestCrab.Dungeon.Generator.Graph;
+using Pomerandomian;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Pomerandomian;
 
 namespace DungeonestCrab.Dungeon.Generator {
     public class PathfinderAStar : IPathFinder {
         public delegate float CostFunc(TheDungeon d, int x, int y);
-        private readonly CostFunc _costFunc;
+        private readonly Graph.ITileCostProvider _costProvider;
 
-        public PathfinderAStar(CostFunc costFunc) {
-            _costFunc = costFunc;
+        public PathfinderAStar(ITileCostProvider costProvider) {
+            _costProvider = costProvider;
+        }
+
+        public void Init(IRandom rand) {
+            _costProvider.Init(rand);
         }
 
         public IEnumerable<Vector2Int> FindPath(TheDungeon dungeon, Vector2Int start, Vector2Int end, IRandom rand) {
             float[,] costs = new float[dungeon.Size.x, dungeon.Size.y];
             for (int x = 0; x < dungeon.Size.x; x++) {
                 for (int y = 0; y < dungeon.Size.y; y++) {
-                    costs[x, y] = _costFunc(dungeon, x, y);
+                    costs[x, y] = _costProvider.GetCost(dungeon, x, y);
                 }
             }
 

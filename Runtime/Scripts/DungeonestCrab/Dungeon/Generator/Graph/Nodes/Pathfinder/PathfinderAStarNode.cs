@@ -1,3 +1,5 @@
+using Pomerandomian;
+
 namespace DungeonestCrab.Dungeon.Generator.Graph {
     [CreateNodeMenu("Dungeon/Pathfinding/Pather: A*")]
     public class PathfinderAStarNode : PathfinderProviderNode {
@@ -9,7 +11,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
             // Default to dungeon logic.
             costProvider ??= new DefaultDungeonCostProvider();
 
-            return new PathfinderAStar((d, x, y) => costProvider.GetCost(d, x, y));
+            return new PathfinderAStar(costProvider);
         }
 
         private class DefaultDungeonCostProvider : ITileCostProvider {
@@ -17,6 +19,8 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
                 TileSpec spec = d.GetTileSpec(x, y);
                 return d.TileCarvingCost(spec);
             }
+
+            public void Init(IRandom rand) { }
         }
     }
 }

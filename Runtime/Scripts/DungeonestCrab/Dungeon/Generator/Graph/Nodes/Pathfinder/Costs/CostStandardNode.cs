@@ -1,3 +1,5 @@
+using Pomerandomian;
+
 namespace DungeonestCrab.Dungeon.Generator.Graph {
     [CreateNodeMenu("Dungeon/Pathfinding/Costs/Standard")]
     public class CostStandardNode : TileCostNode {
@@ -11,6 +13,8 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
                 var tileSpec = d.GetTileSpec(x, y);
                 return tileSpec.TileCarvingCost;
             }
+
+            public void Init(IRandom rand) {}
         }
     }
 }
