@@ -178,8 +178,17 @@ namespace DungeonestCrab.Dungeon.Printer {
                 }
 
                 if (dg.Traits != null) {
+                    IFlatDrawer.FlatInfo baseInfo = new IFlatDrawer.FlatInfo {
+                        parent = EnvironmentHolder,
+                        random = dg.ConsistentRNG,
+                        tileSpec = tileSpec,
+                        tileSize = TileSize,
+                        hasCeiling = ruleConfig.DrawCeiling,
+                        ceilingHeight = ruleConfig.CeilingHeight
+                    };
+
                     foreach (var trait in dg.Traits) {
-                        trait.DecorateTile(this, tileSpec, origin, EnvironmentHolder);
+                        trait.DecorateTile(dg, this, baseInfo, origin);
                     }
                 }
             }

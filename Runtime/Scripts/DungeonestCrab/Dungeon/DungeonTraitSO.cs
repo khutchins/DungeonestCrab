@@ -9,7 +9,7 @@ namespace DungeonestCrab.Dungeon {
 
         public virtual void ResolveWallStyle(TileSpec current, TileSpec neighbor, ref WallStyleConfig config) { }
 
-        public virtual void DecorateTile(DungeonPrinter printer, TileSpec spec, Vector3 position, Transform parent) { }
+        public virtual void DecorateTile(TheDungeon dungeon, DungeonPrinter printer, IFlatDrawer.FlatInfo info, Vector3 position) { }
 
         public virtual void DecorateGlobal(TheDungeon dungeon, DungeonPrinter printer, Transform environmentRoot) { }
     }
