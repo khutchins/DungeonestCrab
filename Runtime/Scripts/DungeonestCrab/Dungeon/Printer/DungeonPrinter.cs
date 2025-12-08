@@ -515,9 +515,19 @@ namespace DungeonestCrab.Dungeon.Printer {
         }
 
         public AudioEvent FootstepForLocalPoint(Vector3 localPos) {
-            TerrainSO terrain = TerrainForLocalPoint(localPos);
-            if (terrain != null) {
-                var mixin = terrain.GetMixin<TerrainAudioMixin>();
+            Vector2Int pt = PointForLocalPoint(localPos);
+            TileSpec spec = _dungeon.GetTileSpec(pt);
+            if (spec == null) return null;
+
+            if (_dungeon.Traits != null) {
+                foreach (var trait in _dungeon.Traits) {
+                    AudioEvent overrideSound = trait.GetFootstepOverride(spec);
+                    if (overrideSound != null) return overrideSound;
+                }
+            }
+
+            if (spec.Terrain != null) {
+                var mixin = spec.Terrain.GetMixin<TerrainAudioMixin>();
                 if (mixin != null) {
                     return mixin.GetFootstepSound();
                 }

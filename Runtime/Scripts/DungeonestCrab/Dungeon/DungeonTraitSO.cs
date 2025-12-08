@@ -1,6 +1,7 @@
-using UnityEngine;
 using DungeonestCrab.Dungeon;
 using DungeonestCrab.Dungeon.Printer;
+using KH.Audio;
+using UnityEngine;
 
 namespace DungeonestCrab.Dungeon {
     public abstract class DungeonTraitSO : ScriptableObject {
@@ -12,5 +13,7 @@ namespace DungeonestCrab.Dungeon {
         public virtual void DecorateTile(TheDungeon dungeon, DungeonPrinter printer, IFlatDrawer.FlatInfo info, Vector3 position) { }
 
         public virtual void DecorateGlobal(TheDungeon dungeon, DungeonPrinter printer, Transform environmentRoot) { }
+
+        public virtual AudioEvent GetFootstepOverride(TileSpec spec) { return null; }
     }
 }
