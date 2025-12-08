@@ -458,7 +458,14 @@ namespace DungeonestCrab.Dungeon.Printer {
                 ceilingHeight = tileSpec.CeilingOffset + 1,
             };
 
-            IFlatDrawer drawer = type == Tile.Floor ? terrain.FloorDrawer : terrain.WallFloorDrawer;
+            IFlatDrawer drawer;
+            if (type == Tile.Floor) {
+                drawer = terrain.FloorDrawer;
+            } else if (terrain.WallFloorDrawer != null) {
+                drawer = terrain.WallFloorDrawer;
+            } else {
+                drawer = terrain.FloorDrawer;
+            }
             if (drawer == null) return;
 
             go = drawer.DrawFlat(flatInfo);
