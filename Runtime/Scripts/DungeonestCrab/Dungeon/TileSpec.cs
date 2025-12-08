@@ -77,10 +77,40 @@ namespace DungeonestCrab.Dungeon {
 			Entities.Add(entity);
 		}
 
+		private void AddTagInternal(string tag) {
+			if (string.IsNullOrEmpty(tag)) return;
+			_tags.Add(tag);
+        }
+
 		public void AddTag(params string[] tags) {
 			foreach (var tag in tags) {
-				_tags.Add(tag);
+				AddTagInternal(tag);
+			}
+		}
 
+        public void AddTags(IReadOnlyList<string> tags) {
+            foreach (var tag in tags) {
+                AddTagInternal(tag);
+            }
+        }
+
+        public void AddTags(IEnumerable<string> tags) {
+            foreach (var tag in tags) {
+                AddTagInternal(tag);
+            }
+        }
+
+        public void RemoveTag(string tag) {
+            _tags.Remove(tag);
+        }
+
+        public bool HasTag(string tag) {
+            return _tags.Contains(tag);
+        }
+
+		public void RefreshCache() {
+			_drawStyle = DrawStyle.NoOverride;
+			foreach (var tag in _tags) {
 				if (tag == DRAW_STYLE_ALL) {
 					_drawStyle = DrawStyle.Wall | DrawStyle.Floor;
 				} else if (tag == DRAW_STYLE_FLOOR) {
@@ -91,26 +121,6 @@ namespace DungeonestCrab.Dungeon {
 					_drawStyle = DrawStyle.None;
 				}
 			}
-		}
-
-        public void AddTags(IReadOnlyList<string> tags) {
-            foreach (var tag in tags) {
-                if (!string.IsNullOrEmpty(tag)) _tags.Add(tag);
-            }
-        }
-
-        public void AddTags(IEnumerable<string> tags) {
-            foreach (var tag in tags) {
-                if (!string.IsNullOrEmpty(tag)) _tags.Add(tag);
-            }
-        }
-
-        public void RemoveTag(string tag) {
-            _tags.Remove(tag);
-        }
-
-        public bool HasTag(string tag) {
-            return _tags.Contains(tag);
         }
 
 		public string GetTagType(string type) {

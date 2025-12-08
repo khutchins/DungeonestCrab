@@ -305,6 +305,7 @@ namespace DungeonestCrab.Dungeon {
 		private void PopulateTileCaches() {
 			foreach (TileSpec tile in AllTiles()) {
 				PopulateTileCache(tile);
+				tile.RefreshCache();
 			}
 		}
 
