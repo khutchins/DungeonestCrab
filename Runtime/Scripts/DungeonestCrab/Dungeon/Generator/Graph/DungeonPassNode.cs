@@ -2,6 +2,7 @@ using UnityEngine;
 using XNode;
 using DungeonestCrab.Dungeon;
 using Pomerandomian;
+using System;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
     /// <summary>
@@ -21,10 +22,15 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
 
             TheDungeon workingDungeon = inputDungeon != null ? inputDungeon.Clone() : null;
 
-            if (workingDungeon != null) {
-                ApplyNodeLogic(workingDungeon, new SystemRandom(GetPreviewSeed()));
-                UpdateTexture(workingDungeon);
-            } else {
+            try {
+                if (workingDungeon != null) {
+                    ApplyNodeLogic(workingDungeon, new SystemRandom(GetPreviewSeed()));
+                    UpdateTexture(workingDungeon);
+                } else {
+                    PreviewTexture = null;
+                }
+            } catch (Exception e) { 
+                Debug.LogException(e);
                 PreviewTexture = null;
             }
 
