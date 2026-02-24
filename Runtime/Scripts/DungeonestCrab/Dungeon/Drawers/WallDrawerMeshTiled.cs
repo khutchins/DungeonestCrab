@@ -40,10 +40,10 @@ namespace DungeonestCrab.Dungeon.Printer {
                 Vector3 vTopLeft = vBottomLeft + (upDir * segmentHeight);
                 Vector3 vTopRight = vBottomRight + (upDir * segmentHeight);
 
-                Vector2 uvBL = Texture.Lerp(0, 0);
-                Vector2 uvBR = Texture.Lerp(1, 0);
-                Vector2 uvTL = Texture.Lerp(0, uvHeightPercent);
-                Vector2 uvTR = Texture.Lerp(1, uvHeightPercent);
+                Vector2 uvBL = Texture.Lerp(0, 1);
+                Vector2 uvBR = Texture.Lerp(1, 1);
+                Vector2 uvTL = Texture.Lerp(0, 1 - uvHeightPercent);
+                Vector2 uvTR = Texture.Lerp(1, 1 - uvHeightPercent);
 
                 mesher.GenerateRect(Texture.Material,
                     mesher.AddVert(Texture.Material, vBottomLeft, uvBL),
