@@ -15,5 +15,7 @@ namespace DungeonestCrab.Dungeon {
         public virtual void DecorateGlobal(TheDungeon dungeon, DungeonPrinter printer, Transform environmentRoot) { }
 
         public virtual AudioEvent GetFootstepOverride(TileSpec spec) { return null; }
+
+        public virtual T GetMixin<T>(TileSpec spec) where T : TerrainMixin { return null; }
     }
 }

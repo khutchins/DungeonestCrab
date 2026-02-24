@@ -248,8 +248,8 @@ namespace DungeonestCrab.Dungeon.Printer {
                 foreach (var t in dg.Traits) t.ModifyTileRules(adjTile, ref adjRules);
             }
 
-            var myInvasiveMixin = tile.Terrain.GetMixin<TerrainInvasiveMixin>();
-            var adjInvasiveMixin = adjTile.Terrain.GetMixin<TerrainInvasiveMixin>();
+            var myInvasiveMixin = dg.GetMixin<TerrainInvasiveMixin>(tile);
+            var adjInvasiveMixin = dg.GetMixin<TerrainInvasiveMixin>(adjTile);
 
             TileSpec ResolvePriority(Func<TerrainInvasiveMixin, bool> predicate) {
                 bool myPriority = myInvasiveMixin != null && predicate(myInvasiveMixin);
@@ -526,11 +526,9 @@ namespace DungeonestCrab.Dungeon.Printer {
                 }
             }
 
-            if (spec.Terrain != null) {
-                var mixin = spec.Terrain.GetMixin<TerrainAudioMixin>();
-                if (mixin != null) {
-                    return mixin.GetFootstepSound();
-                }
+            var mixin = _dungeon.GetMixin<TerrainAudioMixin>(spec);
+            if (mixin != null) {
+                return mixin.GetFootstepSound();
             }
             return null;
         }

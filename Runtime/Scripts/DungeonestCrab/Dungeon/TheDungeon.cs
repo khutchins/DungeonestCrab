@@ -48,6 +48,16 @@ namespace DungeonestCrab.Dungeon {
             return null;
         }
 
+		public T GetMixin<T>(TileSpec tile) where T : TerrainMixin {
+			if (Traits != null) {
+				foreach (var trait in Traits) {
+					var mixin = trait.GetMixin<T>(tile);
+					if (mixin != null) return mixin;
+				}
+			}
+			return tile.Terrain?.GetMixin<T>();
+		}
+
         public TheDungeon(int w, int h, IRandom consistentRNG = null, IRandom inconsistentRNG = null) {
 			Size = new Vector2Int(w, h);
 			Bounds = new AppliedBounds(0, 0, w, h);

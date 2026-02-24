@@ -10,7 +10,11 @@ namespace DungeonestCrab.Dungeon {
         [Title("Audio Settings")]
         [SerializeField] AudioEvent FootstepSound;
 
-        public AudioEvent GetFootstepSound() { 
+        public TerrainAudioMixin(AudioEvent footstepSound) {
+            FootstepSound = footstepSound;
+        }
+
+        public virtual AudioEvent GetFootstepSound() { 
             return FootstepSound;
         }
     }
