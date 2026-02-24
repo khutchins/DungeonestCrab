@@ -55,7 +55,7 @@ namespace DungeonestCrab.Dungeon.Crawl {
         private void Awake() {
             if (PlayerMovementInputAllowed != null) PlayerMovementInputAllowed.Value = true;
             this.transform.localRotation = Quaternion.Euler(Vector3.up * _angle);
-            this.transform.localPosition = new Vector3(Mathf.Round(this.transform.localPosition.x), 0, Mathf.Round(this.transform.localPosition.z));
+            this.transform.localPosition = new Vector3(Mathf.Round(this.transform.localPosition.x), this.transform.localPosition.y, Mathf.Round(this.transform.localPosition.z));
             DungeonGrid.INSTANCE.RegisterPlayer(this);
             _timeCheck = new TimeCheck();
             _actions[Action.Interact] = Controller.Interact;

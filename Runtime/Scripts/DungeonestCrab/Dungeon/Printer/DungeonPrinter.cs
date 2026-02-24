@@ -174,7 +174,7 @@ namespace DungeonestCrab.Dungeon.Printer {
                     float entityZ = walkable ? 0 : -ruleConfig.GroundOffset;
                     if (entity.Type.RaiseToCeiling) entityZ = ruleConfig.CeilingHeight - 1;
 
-                    AddEntity(dg, entity, tileSpec.Coords, entityZ, dg.ConsistentRNG);
+                    AddEntity(dg, entity, tileSpec.Coords, entityZ + entity.YOffset, dg.ConsistentRNG);
                 }
 
                 if (dg.Traits != null) {

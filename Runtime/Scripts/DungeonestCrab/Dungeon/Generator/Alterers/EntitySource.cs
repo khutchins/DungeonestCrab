@@ -32,8 +32,8 @@ namespace DungeonestCrab.Dungeon {
 		/// <param name="entity">The entity to return</param>
 		/// <param name="code">The code on instantiate</param>
 		/// <returns></returns>
-		public static EntitySource Single(EntitySO entity, Entity.CodeOnInstantiate code = null) {
-			return new EntitySource(new Pair(entity, code));
+		public static EntitySource Single(EntitySO entity, Entity.CodeOnInstantiate code = null, float yOffset = 0) {
+			return new EntitySource(new Pair(entity, code, yOffset));
 		}
 
 		/// <summary>
@@ -42,8 +42,8 @@ namespace DungeonestCrab.Dungeon {
 		/// <param name="entity">The entity to return</param>
 		/// <param name="code">The code on instantiate</param>
 		/// <returns></returns>
-		public static EntitySource Single(EntitySpec entity, Entity.CodeOnInstantiate code = null) {
-			return new EntitySource(new Pair(entity, code));
+		public static EntitySource Single(EntitySpec entity, Entity.CodeOnInstantiate code = null, float yOffset = 0) {
+			return new EntitySource(new Pair(entity, code, yOffset));
 		}
 
 		/// <summary>
@@ -73,15 +73,18 @@ namespace DungeonestCrab.Dungeon {
 		public class Pair {
 			public readonly EntitySpec Entity;
 			public readonly Entity.CodeOnInstantiate Code;
+			public readonly float YOffset;
 
-			public Pair(EntitySO entity, Entity.CodeOnInstantiate code) {
+			public Pair(EntitySO entity, Entity.CodeOnInstantiate code, float yOffset = 0) {
 				Entity = entity.Entity;
 				Code = code;
+				YOffset = yOffset;
 			}
 
-			public Pair(EntitySpec entity, Entity.CodeOnInstantiate code) {
+			public Pair(EntitySpec entity, Entity.CodeOnInstantiate code, float yOffset = 0) {
 				Entity = entity;
 				Code = code;
+				YOffset = yOffset;
 			}
 		}
 
@@ -92,13 +95,13 @@ namespace DungeonestCrab.Dungeon {
 
 			}
 
-			public Builder AddEntity(EntitySO entity, Entity.CodeOnInstantiate code = null) {
-				_pairs.Add(new Pair(entity, code));
+			public Builder AddEntity(EntitySO entity, Entity.CodeOnInstantiate code = null, float yOffset = 0) {
+				_pairs.Add(new Pair(entity, code, yOffset));
 				return this;
 			}
 
-			public Builder AddEntity(EntitySpec entity, Entity.CodeOnInstantiate code = null) {
-				_pairs.Add(new Pair(entity, code));
+			public Builder AddEntity(EntitySpec entity, Entity.CodeOnInstantiate code = null, float yOffset = 0) {
+				_pairs.Add(new Pair(entity, code, yOffset));
 				return this;
 			}
 

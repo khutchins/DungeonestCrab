@@ -83,7 +83,7 @@ namespace DungeonestCrab.Dungeon {
                     var clone = new TileSpec(source.Coords, source.Tile, source.Terrain, source.GetTags().ToArray(), source.Immutable);
 
                     foreach (var ent in source.Entities) {
-                        Entity entClone = new Entity(ent.Tile, ent.EntityIndex, ent.Type, ent.Code, ent.EntityID, ent.YAngle);
+                        Entity entClone = new Entity(ent.Tile, ent.EntityIndex, ent.Type, ent.Code, ent.EntityID, ent.YAngle, ent.YOffset);
                         clone.AddEntity(entClone);
                         Entities.Add(entClone);
                     }
