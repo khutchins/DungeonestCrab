@@ -319,8 +319,16 @@ namespace DungeonestCrab.Dungeon {
 					TileSpec.Adjacency mod = (TileSpec.Adjacency)(1 << ((my + 1) * 3 + (mx + 1)));
 					// Hacky way to index into adjacencies. Probably not a good idea.
 					if (neighbor != null) {
-						if (tile.Tile == neighbor.Tile) tileAdjs |= mod;
-						if (tile.Terrain == neighbor.Terrain) terrainAdjs |= mod;
+						bool allowedBySource = true;
+						if (mx == 0 && my == 1) allowedBySource = !tile.HasAnyOrientationTag() || tile.HasTag(TileSpec.ORIENTATION_NORTH);
+						else if (mx == 0 && my == -1) allowedBySource = !tile.HasAnyOrientationTag() || tile.HasTag(TileSpec.ORIENTATION_SOUTH);
+						else if (mx == 1 && my == 0) allowedBySource = !tile.HasAnyOrientationTag() || tile.HasTag(TileSpec.ORIENTATION_EAST);
+						else if (mx == -1 && my == 0) allowedBySource = !tile.HasAnyOrientationTag() || tile.HasTag(TileSpec.ORIENTATION_WEST);
+
+						if (allowedBySource) {
+							if (tile.Tile == neighbor.Tile) tileAdjs |= mod;
+							if (tile.Terrain == neighbor.Terrain) terrainAdjs |= mod;
+						}
 					}
 				}
 			}

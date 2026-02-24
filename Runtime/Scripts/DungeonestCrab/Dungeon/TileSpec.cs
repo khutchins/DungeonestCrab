@@ -108,6 +108,10 @@ namespace DungeonestCrab.Dungeon {
             return _tags.Contains(tag);
         }
 
+        public bool HasAnyOrientationTag() {
+            return HasTag(ORIENTATION_NORTH) || HasTag(ORIENTATION_SOUTH) || HasTag(ORIENTATION_EAST) || HasTag(ORIENTATION_WEST);
+        }
+
 		public void RefreshCache() {
 			_drawStyle = DrawStyle.NoOverride;
 			foreach (var tag in _tags) {
