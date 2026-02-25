@@ -8,11 +8,13 @@ namespace DungeonestCrab.Dungeon.Generator {
     public class TerrainSetter : IAlterer {
 
         readonly IMatcher _matcher;
+        readonly IMatcher _filter;
         readonly int _range;
         readonly TerrainSO _terrainToSet;
 
-        public TerrainSetter(IMatcher matcher, int range, TerrainSO terrainToSet) {
+        public TerrainSetter(IMatcher matcher, IMatcher filter, int range, TerrainSO terrainToSet) {
             _matcher = matcher;
+            _filter = filter;
             _range = range;
             _terrainToSet = terrainToSet;
         }
@@ -24,7 +26,9 @@ namespace DungeonestCrab.Dungeon.Generator {
                     for (int x = -_range; x <= _range; x++) {
                         for (int y = -_range; y <= _range; y++) {
                             var neighbor = dungeon.GetTileSpecSafe(tile.Coords.x + x, tile.Coords.y + y);
-                            set.Add(neighbor);
+                            if (neighbor != null && !neighbor.Immutable && (_filter == null || _filter.Matches(neighbor))) {
+                                set.Add(neighbor);
+                            }
                         }
                     }
                 }

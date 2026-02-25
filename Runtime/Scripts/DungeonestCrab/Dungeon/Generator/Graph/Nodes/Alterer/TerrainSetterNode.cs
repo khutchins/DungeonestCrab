@@ -5,6 +5,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
     [CreateNodeMenu("Dungeon/Actions/Set Terrain")]
     public class TerrainSetterNode : DungeonPassNode {
         [Input(ShowBackingValue.Never, ConnectionType.Override)] public MatcherConnection Matcher;
+        [Input(ShowBackingValue.Never, ConnectionType.Override)] public MatcherConnection Filter;
 
         public TerrainSO TerrainToSet;
         public int Range = 0;
@@ -13,7 +14,9 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
             IMatcher matcher = GetInputValue<IMatcher>("Matcher", null);
             if (matcher == null) matcher = TileMatcher.MatchingAll();
 
-            return new TerrainSetter(matcher, Range, TerrainToSet).Modify(dungeon, random);
+            IMatcher filter = GetInputValue<IMatcher>("Filter", null);
+
+            return new TerrainSetter(matcher, filter, Range, TerrainToSet).Modify(dungeon, random);
         }
     }
 }
