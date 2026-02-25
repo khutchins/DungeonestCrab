@@ -3,7 +3,8 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
     public class CarverStandardNode : CarverProviderNode {
         public Tile TileToSet = Tile.Floor;
         public TerrainSO Terrain;
+        public bool PreserveExistingFloors = false;
 
-        public override ITileCarver GetCarver() => new CarverStandard(TileToSet, Terrain);
+        public override ITileCarver GetCarver() => new CarverStandard(TileToSet, Terrain, PreserveExistingFloors);
     }
 }

@@ -16,6 +16,8 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         [Header("Defaults")]
         [Tooltip("Used if no specific Carver is connected.")]
         public TerrainSO DefaultTerrain;
+        [Tooltip("If true, existing floors will not have their terrain changed when carving.")]
+        public bool PreserveExistingFloors = true;
 
         protected override bool ApplyNodeLogic(TheDungeon dungeon, IRandom random) {
 
@@ -25,7 +27,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
 
             connector ??= new ConnectorRandom(0.1f);
             pathfinder ??= new PathfinderDogleg();
-            carver ??= new CarverStandard(Tile.Floor, DefaultTerrain);
+            carver ??= new CarverStandard(Tile.Floor, DefaultTerrain, PreserveExistingFloors);
 
             return new ModularCombiner(connector, pathfinder, carver).Modify(dungeon, random);
         }
