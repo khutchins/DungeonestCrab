@@ -74,7 +74,33 @@ namespace DungeonestCrab.Dungeon.Generator {
 			int minDist = Mathf.Min(x, y, bounds.w - x, bounds.h - y);
 			if (minDist < insetWidth) return minMod;
 			minDist -= insetWidth;
-			if (minDist < gradientLength) return minDist / gradientLength * (maxMod - minMod) + minMod;
+			if (minDist < gradientLength) return (float)minDist / gradientLength * (maxMod - minMod) + minMod;
+			return maxMod;
+		}
+	}
+
+	public class SmoothStepModifier : INoiseModifier {
+		public int insetWidth;
+		public int gradientLength;
+		public float minMod;
+		public float maxMod;
+
+		public SmoothStepModifier(int inset, int gradientLength, float minMod = 0, float maxMod = 1) {
+			insetWidth = inset;
+			this.gradientLength = gradientLength;
+			this.minMod = minMod;
+			this.maxMod = maxMod;
+		}
+
+		public float Modifier(AppliedBounds bounds, int x, int y) {
+			int minDist = Mathf.Min(x, y, bounds.w - x, bounds.h - y);
+			if (minDist < insetWidth) return minMod;
+			minDist -= insetWidth;
+			if (minDist < gradientLength) {
+				float t = (float)minDist / gradientLength;
+				t = t * t * (3f - 2f * t); // Smoothstep
+				return t * (maxMod - minMod) + minMod;
+			}
 			return maxMod;
 		}
 	}
