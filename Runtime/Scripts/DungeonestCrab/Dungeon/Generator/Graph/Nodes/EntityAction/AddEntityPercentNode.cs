@@ -10,7 +10,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
             EntitySource source = GetEntitySource();
             if (source == null) return false;
 
-            return new AddEntityPercent(source, GetMatcher(), AvoidBlockingPath, Percent)
+            return new AddEntityPercent(source, GetMatcher(), AvoidBlockingPath, AvoidAdjacency, Percent)
                 .Modify(dungeon, random);
         }
     }

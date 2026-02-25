@@ -11,6 +11,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
 
         [Header("Common")]
         public bool AvoidBlockingPath = true;
+        public bool AvoidAdjacency = true;
 
         protected EntitySource GetEntitySource() {
             return GetInputValue<EntitySource>("Entities", null);

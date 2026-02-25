@@ -10,12 +10,14 @@ namespace DungeonestCrab.Dungeon.Generator {
 		private readonly float _chancePerTile;
 		private readonly IMatcher _matcher;
 		private readonly bool _placeToNotBlockDungeon;
+		private readonly bool _avoidAdjacency;
 
-		public AddEntityPercent(EntitySource source, IMatcher tileMatcher, bool placeToNotBlockDungeon, float chancePerTile) {
+		public AddEntityPercent(EntitySource source, IMatcher tileMatcher, bool placeToNotBlockDungeon, bool avoidAdjacency, float chancePerTile) {
 			_source = source;
 			_chancePerTile = chancePerTile;
 			_matcher = tileMatcher;
 			_placeToNotBlockDungeon = placeToNotBlockDungeon;
+			_avoidAdjacency = avoidAdjacency;
 		}
 
 		public override bool Modify(TheDungeon generator, IRandom rand) {
@@ -28,7 +30,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 			}
 			int targetAmt = (int)(qualifiedTiles * _chancePerTile);
 
-			return PlaceMany(generator, rand, _source, _matcher, _placeToNotBlockDungeon, 0, targetAmt);
+			return PlaceMany(generator, rand, _source, _matcher, _placeToNotBlockDungeon, 0, targetAmt, _avoidAdjacency);
 		}
 	}
 }

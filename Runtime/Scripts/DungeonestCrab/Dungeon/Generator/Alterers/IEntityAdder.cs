@@ -37,7 +37,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 			}
 		}
 
-		protected static bool PlaceMany(TheDungeon generator, IRandom rand, EntitySource source, IMatcher matcher, bool placeToNotBlockDungeon, int minRequired, int targetAmt) {
+		protected static bool PlaceMany(TheDungeon generator, IRandom rand, EntitySource source, IMatcher matcher, bool placeToNotBlockDungeon, int minRequired, int targetAmt, bool avoidAdjacency = true) {
 			if (targetAmt <= 0) return true;
 			int actualMin = targetAmt < minRequired ? targetAmt : minRequired;
 
@@ -65,7 +65,11 @@ namespace DungeonestCrab.Dungeon.Generator {
                     return false;
                 }
                 generator.AddEntity(new Entity(pt, i, pair.Entity, pair.Code));
-				spawnablePoints.RemoveAll(pt2 => pt == pt2 || pt2.AdjacenciesWithDiag().Contains(pt));
+				if (avoidAdjacency) {
+					spawnablePoints.RemoveAll(pt2 => pt == pt2 || pt2.AdjacenciesWithDiag().Contains(pt));
+				} else {
+					spawnablePoints.RemoveAt(0);
+				}
 			}
 			Debug.Log(string.Format("Generated {0} entity of target {1}", i, targetAmt));
 			return i >= minRequired;

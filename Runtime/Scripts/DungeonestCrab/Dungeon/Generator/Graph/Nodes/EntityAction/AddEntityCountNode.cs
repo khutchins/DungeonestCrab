@@ -9,7 +9,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
 
         protected override bool ApplyNodeLogic(TheDungeon dungeon, IRandom random) {
             EntitySource source = GetEntitySource();
-            return new AddEntity(source, GetMatcher(), AvoidBlockingPath, MinCount, TargetCount)
+            return new AddEntity(source, GetMatcher(), AvoidBlockingPath, AvoidAdjacency, MinCount, TargetCount)
                 .Modify(dungeon, random);
         }
     }
