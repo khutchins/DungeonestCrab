@@ -41,7 +41,9 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
                 return _baseProvider.GetCost(dungeon, x, y);
             }
 
-            public void Init(IRandom rand) { }
+            public void Init(IRandom rand) {
+                _baseProvider.Init(rand);
+            }
         }
     }
 }
