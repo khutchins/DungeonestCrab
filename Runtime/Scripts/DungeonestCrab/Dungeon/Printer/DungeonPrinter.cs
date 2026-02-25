@@ -257,6 +257,10 @@ namespace DungeonestCrab.Dungeon.Printer {
 
                 if (myPriority && !adjPriority) return tile;
                 if (adjPriority && !myPriority) return adjTile;
+                if (myPriority && adjPriority) {
+                    // Use the taller one.
+                    return (tile.CeilingOffset >= adjTile.CeilingOffset) ? tile : adjTile;
+                }
 
                 return null;
             }
@@ -377,7 +381,7 @@ namespace DungeonestCrab.Dungeon.Printer {
                 float styleCeiling = styleRules.CeilingHeight * _tileHeightMult;
 
                 info.minY = neighborStructureTop;
-                info.maxY = Mathf.Min(myCeiling, styleCeiling);
+                info.maxY = myCeiling;
 
                 if (info.maxY > info.minY) {
                     DrawWallSingle(info);
