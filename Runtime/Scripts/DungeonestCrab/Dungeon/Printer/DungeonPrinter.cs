@@ -339,9 +339,13 @@ namespace DungeonestCrab.Dungeon.Printer {
             // The wall is only drawn if this tile is not itself a wall. 
             // Draw the wall segments up to the wall height.
             if (DrawsStandardWalls(tile, adjTile)) {
+                // We use the rules of whichever spec provided the style, 
+                // so that invasive terrains can control their own boundary heights.
+                TileRuleConfig styleRules = (wallStyle.StyleSource == tile) ? myRules : adjRules;
+                
                 info.tileSpec = wallStyle.StyleSource; // Use Resolved Style
                 info.minY = 0;
-                info.maxY = adjRules.WallHeight * _tileHeightMult;
+                info.maxY = styleRules.WallHeight * _tileHeightMult;
                 info.wallDraws = WallTileAdjacencies(dg, tile, adjTile);
                 DrawWallSingle(info);
             }
@@ -350,7 +354,9 @@ namespace DungeonestCrab.Dungeon.Printer {
 
             if (DrawsStandardWalls(tile, adjTile)) {
                 // Neighbor is a Wall. Structure goes up to WallHeight.
-                neighborStructureTop = adjRules.WallHeight * _tileHeightMult;
+                // Again, respect the height of the actual wall we drew.
+                TileRuleConfig styleRules = (wallStyle.StyleSource == tile) ? myRules : adjRules;
+                neighborStructureTop = styleRules.WallHeight * _tileHeightMult;
             } else {
                 // Neighbor is a Floor (Open Air). Structure goes up to its Ceiling.
                 neighborStructureTop = adjRules.CeilingHeight * _tileHeightMult;
