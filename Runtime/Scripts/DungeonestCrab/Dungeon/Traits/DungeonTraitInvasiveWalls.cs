@@ -11,6 +11,8 @@ namespace DungeonestCrab.Dungeon {
             // We want the Current tile (the floor we are standing on) to provide the wall texture,
             // rather than the Neighbor tile (the wall/void).
             config.StyleSource = current;
+            config.UpperStyleSource = current;
+            config.LowerStyleSource = current;
         }
     }
 }

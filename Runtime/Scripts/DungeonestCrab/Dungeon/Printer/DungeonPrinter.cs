@@ -258,12 +258,12 @@ namespace DungeonestCrab.Dungeon.Printer {
                 if (myPriority && !adjPriority) return tile;
                 if (adjPriority && !myPriority) return adjTile;
 
-                return WallsUse == WallDisplayType.ThisTerrain ? tile : adjTile;
+                return null;
             }
 
-            TileSpec lowerSource = ResolvePriority(m => m.HasPriorityLowerWall);
-            TileSpec standardSource = ResolvePriority(m => m.HasPriorityWall);
-            TileSpec upperSource = ResolvePriority(m => m.HasPriorityUpperWall);
+            TileSpec standardSource = ResolvePriority(m => m.HasPriorityWall) ?? (WallsUse == WallDisplayType.ThisTerrain ? tile : adjTile);
+            TileSpec lowerSource = ResolvePriority(m => m.HasPriorityLowerWall) ?? standardSource;
+            TileSpec upperSource = ResolvePriority(m => m.HasPriorityUpperWall) ?? standardSource;
 
             var wallConfig = new WallStyleConfig(lowerSource, standardSource, upperSource);
 
@@ -328,12 +328,17 @@ namespace DungeonestCrab.Dungeon.Printer {
             // If I draw as floor and my floor-drawing neighbor is goes lower than me,
             // I need to draw a wall downward.
             if (myRules.GroundOffset > adjRules.GroundOffset) {
-                info.tileSpec = wallStyle.StyleSource;
-                info.minY = -myRules.GroundOffset;
+                info.tileSpec = wallStyle.LowerStyleSource;
+                
+                TileRuleConfig styleRules = (wallStyle.LowerStyleSource == tile) ? myRules : adjRules;
+
+                info.minY = -styleRules.GroundOffset;
                 info.maxY = -adjRules.GroundOffset;
                 info.wallDraws = WallTileAdjacencies(dg, tile, adjTile);
 
-                DrawWallSingle(info);
+                if (info.minY < info.maxY) {
+                    DrawWallSingle(info);
+                }
             }
 
             // The wall is only drawn if this tile is not itself a wall. 
@@ -366,10 +371,17 @@ namespace DungeonestCrab.Dungeon.Printer {
 
             // Draw if current tile is higher than the neighbor's structure.
             if (myCeiling > neighborStructureTop) {
-                info.tileSpec = wallStyle.StyleSource;
+                info.tileSpec = wallStyle.UpperStyleSource;
+                
+                TileRuleConfig styleRules = (wallStyle.UpperStyleSource == tile) ? myRules : adjRules;
+                float styleCeiling = styleRules.CeilingHeight * _tileHeightMult;
+
                 info.minY = neighborStructureTop;
-                info.maxY = myCeiling;
-                DrawWallSingle(info);
+                info.maxY = Mathf.Min(myCeiling, styleCeiling);
+
+                if (info.maxY > info.minY) {
+                    DrawWallSingle(info);
+                }
             }
         }
 
