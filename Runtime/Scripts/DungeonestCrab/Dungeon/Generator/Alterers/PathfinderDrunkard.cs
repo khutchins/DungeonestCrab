@@ -36,7 +36,11 @@ namespace DungeonestCrab.Dungeon.Generator {
                 }
 
                 var validNeighbors = current.Adjacencies1Away()
-                    .Where(n => dungeon.Contains(n) && !dungeon.GetTileSpec(n).Immutable)
+                    .Where(n => {
+                        if (!dungeon.Contains(n)) return false;
+                        var spec = dungeon.GetTileSpec(n);
+                        return spec.Walkable || !spec.Immutable;
+                    })
                     .Where(n => !visited.Contains(n))
                     .ToList();
 

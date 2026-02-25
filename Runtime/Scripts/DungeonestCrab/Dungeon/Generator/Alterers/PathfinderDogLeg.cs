@@ -53,8 +53,10 @@ namespace DungeonestCrab.Dungeon.Generator {
 
         private bool IsBlocked(TheDungeon dungeon, Vector2Int pt) {
             if (!dungeon.Contains(pt)) return true;
+            var spec = dungeon.GetTileSpec(pt);
+            if (spec.Walkable) return false;
             // Immutable tiles should not be edited.
-            return dungeon.GetTileSpec(pt).Immutable;
+            return spec.Immutable;
         }
     }
 }

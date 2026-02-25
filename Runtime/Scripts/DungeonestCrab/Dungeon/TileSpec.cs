@@ -188,6 +188,10 @@ namespace DungeonestCrab.Dungeon {
 
 		public float TileCarvingCost {
 			get {
+				if (Walkable) {
+					if (Terrain == null) return 1;
+					return Terrain.TileCarvingCost(Tile);
+				}
 				if (Immutable) return -1;
 				if (Terrain == null) return Tile == Tile.Wall ? 6 : 1;
 				return Terrain.TileCarvingCost(Tile);
