@@ -31,7 +31,7 @@ namespace DungeonestCrab.Dungeon {
 
         public bool RaiseToCeiling;
         public bool HasTag(string tag) {
-            return Tags.Contains(tag);
+            return Tags != null && Tags.Contains(tag);
         }
 
         public T GetMixin<T>() where T : EntityMixin {
