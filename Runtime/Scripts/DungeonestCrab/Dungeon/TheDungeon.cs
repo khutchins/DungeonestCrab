@@ -34,7 +34,6 @@ namespace DungeonestCrab.Dungeon {
 		/// </summary>
 		public readonly IRandom NonConsistentRNG;
 
-		private float[,] _pathMap;
 		private int[,] _cachedRegionMap;
 		private DirectedGraph<Vector2Int> _cachedPathGraph;
 		private int _cachedMaxRegion = -1;
@@ -64,10 +63,15 @@ namespace DungeonestCrab.Dungeon {
 			TilesWithEntities = new HashSet<TileSpec>();
 			Entities = new List<Entity>();
 			_tiles = CreateTiles();
-			_pathMap = new float[h, w];
 			this.ConsistentRNG = consistentRNG ?? new SystemRandom();
 			this.NonConsistentRNG = inconsistentRNG ?? new SystemRandom();
 		}
+
+        public void InvalidateCaches() {
+            _cachedRegionMap = null;
+            _cachedPathGraph = null;
+            _cachedMaxRegion = -1;
+        }
 
         public TheDungeon Clone() {
             return new TheDungeon(this);
@@ -103,10 +107,7 @@ namespace DungeonestCrab.Dungeon {
                 }
             }
 
-			// Reset caches
-            _pathMap = new float[Size.y, Size.x];
-            _cachedRegionMap = null;
-			_cachedPathGraph = null;
+            InvalidateCaches();
         }
 
         public void AddTrait(DungeonTraitSO trait) {
@@ -180,9 +181,6 @@ namespace DungeonestCrab.Dungeon {
 			tile.AddEntity(entity);
 			TilesWithEntities.Add(tile);
 			Entities.Add(entity);
-			if (entity.Type.BlocksMovement) {
-				_pathMap[entity.Tile.y, entity.Tile.x] = -1;
-			}
 		}
 
 		public void AddJunction(Vector2Int pt, TerrainSO terrain) {

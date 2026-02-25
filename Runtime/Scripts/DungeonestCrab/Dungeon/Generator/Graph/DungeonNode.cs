@@ -108,6 +108,8 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
                 return false;
             }
 
+            dungeon.InvalidateCaches();
+
             NodePort outPort = GetOutputPort("Output");
             if (outPort != null && outPort.IsConnected) {
                 DungeonNode nextNode = outPort.Connection.node as DungeonNode;
