@@ -32,12 +32,26 @@ namespace DungeonestCrab.Dungeon.Generator {
                 }
 
                 if (i < pathList.Count - 1) {
-                    AddOrientationTag(spec, pathList[i + 1] - current);
+                    Vector2Int next = pathList[i + 1];
+                    TileSpec nextSpec = dungeon.GetTileSpec(next);
+                    if (IsValidPathSegment(nextSpec)) {
+                        AddOrientationTag(spec, next - current);
+                    }
                 }
                 if (i > 0) {
-                    AddOrientationTag(spec, pathList[i - 1] - current);
+                    Vector2Int prev = pathList[i - 1];
+                    TileSpec prevSpec = dungeon.GetTileSpec(prev);
+                    if (IsValidPathSegment(prevSpec)) {
+                        AddOrientationTag(spec, prev - current);
+                    }
                 }
             }
+        }
+
+        private bool IsValidPathSegment(TileSpec spec) {
+            if (spec.Immutable) return false;
+            if (_preserveExistingFloors && spec.Tile == Tile.Floor) return false;
+            return true;
         }
 
         private void AddOrientationTag(TileSpec spec, Vector2Int direction) {
