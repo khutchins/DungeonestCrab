@@ -219,7 +219,7 @@ namespace DungeonestCrab.Dungeon {
 		/// <returns></returns>
 		public int ComputeRegionCount() {
 			ComputeRegions(out int res);
-			return res;
+			return res + 1;
 		}
 
 		public int[,] ComputeRegions(out int maxRegion) {
