@@ -5,8 +5,8 @@ using Pomerandomian;
 namespace DungeonestCrab.Dungeon.Generator.Graph {
     [CreateNodeMenu("Dungeon/Pathfinding/Costs/Add Noise")]
     public class CostAddNoiseNode : TileCostNode {
-        [Input(ShowBackingValue.Never, ConnectionType.Override)] public CostProviderConnection Input;
-        [Input(ShowBackingValue.Never, ConnectionType.Override)] public NoiseConnection Noise;
+        [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public CostProviderConnection Input;
+        [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NoiseConnection Noise;
 
         [Tooltip("How much influence the noise has. Higher values = more winding paths.")]
         public float Multiplier = 2.0f;

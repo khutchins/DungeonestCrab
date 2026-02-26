@@ -8,7 +8,7 @@ using XNode;
 namespace DungeonestCrab.Dungeon.Generator.Graph {
     [CreateNodeMenu("Dungeon/Start")]
     public class StartNode : DungeonNode {
-        [Output(ShowBackingValue.Never, ConnectionType.Override)] public DungeonConnection Output;
+        [Output(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public DungeonConnection Output;
 
         [Header("Settings")]
         public List<DungeonTraitSO> Traits;

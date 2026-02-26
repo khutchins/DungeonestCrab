@@ -3,12 +3,12 @@ using UnityEngine;
 namespace DungeonestCrab.Dungeon.Generator.Graph {
     [CreateNodeMenu("Dungeon/Matchers/Not Matcher")]
     public class NotMatcherNode : MatcherProviderNode {
-        [Input(ShowBackingValue.Never, ConnectionType.Override)] public MatcherProviderNode Matcher;
+        [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public MatcherConnection Matcher;
 
         public override IMatcher GetMatcher() {
-            var input = GetInputValue<MatcherProviderNode>("Matcher", Matcher);
+            var input = GetInputValue<IMatcher>("Matcher", null);
             if (input == null) return null;
-            return new NotMatcher(input.GetMatcher());
+            return new NotMatcher(input);
         }
     }
 

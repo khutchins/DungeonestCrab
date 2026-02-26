@@ -4,8 +4,8 @@ using Pomerandomian;
 namespace DungeonestCrab.Dungeon.Generator.Graph {
     [CreateNodeMenu("Dungeon/Actions/Set Terrain")]
     public class TerrainSetterNode : DungeonPassNode {
-        [Input(ShowBackingValue.Never, ConnectionType.Override)] public MatcherConnection Matcher;
-        [Input(ShowBackingValue.Never, ConnectionType.Override)] public MatcherConnection Filter;
+        [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public MatcherConnection Matcher;
+        [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public MatcherConnection Filter;
 
         public TerrainSO TerrainToSet;
         public int Range = 0;

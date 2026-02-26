@@ -10,7 +10,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
     public class AStarCombinerNode : DungeonPassNode {
 
         [Header("Inputs")]
-        [Input(ShowBackingValue.Never, ConnectionType.Override)] public NoiseConnection CarveNoise;
+        [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NoiseConnection CarveNoise;
 
         [Header("Settings")]
         public TerrainSO FloorTerrain;

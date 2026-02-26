@@ -5,7 +5,7 @@ using DungeonestCrab.Dungeon;
 namespace DungeonestCrab.Dungeon.Generator.Graph {
 
     public abstract class BoundsProviderNode : BasePreviewNode {
-        [Output(ShowBackingValue.Never, ConnectionType.Multiple)] public BoundsConnection Output;
+        [Output(ShowBackingValue.Never, ConnectionType.Multiple, TypeConstraint.Strict)] public BoundsConnection Output;
 
         public abstract Bounds GetBounds();
 

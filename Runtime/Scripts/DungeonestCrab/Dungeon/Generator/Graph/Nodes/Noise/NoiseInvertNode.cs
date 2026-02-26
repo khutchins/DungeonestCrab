@@ -4,7 +4,7 @@ using KH.Noise;
 namespace DungeonestCrab.Dungeon.Generator.Graph {
     [CreateNodeMenu("Dungeon/Noise/Math/Invert")]
     public class NoiseInvertNode : NoiseProviderNode {
-        [Input(ShowBackingValue.Never, ConnectionType.Override)] public NoiseConnection Input;
+        [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NoiseConnection Input;
 
         public override INoiseSource CreateNoiseSource() {
             INoiseSource src = GetInputValue<INoiseSource>("Input", null);

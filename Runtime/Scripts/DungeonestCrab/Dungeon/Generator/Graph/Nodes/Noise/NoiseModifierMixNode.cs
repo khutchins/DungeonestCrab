@@ -10,8 +10,8 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
             Multiply
         }
 
-        [Input(ShowBackingValue.Never, ConnectionType.Override)] public NoiseModifierConnection A;
-        [Input(ShowBackingValue.Never, ConnectionType.Override)] public NoiseModifierConnection B;
+        [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NoiseModifierConnection A;
+        [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NoiseModifierConnection B;
         public MixMode Mode = MixMode.Max;
 
         public override INoiseModifier CreateModifier() {

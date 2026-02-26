@@ -19,7 +19,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
 
 
     public abstract class TileCostNode : Node {
-        [Output(ShowBackingValue.Never, ConnectionType.Multiple)] public CostProviderConnection Output;
+        [Output(ShowBackingValue.Never, ConnectionType.Multiple, TypeConstraint.Strict)] public CostProviderConnection Output;
         public override object GetValue(NodePort port) {
             if (port.fieldName == "Output") return GetCostProvider();
             return null;

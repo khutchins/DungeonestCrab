@@ -6,7 +6,7 @@ using Pomerandomian;
 namespace DungeonestCrab.Dungeon.Generator.Graph {
 
     public abstract class MatcherProviderNode : BasePreviewNode {
-        [Output(ShowBackingValue.Never, ConnectionType.Multiple)] public MatcherConnection Output;
+        [Output(ShowBackingValue.Never, ConnectionType.Multiple, TypeConstraint.Strict)] public MatcherConnection Output;
 
         public abstract IMatcher GetMatcher();
 

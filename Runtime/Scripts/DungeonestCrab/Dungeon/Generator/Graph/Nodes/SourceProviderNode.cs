@@ -4,7 +4,7 @@ using XNode;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
     public abstract class SourceProviderNode : BasePreviewNode {
-        [Output(ShowBackingValue.Never, ConnectionType.Multiple)] public SourceConnection Output;
+        [Output(ShowBackingValue.Never, ConnectionType.Multiple, TypeConstraint.Strict)] public SourceConnection Output;
 
         public abstract ISource GetSource();
 

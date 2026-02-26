@@ -4,7 +4,7 @@ using KH.Noise;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
     public abstract class NoiseProviderNode : BasePreviewNode {
-        [Output(ShowBackingValue.Never, ConnectionType.Multiple)] public NoiseConnection Output;
+        [Output(ShowBackingValue.Never, ConnectionType.Multiple, TypeConstraint.Strict)] public NoiseConnection Output;
 
         public abstract INoiseSource CreateNoiseSource();
 

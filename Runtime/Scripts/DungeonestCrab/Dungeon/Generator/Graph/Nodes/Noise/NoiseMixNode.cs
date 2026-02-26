@@ -7,8 +7,8 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
 
     [CreateNodeMenu("Dungeon/Noise/Math/Mix (Average)")]
     public class NoiseMixNode : NoiseProviderNode {
-        [Input(ShowBackingValue.Never, ConnectionType.Override)] public NoiseConnection A;
-        [Input(ShowBackingValue.Never, ConnectionType.Override)] public NoiseConnection B;
+        [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NoiseConnection A;
+        [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NoiseConnection B;
 
         [Tooltip("0 = All B, 1 = All A")]
         [Range(0, 1)] public float WeightA = 0.5f;

@@ -3,7 +3,7 @@ using UnityEngine;
 namespace DungeonestCrab.Dungeon.Generator.Graph {
     [CreateNodeMenu("Dungeon/Matchers/Or Matcher")]
     public class OrMatcherNode : MatcherProviderNode {
-        [Input(ShowBackingValue.Never, ConnectionType.Multiple)] public MatcherConnection Matchers;
+        [Input(ShowBackingValue.Never, ConnectionType.Multiple, TypeConstraint.Strict)] public MatcherConnection Matchers;
 
         public override IMatcher GetMatcher() {
             var inputs = GetInputValues<IMatcher>("Matchers", null);

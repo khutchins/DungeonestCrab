@@ -4,7 +4,7 @@ using DungeonestCrab.Dungeon.Generator;
 namespace DungeonestCrab.Dungeon.Generator.Graph {
 
     public abstract class ConnectorProviderNode : Node {
-        [Output(ShowBackingValue.Never, ConnectionType.Multiple)] public ConnectorConnection Output;
+        [Output(ShowBackingValue.Never, ConnectionType.Multiple, TypeConstraint.Strict)] public ConnectorConnection Output;
         public override object GetValue(NodePort port) {
             if (port.fieldName == "Output") return GetConnector();
             return null;

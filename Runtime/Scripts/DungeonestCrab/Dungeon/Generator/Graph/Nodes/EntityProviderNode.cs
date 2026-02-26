@@ -5,7 +5,7 @@ using DungeonestCrab.Dungeon;
 namespace DungeonestCrab.Dungeon.Generator.Graph {
 
     public abstract class EntityProviderNode : Node {
-        [Output(ShowBackingValue.Never, ConnectionType.Multiple)] public EntitySourceConnection Output;
+        [Output(ShowBackingValue.Never, ConnectionType.Multiple, TypeConstraint.Strict)] public EntitySourceConnection Output;
 
         public abstract EntitySource GetSource();
 

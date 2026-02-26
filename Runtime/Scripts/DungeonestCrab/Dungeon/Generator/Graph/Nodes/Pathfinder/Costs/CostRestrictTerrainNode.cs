@@ -4,7 +4,7 @@ using UnityEngine;
 namespace DungeonestCrab.Dungeon.Generator.Graph {
     [CreateNodeMenu("Dungeon/Pathfinding/Costs/Restrict to Terrain")]
     public class CostRestrictTerrainNode : TileCostNode {
-        [Input(ShowBackingValue.Never, ConnectionType.Override)] public CostProviderConnection Input;
+        [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public CostProviderConnection Input;
 
         [Tooltip("If set, pathfinding is only allowed on this terrain.")]
         public TerrainSO RequiredTerrain;

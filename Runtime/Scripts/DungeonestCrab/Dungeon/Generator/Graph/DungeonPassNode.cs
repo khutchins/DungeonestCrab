@@ -9,8 +9,8 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
     /// A node that takes a dungeon, modifies it, and passes it on.
     /// </summary>
     public abstract class DungeonPassNode : DungeonNode {
-        [Input(ShowBackingValue.Never, ConnectionType.Override)] public DungeonConnection Input;
-        [Output(ShowBackingValue.Never, ConnectionType.Override)] public DungeonConnection Output;
+        [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public DungeonConnection Input;
+        [Output(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public DungeonConnection Output;
 
         public override object GetValue(NodePort port) {
             if (port.fieldName == "Output") return GetPreviewDungeon();

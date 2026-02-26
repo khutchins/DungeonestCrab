@@ -6,7 +6,7 @@ using Pomerandomian;
 namespace DungeonestCrab.Dungeon.Generator.Graph {
     [CreateNodeMenu("Dungeon/Finalizer")]
     public class FinalizerNode : DungeonNode {
-        [Input(ShowBackingValue.Never, ConnectionType.Override)] public DungeonConnection Input;
+        [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public DungeonConnection Input;
 
         public TerrainSO DefaultTerrain;
 

@@ -9,9 +9,9 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
     public class ModularCombinerNode : DungeonPassNode {
 
         [Header("Components")]
-        [Input(ShowBackingValue.Never, ConnectionType.Override)] public ConnectorConnection Connector;
-        [Input(ShowBackingValue.Never, ConnectionType.Override)] public PathfinderConnection Pathfinder;
-        [Input(ShowBackingValue.Never, ConnectionType.Override)] public CarverConnection Carver;
+        [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public ConnectorConnection Connector;
+        [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public PathfinderConnection Pathfinder;
+        [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public CarverConnection Carver;
 
         [Header("Defaults")]
         [Tooltip("Used if no specific Carver is connected.")]

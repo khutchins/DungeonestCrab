@@ -7,8 +7,8 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
 
     [CreateNodeMenu("Dungeon/Sources/Noise")]
     public class SourceNoiseNode : SourceProviderNode {
-        [Input(ShowBackingValue.Never, ConnectionType.Override)] public NoiseConnection NoiseInput;
-        [Input(ShowBackingValue.Never, ConnectionType.Override)] public NoiseModifierConnection ModifierInput;
+        [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NoiseConnection NoiseInput;
+        [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NoiseModifierConnection ModifierInput;
         public Tile TileToSet = Tile.Floor;
         [Range(0, 1)] public float Threshold = 0.5f;
 

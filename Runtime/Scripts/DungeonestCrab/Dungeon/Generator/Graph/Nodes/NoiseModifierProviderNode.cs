@@ -3,7 +3,7 @@ using XNode;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
     public abstract class NoiseModifierProviderNode : BasePreviewNode {
-        [Output(ShowBackingValue.Never, ConnectionType.Multiple)] public NoiseModifierConnection Output;
+        [Output(ShowBackingValue.Never, ConnectionType.Multiple, TypeConstraint.Strict)] public NoiseModifierConnection Output;
 
         public abstract INoiseModifier CreateModifier();
 

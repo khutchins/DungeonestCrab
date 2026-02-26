@@ -3,7 +3,7 @@ using Pomerandomian;
 namespace DungeonestCrab.Dungeon.Generator.Graph {
     [CreateNodeMenu("Dungeon/Pathfinding/Pather: A*")]
     public class PathfinderAStarNode : PathfinderProviderNode {
-        [Input(ShowBackingValue.Never, ConnectionType.Override)] public CostProviderConnection CostFunction;
+        [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public CostProviderConnection CostFunction;
 
         public override IPathFinder GetPathFinder() {
             var costProvider = GetInputValue<ITileCostProvider>("CostFunction", null);

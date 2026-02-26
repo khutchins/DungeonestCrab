@@ -6,8 +6,8 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
 
     public abstract class EntityPassNode : DungeonPassNode {
         [Header("Inputs")]
-        [Input(ShowBackingValue.Never, ConnectionType.Override)] public EntitySourceConnection Entities;
-        [Input(ShowBackingValue.Never, ConnectionType.Override)] public MatcherConnection Matcher;
+        [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public EntitySourceConnection Entities;
+        [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public MatcherConnection Matcher;
 
         [Header("Common")]
         public bool AvoidBlockingPath = true;
