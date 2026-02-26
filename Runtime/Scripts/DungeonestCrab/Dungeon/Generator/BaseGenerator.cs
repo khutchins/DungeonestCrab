@@ -28,7 +28,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 			get => GetComponent<DungeonPrinter>();
 		}
 
-		private void Awake() {
+		protected virtual void Awake() {
 			if (GenerateOnAwake) Print();
 		}
 
