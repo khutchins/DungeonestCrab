@@ -12,7 +12,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
 
         [Header("Inputs")]
         [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NoiseConnection Noise;
-        [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NoiseConnection NoiseModifier;
+        [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NoiseModifierConnection NoiseModifier;
         [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public BoundsConnection Bounds;
 
         [Header("Bands")]
