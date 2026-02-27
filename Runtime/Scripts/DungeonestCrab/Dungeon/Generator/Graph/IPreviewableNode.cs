@@ -14,6 +14,8 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
     [System.Serializable] public struct CarverConnection { }
     [System.Serializable] public struct NoiseModifierConnection { }
     [System.Serializable] public struct CostProviderConnection { }
+    [System.Serializable] public struct ActionConnection { }
+    [System.Serializable] public struct NoiseBandConnection { }
 
 
     public interface IPreviewableNode {
