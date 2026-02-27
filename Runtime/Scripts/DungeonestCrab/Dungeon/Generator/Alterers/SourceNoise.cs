@@ -47,13 +47,18 @@ namespace DungeonestCrab.Dungeon.Generator {
 			float cx = bounds.w / 2F;
 			float cy = bounds.h / 2F;
 
-			float dist = (cx - x) * (cx - x) + (cy - y) * (cy - y);
-			float startRad2 = startRadius * startRadius;
-			if (dist < startRad2) return minMod;
-			float endRad2 = endRadius * endRadius;
-			if (dist < endRad2) return maxMod;
-			dist -= startRad2;
-			return dist / endRad2 * (maxMod - minMod) + minMod;
+			float dx = cx - x;
+			float dy = cy - y;
+			float distSq = dx * dx + dy * dy;
+			float startRadSq = startRadius * startRadius;
+			if (distSq < startRadSq) return minMod;
+			
+			float endRadSq = endRadius * endRadius;
+			if (distSq >= endRadSq) return maxMod;
+
+			float dist = Mathf.Sqrt(distSq);
+			float t = (dist - startRadius) / (endRadius - startRadius);
+			return t * (maxMod - minMod) + minMod;
 		}
 	}
 
