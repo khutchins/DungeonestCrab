@@ -7,7 +7,7 @@ using KH.Noise;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
 
-    [CreateNodeMenu("Dungeon/Actions/Stamp (Bands)")]
+    [CreateNodeMenu("Dungeon/Passes/Generation/Stamp Bands")]
     public class BandStamperNode : DungeonPassNode {
 
         [Header("Inputs")]

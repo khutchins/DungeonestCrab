@@ -4,7 +4,7 @@ using DungeonestCrab.Dungeon;
 using Pomerandomian;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Finalizer")]
+    [CreateNodeMenu("Dungeon/Core/Finalizer")]
     public class FinalizerNode : DungeonNode {
         [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public DungeonConnection Input;
 

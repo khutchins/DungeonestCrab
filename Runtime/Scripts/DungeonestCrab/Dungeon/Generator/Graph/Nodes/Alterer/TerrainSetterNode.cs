@@ -2,7 +2,7 @@ using UnityEngine;
 using Pomerandomian;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Actions/Set Terrain")]
+    [CreateNodeMenu("Dungeon/Passes/Logic/Set Terrain")]
     public class TerrainSetterNode : DungeonPassNode {
         [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public MatcherConnection Matcher;
         [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public MatcherConnection Filter;

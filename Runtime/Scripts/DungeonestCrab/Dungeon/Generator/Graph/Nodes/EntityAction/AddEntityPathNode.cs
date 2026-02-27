@@ -2,7 +2,7 @@ using UnityEngine;
 using Pomerandomian;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Actions/Add Entities (Path)")]
+    [CreateNodeMenu("Dungeon/Passes/Generation/Place Entities (Path)")]
     public class AddEntityPathNode : EntityPassNode {
         [Header("Path Settings")]
         public Vector2Int StartOffset;

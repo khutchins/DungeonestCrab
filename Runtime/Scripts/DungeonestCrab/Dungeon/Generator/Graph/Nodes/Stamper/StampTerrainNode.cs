@@ -1,5 +1,5 @@
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Actions/Stamp (With Terrain)")]
+    [CreateNodeMenu("Dungeon/Passes/Generation/Stamp Source (Terrain)")]
     public class StampTerrainNode : BaseStamperNode {
         public TerrainSO Terrain;
 

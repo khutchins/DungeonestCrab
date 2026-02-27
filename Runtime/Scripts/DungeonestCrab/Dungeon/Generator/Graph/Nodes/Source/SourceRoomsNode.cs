@@ -6,7 +6,7 @@ using Pomerandomian;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
 
-    [CreateNodeMenu("Dungeon/Sources/Rooms")]
+    [CreateNodeMenu("Dungeon/Definitions/Sources/Rooms (Rect)")]
     public class SourceRoomsNode : SourceProviderNode {
         public float TriesPerSquare = 0.1f;
 

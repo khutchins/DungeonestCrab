@@ -1,5 +1,5 @@
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Matchers/Terrain")]
+    [CreateNodeMenu("Dungeon/Definitions/Matchers/Match Terrain")]
     public class MatcherTerrainNode : MatcherProviderNode {
         public TerrainSO Terrain;
 

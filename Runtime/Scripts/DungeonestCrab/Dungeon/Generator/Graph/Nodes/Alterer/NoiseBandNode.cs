@@ -3,7 +3,7 @@ using XNode;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
 
-    [CreateNodeMenu("Dungeon/Actions/Noise Band")]
+    [CreateNodeMenu("Dungeon/Definitions/Actions/Noise Band Config")]
     public class NoiseBandNode : Node {
         [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public ActionConnection Action;
         [Output(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NoiseBandConnection Output;

@@ -4,7 +4,7 @@ using DungeonestCrab.Dungeon.Generator;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
 
-    [CreateNodeMenu("Dungeon/Sources/Rooms (BAM-like)")]
+    [CreateNodeMenu("Dungeon/Definitions/Sources/Rooms (BAM)")]
     public class SourceBAMRoomsNode : SourceProviderNode {
         public Tile TileToSet = Tile.Floor;
 

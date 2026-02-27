@@ -1,7 +1,7 @@
 using UnityEngine;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Noise/Modifiers/Smoothstep Edge Modifier")]
+    [CreateNodeMenu("Dungeon/Noise/Modifiers/Smoothstep Edge Mask")]
     public class SmoothStepModifierNode : NoiseModifierProviderNode {
         [Tooltip("The distance from the edge where the modification starts to be at MinMod.")]
         public int InsetWidth = 0;

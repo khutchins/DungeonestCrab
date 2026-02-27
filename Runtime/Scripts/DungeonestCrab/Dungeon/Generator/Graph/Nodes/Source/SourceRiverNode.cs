@@ -1,5 +1,5 @@
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Sources/River")]
+    [CreateNodeMenu("Dungeon/Definitions/Sources/River")]
     public class SourceRiverNode : SourceProviderNode {
         public Tile TileToSet = Tile.Floor;
         public float MinWidth = 0.5f;

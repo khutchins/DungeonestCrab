@@ -3,7 +3,7 @@ using Pomerandomian;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
 
-    [CreateNodeMenu("Dungeon/Noise/Cellular")]
+    [CreateNodeMenu("Dungeon/Noise/Generators/Cellular")]
     public class CellularNoiseNode : NoiseProviderNode {
         public float Frequency = 0.1f;
         public float Jitter = 1.0f;

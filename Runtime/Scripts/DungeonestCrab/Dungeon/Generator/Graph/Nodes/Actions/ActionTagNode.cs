@@ -2,7 +2,7 @@ using Pomerandomian;
 using System.Collections.Generic;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Actions/Modify Tags")]
+    [CreateNodeMenu("Dungeon/Definitions/Actions/Set Tags")]
     public class ActionTagNode : ActionProviderNode {
         public List<string> TagsToAdd = new List<string>();
         public List<string> TagsToRemove = new List<string>();

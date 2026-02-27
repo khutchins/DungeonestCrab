@@ -3,7 +3,7 @@ using DungeonestCrab.Dungeon.Generator;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
 
-    [CreateNodeMenu("Dungeon/Carver/Carver: Directional")]
+    [CreateNodeMenu("Dungeon/Pathfinding/Carvers/Directional")]
     public class CarverDirectionalNode : CarverProviderNode {
 
         [Header("Defaults")]

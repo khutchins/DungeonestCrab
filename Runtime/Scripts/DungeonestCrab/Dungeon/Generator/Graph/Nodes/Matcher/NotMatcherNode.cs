@@ -1,7 +1,7 @@
 using UnityEngine;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Matchers/Not Matcher")]
+    [CreateNodeMenu("Dungeon/Definitions/Matchers/Logic/Not")]
     public class NotMatcherNode : MatcherProviderNode {
         [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public MatcherConnection Matcher;
 

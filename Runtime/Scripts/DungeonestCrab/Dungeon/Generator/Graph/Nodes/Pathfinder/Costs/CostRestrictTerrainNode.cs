@@ -2,7 +2,7 @@ using Pomerandomian;
 using UnityEngine;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Pathfinding/Costs/Restrict to Terrain")]
+    [CreateNodeMenu("Dungeon/Pathfinding/Costs/Modifier: Restrict Terrain")]
     public class CostRestrictTerrainNode : TileCostNode {
         [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public CostProviderConnection Input;
 

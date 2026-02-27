@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEngine;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Matchers/And Matcher")]
+    [CreateNodeMenu("Dungeon/Definitions/Matchers/Logic/And")]
     public class AndMatcherNode : MatcherProviderNode {
         [Input(typeConstraint = TypeConstraint.Strict)] public MatcherConnection Matcher1;
         [Input(typeConstraint = TypeConstraint.Strict)] public MatcherConnection Matcher2;

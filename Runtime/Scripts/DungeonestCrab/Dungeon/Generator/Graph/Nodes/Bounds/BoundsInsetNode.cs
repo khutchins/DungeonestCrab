@@ -1,5 +1,5 @@
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Bounds/Inset (Fixed)")]
+    [CreateNodeMenu("Dungeon/Definitions/Bounds/Inset (Fixed)")]
     public class BoundsInsetNode : BoundsProviderNode {
         public int Left = 1;
         public int Right = 1;

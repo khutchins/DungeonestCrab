@@ -1,7 +1,7 @@
 using UnityEngine;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Sources/Maze")]
+    [CreateNodeMenu("Dungeon/Definitions/Sources/Maze (Standard)")]
     public class SourceMazeNode : SourceProviderNode {
         public Tile TileToSet = Tile.Floor;
         [Range(0, 1)] public float StraightBias = 0.5f;

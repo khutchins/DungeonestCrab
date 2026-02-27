@@ -1,7 +1,7 @@
 using UnityEngine;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Bounds/Centered (Percent)")]
+    [CreateNodeMenu("Dungeon/Definitions/Bounds/Centered (Percent)")]
     public class BoundsCenteredNode : BoundsProviderNode {
         [Range(0, 1)] public float CenterX = 0.5f;
         [Range(0, 1)] public float CenterY = 0.5f;

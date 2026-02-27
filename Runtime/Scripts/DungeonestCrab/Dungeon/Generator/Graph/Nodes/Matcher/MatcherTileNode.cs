@@ -1,5 +1,5 @@
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Matchers/Tile")]
+    [CreateNodeMenu("Dungeon/Definitions/Matchers/Match Tile Type")]
     public class MatcherTileNode : MatcherProviderNode {
         public Tile Tile = Tile.Floor;
 

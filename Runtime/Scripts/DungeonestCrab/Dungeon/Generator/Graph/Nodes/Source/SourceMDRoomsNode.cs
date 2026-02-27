@@ -4,7 +4,7 @@ using DungeonestCrab.Dungeon.Generator;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
 
-    [CreateNodeMenu("Dungeon/Sources/Rooms (MD-Like)")]
+    [CreateNodeMenu("Dungeon/Definitions/Sources/Rooms (MD)")]
     public class SourceMDRoomsNode : SourceProviderNode {
 
         [Header("General")]

@@ -5,7 +5,7 @@ using Pomerandomian;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
 
-    [CreateNodeMenu("Dungeon/Actions/Search & Apply (Proximity)")]
+    [CreateNodeMenu("Dungeon/Passes/Logic/Search & Apply")]
     public class SearchAndApplyNode : DungeonPassNode {
 
         [Header("Inputs")]

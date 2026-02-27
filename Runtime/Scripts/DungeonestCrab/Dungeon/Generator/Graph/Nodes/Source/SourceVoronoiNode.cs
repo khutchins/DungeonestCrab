@@ -1,5 +1,5 @@
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Sources/Voronoi")]
+    [CreateNodeMenu("Dungeon/Definitions/Sources/Voronoi")]
     public class SourceVoronoiNode : SourceProviderNode {
         public Tile TileToSet = Tile.Floor;
         public int Cells = 5;

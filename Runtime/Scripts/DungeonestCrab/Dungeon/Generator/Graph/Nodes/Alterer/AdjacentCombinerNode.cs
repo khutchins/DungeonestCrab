@@ -5,7 +5,7 @@ using Pomerandomian;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
 
-    [CreateNodeMenu("Dungeon/Actions/Connect Regions (Simple)")]
+    [CreateNodeMenu("Dungeon/Passes/Topology/Connect Regions (Simple)")]
     public class AdjacentCombinerNode : DungeonPassNode {
         public TerrainSO Terrain;
         [Range(0, 1)] public float ExtraJunctionChance = 0.1f;

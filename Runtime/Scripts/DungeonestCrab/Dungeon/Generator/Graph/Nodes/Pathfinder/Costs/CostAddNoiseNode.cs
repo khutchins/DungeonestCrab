@@ -3,7 +3,7 @@ using KH.Noise;
 using Pomerandomian;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Pathfinding/Costs/Add Noise")]
+    [CreateNodeMenu("Dungeon/Pathfinding/Costs/Modifier: Add Noise")]
     public class CostAddNoiseNode : TileCostNode {
         [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public CostProviderConnection Input;
         [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NoiseConnection Noise;

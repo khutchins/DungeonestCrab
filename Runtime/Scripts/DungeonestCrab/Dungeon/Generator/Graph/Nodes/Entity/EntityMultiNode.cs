@@ -1,5 +1,5 @@
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Entities/Multi Entity")]
+    [CreateNodeMenu("Dungeon/Definitions/Entities/Collection")]
     public class EntityMultiNode : EntityProviderNode {
         public EntitySO[] Entities;
 

@@ -1,7 +1,7 @@
 using Pomerandomian;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Pathfinding/Pather: A*")]
+    [CreateNodeMenu("Dungeon/Pathfinding/Solvers/A*")]
     public class PathfinderAStarNode : PathfinderProviderNode {
         [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public CostProviderConnection CostFunction;
 

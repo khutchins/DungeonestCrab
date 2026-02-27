@@ -1,7 +1,7 @@
 using UnityEngine;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Sources/Stripes")]
+    [CreateNodeMenu("Dungeon/Definitions/Sources/Stripes")]
     public class SourceStripeNode : SourceProviderNode {
         public Tile TileToSet = Tile.Floor;
         [Range(0, 1)] public float Density = 0.2f;

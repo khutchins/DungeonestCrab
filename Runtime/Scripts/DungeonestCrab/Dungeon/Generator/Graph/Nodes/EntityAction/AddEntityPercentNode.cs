@@ -2,7 +2,7 @@ using UnityEngine;
 using Pomerandomian;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Actions/Add Entities (Percent)")]
+    [CreateNodeMenu("Dungeon/Passes/Generation/Place Entities (Percent)")]
     public class AddEntityPercentNode : EntityPassNode {
         [Range(0, 1)] public float Percent = 0.1f;
 

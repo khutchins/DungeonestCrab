@@ -1,7 +1,7 @@
 using UnityEngine;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Matchers/Tile Matcher")]
+    [CreateNodeMenu("Dungeon/Definitions/Matchers/General Matcher")]
     public class TileMatcherNode : MatcherProviderNode {
         [Header("Tile")]
         public bool CheckTile = true;

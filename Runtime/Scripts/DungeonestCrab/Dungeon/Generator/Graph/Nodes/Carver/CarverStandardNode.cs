@@ -1,5 +1,5 @@
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Pathfinding/Carver: Standard")]
+    [CreateNodeMenu("Dungeon/Pathfinding/Carvers/Standard")]
     public class CarverStandardNode : CarverProviderNode {
         public Tile TileToSet = Tile.Floor;
         public TerrainSO Terrain;

@@ -1,5 +1,5 @@
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Sources/Maze (Haphazard)")]
+    [CreateNodeMenu("Dungeon/Definitions/Sources/Maze (Haphazard)")]
     public class SourceMazeHaphazardNode : SourceProviderNode {
         public Tile TileToSet = Tile.Floor;
         public int MaxMoveDist = 3;

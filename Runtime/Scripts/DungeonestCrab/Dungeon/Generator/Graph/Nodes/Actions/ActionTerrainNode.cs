@@ -1,7 +1,7 @@
 using Pomerandomian;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Actions/Set Terrain")]
+    [CreateNodeMenu("Dungeon/Definitions/Actions/Set Terrain")]
     public class ActionTerrainNode : ActionProviderNode {
         public TerrainSO Terrain;
         public override ITileAction GetAction() => new TerrainAction(Terrain);

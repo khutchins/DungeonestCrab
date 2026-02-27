@@ -3,7 +3,7 @@ using KH.Noise;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
 
-    [CreateNodeMenu("Dungeon/Noise/Basic (FastNoiseLite)")]
+    [CreateNodeMenu("Dungeon/Noise/Generators/FastNoiseLite")]
     public class BasicNoiseNode : NoiseProviderNode {
         public FastNoiseLite.NoiseType Type = FastNoiseLite.NoiseType.OpenSimplex2;
         public float Frequency = 0.05f;

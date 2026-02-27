@@ -1,5 +1,5 @@
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Entities/Single Entity")]
+    [CreateNodeMenu("Dungeon/Definitions/Entities/Single")]
     public class EntitySingleNode : EntityProviderNode {
         public EntitySO Entity;
 

@@ -2,7 +2,7 @@ using UnityEngine;
 using KH.Noise;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Noise/Math/Add")]
+    [CreateNodeMenu("Dungeon/Noise/Operators/Add")]
     public class NoiseAddNode : NoiseProviderNode {
         [Input(ShowBackingValue.Never, ConnectionType.Multiple, TypeConstraint.Strict)] public NoiseConnection Sources;
 

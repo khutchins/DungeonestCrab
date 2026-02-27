@@ -6,7 +6,7 @@ using UnityEngine;
 using XNode;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Start")]
+    [CreateNodeMenu("Dungeon/Core/Start")]
     public class StartNode : DungeonNode {
         [Output(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public DungeonConnection Output;
 

@@ -2,7 +2,7 @@ using UnityEngine;
 using KH.Noise;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Noise/Math/Invert")]
+    [CreateNodeMenu("Dungeon/Noise/Operators/Invert")]
     public class NoiseInvertNode : NoiseProviderNode {
         [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NoiseConnection Input;
 

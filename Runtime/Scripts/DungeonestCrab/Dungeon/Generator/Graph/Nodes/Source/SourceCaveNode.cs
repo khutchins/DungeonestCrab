@@ -1,7 +1,7 @@
 using UnityEngine;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Sources/Cave")]
+    [CreateNodeMenu("Dungeon/Definitions/Sources/Cellular Automata")]
     public class SourceCaveNode : SourceProviderNode {
         public Tile TileToSet = Tile.Floor;
         [Range(0, 1)] public float InitialOdds = 0.5f;

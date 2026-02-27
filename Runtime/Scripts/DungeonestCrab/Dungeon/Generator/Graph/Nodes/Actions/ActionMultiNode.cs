@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using XNode;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Actions/Multi-Action")]
+    [CreateNodeMenu("Dungeon/Definitions/Actions/Sequence")]
     public class ActionMultiNode : ActionProviderNode {
         [Input(ShowBackingValue.Never, ConnectionType.Multiple, TypeConstraint.Strict)] public ActionConnection SubActions;
         public override ITileAction GetAction() {

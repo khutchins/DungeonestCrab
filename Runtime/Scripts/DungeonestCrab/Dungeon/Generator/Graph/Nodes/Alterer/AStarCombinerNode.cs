@@ -6,7 +6,7 @@ using Pomerandomian;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
 
-    [CreateNodeMenu("Dungeon/Actions/Connect Regions (A*)")]
+    [CreateNodeMenu("Dungeon/Passes/Topology/Connect Regions (A*)")]
     public class AStarCombinerNode : DungeonPassNode {
 
         [Header("Inputs")]

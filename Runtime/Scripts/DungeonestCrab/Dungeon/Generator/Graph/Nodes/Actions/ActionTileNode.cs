@@ -1,7 +1,7 @@
 using Pomerandomian;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Actions/Set Tile")]
+    [CreateNodeMenu("Dungeon/Definitions/Actions/Set Tile Type")]
     public class ActionTileNode : ActionProviderNode {
         public Tile TileType;
         public override ITileAction GetAction() => new TileAction(TileType);

@@ -1,7 +1,7 @@
 using UnityEngine;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Noise/Modifiers/Circle Modifier")]
+    [CreateNodeMenu("Dungeon/Noise/Modifiers/Circle Mask")]
     public class CircleModifierNode : NoiseModifierProviderNode {
         public float StartRadius = 20;
         public float EndRadius = 25;

@@ -2,7 +2,7 @@ using UnityEngine;
 using Pomerandomian;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Actions/Add Entities (Count)")]
+    [CreateNodeMenu("Dungeon/Passes/Generation/Place Entities (Count)")]
     public class AddEntityCountNode : EntityPassNode {
         public int MinCount = 1;
         public int TargetCount = 5;

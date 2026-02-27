@@ -1,7 +1,7 @@
 using UnityEngine;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Noise/Modifiers/Modifier Mix")]
+    [CreateNodeMenu("Dungeon/Noise/Modifiers/Mix Modifiers")]
     public class NoiseModifierMixNode : NoiseModifierProviderNode {
         public enum MixMode {
             Max,

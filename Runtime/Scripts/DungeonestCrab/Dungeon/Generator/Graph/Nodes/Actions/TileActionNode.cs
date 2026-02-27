@@ -8,7 +8,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
     /// A general action node that can modify Tile Type, Terrain, and Tags in a single configuration.
     /// Similar to the general Tile Matcher node.
     /// </summary>
-    [CreateNodeMenu("Dungeon/Actions/Tile Action (General)")]
+    [CreateNodeMenu("Dungeon/Definitions/Actions/General Action")]
     public class TileActionNode : ActionProviderNode {
         
         [ToggleGroup("SetTile", "Set Tile Type")]

@@ -1,7 +1,7 @@
 using UnityEngine;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Matchers/Or Matcher")]
+    [CreateNodeMenu("Dungeon/Definitions/Matchers/Logic/Or")]
     public class OrMatcherNode : MatcherProviderNode {
         [Input(ShowBackingValue.Never, ConnectionType.Multiple, TypeConstraint.Strict)] public MatcherConnection Matchers;
 

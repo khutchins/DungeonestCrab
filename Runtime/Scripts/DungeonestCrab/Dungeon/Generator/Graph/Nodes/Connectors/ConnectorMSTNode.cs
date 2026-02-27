@@ -1,7 +1,7 @@
 using UnityEngine;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Pathfinding/Connector: MST")]
+    [CreateNodeMenu("Dungeon/Pathfinding/Connectors/Minimum Spanning Tree")]
     public class ConnectorMSTNode : ConnectorProviderNode {
         public bool UseCentroids = true;
         [Range(0, 1)] public float LoopChance = 0.0f;

@@ -1,7 +1,7 @@
 using Pomerandomian;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Pathfinding/Pather: Dogleg")]
+    [CreateNodeMenu("Dungeon/Pathfinding/Solvers/Dogleg")]
     public class PathfinderDoglegNode : PathfinderProviderNode {
 
         public override IPathFinder GetPathFinder() {

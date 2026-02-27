@@ -5,7 +5,7 @@ using static XNode.Node;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
 
-    [CreateNodeMenu("Dungeon/Sources/Noise")]
+    [CreateNodeMenu("Dungeon/Definitions/Sources/From Noise")]
     public class SourceNoiseNode : SourceProviderNode {
         [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NoiseConnection NoiseInput;
         [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NoiseModifierConnection ModifierInput;

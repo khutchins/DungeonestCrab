@@ -1,7 +1,7 @@
 using KH.Noise;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Noise/Perlin")]
+    [CreateNodeMenu("Dungeon/Noise/Generators/Perlin")]
     public class PerlinNoiseNode : NoiseProviderNode {
         public float Frequency = 0.1f;
 

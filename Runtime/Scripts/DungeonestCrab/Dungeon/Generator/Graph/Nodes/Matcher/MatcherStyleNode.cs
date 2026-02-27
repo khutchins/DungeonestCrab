@@ -1,5 +1,5 @@
 namespace DungeonestCrab.Dungeon.Generator.Graph {
-    [CreateNodeMenu("Dungeon/Matchers/Style")]
+    [CreateNodeMenu("Dungeon/Definitions/Matchers/Match Tag")]
     public class MatcherStyleNode : MatcherProviderNode {
         public string Style = null;
 

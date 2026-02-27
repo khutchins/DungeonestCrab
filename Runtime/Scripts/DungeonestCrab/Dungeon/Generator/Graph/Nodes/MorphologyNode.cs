@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
 
-    [CreateNodeMenu("Dungeon/Actions/Morphology (Smooth)")]
+    [CreateNodeMenu("Dungeon/Passes/Topology/Morphology (Erode/Dilate)")]
     public class MorphologyNode : DungeonPassNode {
         public Morphology.Operation Operation;
         public int Iterations = 1;

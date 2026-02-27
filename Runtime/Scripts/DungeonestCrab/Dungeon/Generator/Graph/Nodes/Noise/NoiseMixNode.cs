@@ -5,7 +5,7 @@ using Pomerandomian;
 
 namespace DungeonestCrab.Dungeon.Generator.Graph {
 
-    [CreateNodeMenu("Dungeon/Noise/Math/Mix (Average)")]
+    [CreateNodeMenu("Dungeon/Noise/Operators/Mix")]
     public class NoiseMixNode : NoiseProviderNode {
         [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NoiseConnection A;
         [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NoiseConnection B;
