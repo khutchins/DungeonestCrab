@@ -8,7 +8,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         [Input(ShowBackingValue.Never, ConnectionType.Multiple, TypeConstraint.Strict)] public ActionConnection SubActions;
         public override ITileAction GetAction() {
             var inputs = GetInputValues<ITileAction>("SubActions", null);
-            return new MultiAction(new List<ITileAction>(inputs));
+            return new MultiAction(inputs != null ? new List<ITileAction>(inputs) : new List<ITileAction>());
         }
 
         private class MultiAction : ITileAction {

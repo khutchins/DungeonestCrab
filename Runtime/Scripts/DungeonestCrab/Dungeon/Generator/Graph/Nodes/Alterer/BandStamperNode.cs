@@ -26,7 +26,9 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
             Bounds bounds = GetInputValue<Bounds>("Bounds", null);
 
             var bandHolders = GetInputValues<BandStamper.BandEntry>("Bands", null);
-            var bands = new List<BandStamper.BandEntry>(bandHolders);
+            var bands = bandHolders != null ? 
+                new List<BandStamper.BandEntry>(bandHolders) : 
+                new List<BandStamper.BandEntry>();
 
             var stamper = new BandStamper(noise, modifier, bands, bounds);
             return stamper.Modify(dungeon, random);
