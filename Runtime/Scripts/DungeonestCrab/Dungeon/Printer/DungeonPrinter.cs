@@ -323,12 +323,98 @@ namespace DungeonestCrab.Dungeon.Printer {
             );
         }
 
+        internal enum WallSegmentType { Lower, Standard, Upper }
+
+        internal struct WallSegment {
+            public float MinY;
+            public float MaxY;
+            public WallSegmentType Type;
+
+            public WallSegment(WallSegmentType type, float minY, float maxY) {
+                Type = type;
+                MinY = minY;
+                MaxY = maxY;
+            }
+        }
+
+        /// <summary>
+        /// Computes which wall segments to draw and their Y ranges.
+        /// </summary>
+        /// <param name="myRules">Rules for the current tile (already resolved through traits).</param>
+        /// <param name="adjRules">Rules for the adjacent tile.</param>
+        /// <param name="styleWallHeight">WallHeight of the style source (for standard wall).</param>
+        /// <param name="drawsStandardWalls">Whether a standard wall is drawn between these tiles.</param>
+        /// <param name="adjDrawsAsFloor">Whether the adjacent tile draws as a floor (only used when no standard walls).</param>
+        /// <param name="tileHeightMult">Tile height multiplier.</param>
+        internal static List<WallSegment> ComputeWallSegments(
+                TileRuleConfig myRules, TileRuleConfig adjRules,
+                float styleWallHeight,
+                bool drawsStandardWalls, bool adjDrawsAsFloor,
+                float tileHeightMult) {
+            var segments = new List<WallSegment>(3);
+
+            // Lower wall: drawn when this tile's ground is deeper than neighbor's.
+            if (myRules.GroundOffset > adjRules.GroundOffset) {
+                float minY = -myRules.GroundOffset;
+                float maxY = -adjRules.GroundOffset;
+                if (minY < maxY) {
+                    segments.Add(new WallSegment(WallSegmentType.Lower, minY, maxY));
+                }
+            }
+
+            // Standard wall: drawn from ground to wall height when tile sees neighbor as wall.
+            float standardWallTop = 0;
+            if (drawsStandardWalls) {
+                standardWallTop = styleWallHeight * tileHeightMult;
+                if (standardWallTop > 0) {
+                    segments.Add(new WallSegment(WallSegmentType.Standard, 0, standardWallTop));
+                }
+            }
+
+            // Upper wall: bridges height differences between tiles.
+            // Both the neighbor's "structure top" and this tile's upper extent
+            // depend on context:
+            float neighborStructureTop;
+            float myUpperExtent;
+            if (drawsStandardWalls) {
+                // Floor looking at wall: wall tile's ceiling is the boundary.
+                // max with standardWallTop prevents overlap with the standard wall.
+                neighborStructureTop = System.Math.Max(adjRules.CeilingHeight * tileHeightMult, standardWallTop);
+                myUpperExtent = myRules.CeilingHeight * tileHeightMult;
+            } else if (adjDrawsAsFloor) {
+                // Neighbor is floor-like: ceiling caps the open space.
+                neighborStructureTop = adjRules.CeilingHeight * tileHeightMult;
+                myUpperExtent = myRules.CeilingHeight * tileHeightMult;
+            } else {
+                // Both are walls: the SHORT wall draws the upper segment so the
+                // wall face points toward the short side (visible from below).
+                // Wall height is the physical boundary; ceiling is irrelevant.
+                neighborStructureTop = myRules.WallHeight * tileHeightMult;
+                myUpperExtent = adjRules.WallHeight * tileHeightMult;
+            }
+
+            if (myUpperExtent > neighborStructureTop) {
+                segments.Add(new WallSegment(WallSegmentType.Upper, neighborStructureTop, myUpperExtent));
+            }
+
+            return segments;
+        }
+
         private void DrawWallCore(
             TheDungeon dg, TileSpec tile, TileSpec adjTile, int xOffset, int yOffset, 
                 TileRuleConfig myRules, TileRuleConfig adjRules, WallStyleConfig wallStyle) {
             // Determine Rotation based on direction
             int rot = xOffset == 0 ? (yOffset > 0 ? 0 : 180) : (xOffset > 0 ? 90 : 270);
             Vector3 loc = OriginForTile(tile);
+
+            bool standardWalls = DrawsStandardWalls(tile, adjTile);
+            TileRuleConfig styleRules = (wallStyle.StyleSource == tile) ? myRules : adjRules;
+
+            var segments = ComputeWallSegments(
+                myRules, adjRules,
+                styleRules.WallHeight,
+                standardWalls, adjTile.DrawAsFloor,
+                _tileHeightMult);
 
             IWallDrawer.WallInfo info = new IWallDrawer.WallInfo {
                 parent = EnvironmentHolder,
@@ -338,63 +424,32 @@ namespace DungeonestCrab.Dungeon.Printer {
                 tileSize = TileSize,
             };
 
-            // If I draw as floor and my floor-drawing neighbor is goes lower than me,
-            // I need to draw a wall downward.
-            if (myRules.GroundOffset > adjRules.GroundOffset) {
-                info.tileSpec = wallStyle.LowerStyleSource;
-                
-                TileRuleConfig styleRules = (wallStyle.LowerStyleSource == tile) ? myRules : adjRules;
+            int wallDraws = 0;
+            bool wallDrawsComputed = false;
 
-                info.minY = -styleRules.GroundOffset;
-                info.maxY = -adjRules.GroundOffset;
-                info.wallDraws = WallTileAdjacencies(dg, tile, adjTile);
-
-                if (info.minY < info.maxY) {
-                    DrawWallSingle(info);
+            foreach (var seg in segments) {
+                switch (seg.Type) {
+                    case WallSegmentType.Lower:
+                        info.tileSpec = wallStyle.LowerStyleSource;
+                        break;
+                    case WallSegmentType.Standard:
+                        info.tileSpec = wallStyle.StyleSource;
+                        break;
+                    case WallSegmentType.Upper:
+                        info.tileSpec = wallStyle.UpperStyleSource;
+                        break;
                 }
-            }
 
-            // The wall is only drawn if this tile is not itself a wall. 
-            // Draw the wall segments up to the wall height.
-            if (DrawsStandardWalls(tile, adjTile)) {
-                // We use the rules of whichever spec provided the style, 
-                // so that invasive terrains can control their own boundary heights.
-                TileRuleConfig styleRules = (wallStyle.StyleSource == tile) ? myRules : adjRules;
-                
-                info.tileSpec = wallStyle.StyleSource; // Use Resolved Style
-                info.minY = 0;
-                info.maxY = styleRules.WallHeight * _tileHeightMult;
-                info.wallDraws = WallTileAdjacencies(dg, tile, adjTile);
+                info.minY = seg.MinY;
+                info.maxY = seg.MaxY;
+
+                if (!wallDrawsComputed) {
+                    wallDraws = WallTileAdjacencies(dg, tile, adjTile);
+                    wallDrawsComputed = true;
+                }
+                info.wallDraws = wallDraws;
+
                 DrawWallSingle(info);
-            }
-
-            float neighborStructureTop;
-
-            if (DrawsStandardWalls(tile, adjTile)) {
-                // Neighbor is a Wall. Structure goes up to WallHeight.
-                // Again, respect the height of the actual wall we drew.
-                TileRuleConfig styleRules = (wallStyle.StyleSource == tile) ? myRules : adjRules;
-                neighborStructureTop = styleRules.WallHeight * _tileHeightMult;
-            } else {
-                // Neighbor is a Floor (Open Air). Structure goes up to its Ceiling.
-                neighborStructureTop = adjRules.CeilingHeight * _tileHeightMult;
-            }
-
-            float myCeiling = myRules.CeilingHeight * _tileHeightMult;
-
-            // Draw if current tile is higher than the neighbor's structure.
-            if (myCeiling > neighborStructureTop) {
-                info.tileSpec = wallStyle.UpperStyleSource;
-                
-                TileRuleConfig styleRules = (wallStyle.UpperStyleSource == tile) ? myRules : adjRules;
-                float styleCeiling = styleRules.CeilingHeight * _tileHeightMult;
-
-                info.minY = neighborStructureTop;
-                info.maxY = myCeiling;
-
-                if (info.maxY > info.minY) {
-                    DrawWallSingle(info);
-                }
             }
         }
 
