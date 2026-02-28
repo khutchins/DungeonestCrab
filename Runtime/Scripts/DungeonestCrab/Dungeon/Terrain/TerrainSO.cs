@@ -21,11 +21,11 @@ namespace DungeonestCrab.Dungeon {
 		[Tooltip("Whether or not the terrain has a ceiling. This can be overridden to false by various traits.")]
 		public bool HasCeiling = true;
         [Tooltip("How far upward the ceiling tiles should be placed. A value of 1 puts the ceiling 1 unit above the player. Should only be positive.")]
-        public int CeilingOffset = 1;
+        public float CeilingOffset = 1;
         [Tooltip("How far downward the draw as floor wall tiles should be placed. A value of 0 puts the ground at the player's feet. Should only be positive.")]
 		public float GroundOffset = 0;
 		[Tooltip("How far up the wall tiles should extend.")]
-		public int WallHeight = 1;
+		public float WallHeight = 1;
 		[Tooltip("Whether or not the wall of this terrain should be rendered like a floor.")]
 		public bool DrawWallAsFloor = false;
 
