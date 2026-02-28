@@ -171,8 +171,17 @@ namespace DungeonestCrab.Dungeon.Printer {
                 }
 
                 foreach (Entity entity in tileSpec.Entities) {
-                    float entityZ = walkable ? 0 : -ruleConfig.GroundOffset;
-                    if (entity.Type.RaiseToCeiling) entityZ = ruleConfig.CeilingHeight - 1;
+                    float entityZ;
+                    if (entity.Type.VerticalAnchor == VerticalAnchor.Ceiling) {
+                        entityZ = ruleConfig.CeilingHeight - 1;
+                    } else {
+                        // Surface: ground level for walkable/draw-as-floor tiles, wall top for wall tiles
+                        if (walkable || tileSpec.DrawAsFloor) {
+                            entityZ = -ruleConfig.GroundOffset;
+                        } else {
+                            entityZ = ruleConfig.WallHeight;
+                        }
+                    }
 
                     AddEntity(dg, entity, tileSpec.Coords, entityZ + entity.YOffset, dg.ConsistentRNG);
                 }

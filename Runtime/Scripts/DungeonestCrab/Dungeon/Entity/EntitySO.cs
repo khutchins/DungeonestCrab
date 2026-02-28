@@ -6,6 +6,11 @@ using System.Linq;
 using UnityEngine;
 
 namespace DungeonestCrab.Dungeon {
+    public enum VerticalAnchor {
+        Surface = 0,  // ground for floor tiles, wall top for wall tiles
+        Ceiling = 1,  // hangs from ceiling
+    }
+
     [Serializable]
     public abstract class EntityMixin { }
 
@@ -29,7 +34,8 @@ namespace DungeonestCrab.Dungeon {
         [ListDrawerSettings(ShowIndexLabels = false, ShowFoldout = true)]
         public List<EntityMixin> Mixins = new List<EntityMixin>();
 
-        public bool RaiseToCeiling;
+        [Tooltip("The placement of the entity. Surface is the ground (or wall cap), ceiling is the ceiling.")]
+        public VerticalAnchor VerticalAnchor = VerticalAnchor.Surface;
         public bool HasTag(string tag) {
             return Tags != null && Tags.Contains(tag);
         }
@@ -48,7 +54,7 @@ namespace DungeonestCrab.Dungeon {
             private bool _canBeMerged = false;
             private bool _replacesCeiling = false;
             private bool _replacesFloor = false;
-            private bool _raiseToCeiling = false;
+            private VerticalAnchor _verticalAnchor = VerticalAnchor.Surface;
             private bool _showOnMap;
             private Sprite _mapImage;
             private bool _rotateMapImage;
@@ -84,8 +90,8 @@ namespace DungeonestCrab.Dungeon {
                 return this;
             }
 
-            public Builder SetRaiseToCeiling(bool raiseToCeiling = true) {
-                _raiseToCeiling = raiseToCeiling;
+            public Builder SetVerticalAnchor(VerticalAnchor anchor) {
+                _verticalAnchor = anchor;
                 return this;
             }
 
@@ -102,7 +108,7 @@ namespace DungeonestCrab.Dungeon {
                     Prefab = _prefab,
                     BlocksMovement = _blocksMovement,
                     CanBeMerged = _canBeMerged,
-                    RaiseToCeiling = _raiseToCeiling,
+                    VerticalAnchor = _verticalAnchor,
                 };
                 if (_showOnMap) {
                     spec.Mixins.Add(new EntityMapMixin {
