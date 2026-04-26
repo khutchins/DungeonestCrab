@@ -19,7 +19,7 @@ namespace DungeonestCrab.Dungeon.Printer {
         }
 
         void RecomputeGarbage() {
-            _uv = FloorTexture.UV;
+            _uv = FloorTexture != null ? FloorTexture.UV : null;
         }
 
         public override bool DrawAtCenter { get => false; }
