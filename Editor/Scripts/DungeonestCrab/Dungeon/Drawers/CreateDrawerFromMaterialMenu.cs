@@ -34,7 +34,15 @@ namespace DungeonestCrab.Editor {
         [MenuItem(MenuRoot + "Floor - Quad", true)]
         static bool CreateFloorQuadValidate() => HasMaterialSelected();
 
-        [MenuItem(MenuRoot + "Wall - Mesh Tiled", false, 102)]
+        [MenuItem(MenuRoot + "Floor - Quad AO", false, 102)]
+        static void CreateFloorQuadAO() {
+            CreateDrawersForSelection<FlatDrawerQuadAO>("FloorTexture", "FloorAO");
+        }
+
+        [MenuItem(MenuRoot + "Floor - Quad AO", true)]
+        static bool CreateFloorQuadAOValidate() => HasMaterialSelected();
+
+        [MenuItem(MenuRoot + "Wall - Mesh Tiled", false, 103)]
         static void CreateWallMeshTiled() {
             CreateDrawersForSelection<WallDrawerMeshTiled>("Texture", "Wall");
         }
@@ -42,13 +50,21 @@ namespace DungeonestCrab.Editor {
         [MenuItem(MenuRoot + "Wall - Mesh Tiled", true)]
         static bool CreateWallMeshTiledValidate() => HasMaterialSelected();
 
-        static void CreateDrawersForSelection<T>(string textureViewFieldName, string assetPrefix)
+        [MenuItem(MenuRoot + "Wall - Mesh Tiled AO", false, 104)]
+        static void CreateWallMeshTiledAO() {
+            CreateDrawersForSelection<WallDrawerMeshTiledAO>("Texture", "WallAO");
+        }
+
+        [MenuItem(MenuRoot + "Wall - Mesh Tiled AO", true)]
+        static bool CreateWallMeshTiledAOValidate() => HasMaterialSelected();
+
+        static void CreateDrawersForSelection<T>(string textureViewFieldName, string assetSuffix)
                 where T : ScriptableObject {
             Object last = null;
             foreach (Material mat in SelectedMaterials()) {
                 var drawer = ScriptableObject.CreateInstance<T>();
                 string path = AssetDatabase.GenerateUniqueAssetPath(
-                    $"{MaterialFolder(mat)}/{assetPrefix}_{mat.name}.asset");
+                    $"{MaterialFolder(mat)}/{mat.name}_{assetSuffix}.asset");
                 AssetDatabase.CreateAsset(drawer, path);
 
                 var tv = MakeTextureViewForWholeMaterial(mat);

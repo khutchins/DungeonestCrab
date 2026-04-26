@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -78,6 +78,7 @@ namespace DungeonestCrab.Dungeon.Printer {
 
         public void Print(TheDungeon dg) {
             _dungeon = dg;
+            dg.UpdateDungeonComputations();
 
             dg.Mixins.Add(new DungeonInfoMixin(this));
 

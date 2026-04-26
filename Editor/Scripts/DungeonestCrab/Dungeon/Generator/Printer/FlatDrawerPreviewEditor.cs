@@ -25,6 +25,10 @@ namespace DungeonestCrab.Editor {
         private bool _neighborE = false;
         private bool _neighborS = false;
         private bool _neighborW = false;
+        private bool _neighborNE = false;
+        private bool _neighborSE = false;
+        private bool _neighborSW = false;
+        private bool _neighborNW = false;
 
         private void OnEnable() {
             Undo.undoRedoPerformed += OnUndoRedo;
@@ -77,6 +81,10 @@ namespace DungeonestCrab.Editor {
             _neighborS = GUILayout.Toggle(_neighborS, "S", EditorStyles.miniButtonMid, GUILayout.Width(25));
             _neighborE = GUILayout.Toggle(_neighborE, "E", EditorStyles.miniButtonMid, GUILayout.Width(25));
             _neighborW = GUILayout.Toggle(_neighborW, "W", EditorStyles.miniButtonMid, GUILayout.Width(25));
+            _neighborNE = GUILayout.Toggle(_neighborNE, "NE", EditorStyles.miniButtonMid, GUILayout.Width(25));
+            _neighborSE = GUILayout.Toggle(_neighborSE, "SE", EditorStyles.miniButtonMid, GUILayout.Width(25));
+            _neighborSW = GUILayout.Toggle(_neighborSW, "SW", EditorStyles.miniButtonMid, GUILayout.Width(25));
+            _neighborNW = GUILayout.Toggle(_neighborNW, "NW", EditorStyles.miniButtonMid, GUILayout.Width(25));
 
             GUILayout.Space(5);
 
@@ -168,7 +176,8 @@ namespace DungeonestCrab.Editor {
             if (drawer == null) return;
 
             TileSpec centerTile = new TileSpec(Vector2Int.zero, Tile.Floor, ScriptableObject.CreateInstance<TerrainSO>(), false);
-            MockAdjacency(centerTile, _neighborN, _neighborE, _neighborS, _neighborW);
+            MockAdjacency(centerTile, _neighborN, _neighborE, _neighborS, _neighborW,
+                          _neighborNE, _neighborSE, _neighborSW, _neighborNW);
 
             var info = new IFlatDrawer.FlatInfo {
                 parent = null,
@@ -189,13 +198,18 @@ namespace DungeonestCrab.Editor {
             }
         }
 
-        private void MockAdjacency(TileSpec tile, bool n, bool e, bool s, bool w) {
+        private void MockAdjacency(TileSpec tile, bool n, bool e, bool s, bool w,
+                                  bool ne, bool se, bool sw, bool nw) {
             TileSpec.Adjacency adj = TileSpec.Adjacency.Here;
 
             if (n) adj |= TileSpec.Adjacency.N;
             if (e) adj |= TileSpec.Adjacency.E;
             if (s) adj |= TileSpec.Adjacency.S;
             if (w) adj |= TileSpec.Adjacency.W;
+            if (ne) adj |= TileSpec.Adjacency.NE;
+            if (se) adj |= TileSpec.Adjacency.SE;
+            if (sw) adj |= TileSpec.Adjacency.SW;
+            if (nw) adj |= TileSpec.Adjacency.NW;
 
             tile.SetTileAdjacencies(adj);
             tile.SetTerrainAdjacencies(adj);

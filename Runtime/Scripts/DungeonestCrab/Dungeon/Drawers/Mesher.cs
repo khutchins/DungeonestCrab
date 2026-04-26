@@ -15,10 +15,12 @@ namespace DungeonestCrab.Dungeon.Printer {
             public Material material;
             public List<Vector3> verts = new List<Vector3>();
             public List<Vector2> uvs = new List<Vector2>();
+            public List<Color> colors = new List<Color>();
             public List<int> triangles = new List<int>();
+            public bool anyNonWhiteColor = false;
 
             public MeshInstance(Material material) { this.material = material; }
-            
+
             public Mesh MakeMesh() {
                 Mesh mesh = new Mesh {
                     name = "Mesh",
@@ -26,6 +28,7 @@ namespace DungeonestCrab.Dungeon.Printer {
                     triangles = triangles.ToArray(),
                     uv = uvs.ToArray()
                 };
+                if (anyNonWhiteColor) mesh.colors = colors.ToArray();
                 mesh.RecalculateNormals();
                 return mesh;
             }
@@ -75,10 +78,20 @@ namespace DungeonestCrab.Dungeon.Printer {
         }
 
         public int AddVert(Material material, Vector3 vert, Vector2 uv) {
+            return AddVert(material, vert, uv, Color.white);
+        }
+
+        public int AddVert(ITextureView view, Vector3 vert, Vector2 uv, Color color) {
+            return AddVert(view.Material, vert, view.ConvertToLocalUVSpace(uv), color);
+        }
+
+        public int AddVert(Material material, Vector3 vert, Vector2 uv, Color color) {
             var instance = EnsureInstance(material);
             int value = instance.verts.Count;
             instance.verts.Add(vert);
             instance.uvs.Add(uv);
+            instance.colors.Add(color);
+            if (color != Color.white) instance.anyNonWhiteColor = true;
             return value;
         }
 
