@@ -5,6 +5,7 @@ using UnityEngine;
 namespace DungeonestCrab.Dungeon.Crawl {
     public class DungeonEntrance : MonoBehaviour, DungeonGrid.GridObject {
         public string Name;
+        public int Key;
         public float Angle;
         public bool Default;
 
