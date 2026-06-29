@@ -27,7 +27,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 			_iterations = iterations;
 		}
 
-		public override void Generate(Stamp stamp, IRandom rand) {
+		public override void Generate(Stamp stamp, ISeededRandom rand) {
 			if (_cells < 1) return;
 
 			List<Vector2Int> points = new List<Vector2Int>();

@@ -34,7 +34,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 			_braidPercent = braidPercent;
 		}
 
-		public override void Generate(Stamp stamp, IRandom rand) {
+		public override void Generate(Stamp stamp, ISeededRandom rand) {
 			for (int y = 0; y < stamp.H; y += 2) {
 				for (int x = 0; x < stamp.W; x += 2) {
 					if (!IsSettableAt(stamp, new DirectedPoint(x, y))) continue;
@@ -43,7 +43,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 			}
 		}
 
-		private void GrowMaze(Stamp stamp, int sx, int sy, IRandom rand) {
+		private void GrowMaze(Stamp stamp, int sx, int sy, ISeededRandom rand) {
 			List<DirectedPoint> cells = new List<DirectedPoint>();
 
 			stamp.MaybeSetAt(sx, sy, _tileToSet);

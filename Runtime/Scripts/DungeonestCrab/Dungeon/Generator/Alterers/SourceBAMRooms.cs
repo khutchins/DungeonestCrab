@@ -33,7 +33,7 @@ namespace DungeonestCrab.Dungeon.Generator {
             ForceOddAlignment = odd;
         }
 
-        public override void Generate(Stamp stamp, IRandom rand) {
+        public override void Generate(Stamp stamp, ISeededRandom rand) {
             int area = stamp.W * stamp.H;
             int minC = Mathf.Max(1, Mathf.FloorToInt(area * MinRoomDensity));
             int maxC = Mathf.Max(minC, Mathf.FloorToInt(area * MaxRoomDensity));
@@ -70,7 +70,7 @@ namespace DungeonestCrab.Dungeon.Generator {
             }
         }
 
-        private RectInt GenerateRandomRoom(Stamp stamp, IRandom rand, bool forceCenter = false) {
+        private RectInt GenerateRandomRoom(Stamp stamp, ISeededRandom rand, bool forceCenter = false) {
             int w = rand.Next(MinRoomSize, MaxRoomSize + 1);
             int h = rand.Next(MinRoomSize, MaxRoomSize + 1);
 

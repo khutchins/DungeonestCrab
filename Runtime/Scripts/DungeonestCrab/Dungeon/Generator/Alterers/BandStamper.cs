@@ -28,7 +28,7 @@ namespace DungeonestCrab.Dungeon.Generator {
             _bounds = bounds;
         }
 
-        public bool Modify(TheDungeon dungeon, IRandom rand) {
+        public bool Modify(TheDungeon dungeon, ISeededRandom rand) {
             Bounds actualBounds = _bounds ?? new FullBounds();
             AppliedBounds applied = actualBounds.Apply(dungeon.Bounds);
             

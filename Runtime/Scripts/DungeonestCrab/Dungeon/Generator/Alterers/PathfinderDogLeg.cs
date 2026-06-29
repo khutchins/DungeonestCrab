@@ -5,8 +5,8 @@ using Pomerandomian;
 namespace DungeonestCrab.Dungeon.Generator {
     public class PathfinderDogleg : IPathFinder {
 
-        public void Init(IRandom rand) { }
-        public IEnumerable<Vector2Int> FindPath(TheDungeon dungeon, Vector2Int start, Vector2Int end, IRandom rand) {
+        public void Init(ISeededRandom rand) { }
+        public IEnumerable<Vector2Int> FindPath(TheDungeon dungeon, Vector2Int start, Vector2Int end, ISeededRandom rand) {
             bool xFirst = rand.NextBool();
             List<Vector2Int> path = TryPath(dungeon, start, end, xFirst);
             if (path != null) return path;

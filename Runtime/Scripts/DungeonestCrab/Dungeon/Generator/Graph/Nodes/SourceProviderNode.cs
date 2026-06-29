@@ -21,7 +21,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
 
             Stamp stamp = new Stamp(size.x, size.y);
             ISource source = GetSource();
-            if (source != null) source.Generate(stamp, new SystemRandom(GetPreviewSeed()));
+            if (source != null) source.Generate(stamp, new Xoshiro256PpRandom(GetPreviewSeed()));
 
             Color[] cols = new Color[size.x * size.y];
             for (int y = 0; y < size.y; y++) {

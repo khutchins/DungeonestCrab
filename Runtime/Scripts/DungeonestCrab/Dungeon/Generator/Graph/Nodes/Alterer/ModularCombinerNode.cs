@@ -19,7 +19,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         [Tooltip("If true, existing floors will not have their terrain changed when carving.")]
         public bool PreserveExistingFloors = true;
 
-        protected override bool ApplyNodeLogic(TheDungeon dungeon, IRandom random) {
+        protected override bool ApplyNodeLogic(TheDungeon dungeon, ISeededRandom random) {
 
             IRegionConnector connector = GetInputValue<IRegionConnector>("Connector", null);
             IPathFinder pathfinder = GetInputValue<IPathFinder>("Pathfinder", null);

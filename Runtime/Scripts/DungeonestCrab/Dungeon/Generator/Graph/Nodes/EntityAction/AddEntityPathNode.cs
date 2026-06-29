@@ -13,7 +13,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         public bool ToFarthestPoint = true;
         public Vector2Int SpecificDestination;
 
-        protected override bool ApplyNodeLogic(TheDungeon dungeon, IRandom random) {
+        protected override bool ApplyNodeLogic(TheDungeon dungeon, ISeededRandom random) {
             EntitySource source = GetEntitySource();
             if (source == null) return false;
 

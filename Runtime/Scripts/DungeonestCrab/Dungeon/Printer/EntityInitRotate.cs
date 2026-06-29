@@ -14,7 +14,7 @@ namespace DungeonestCrab.Dungeon.Printer {
         [Tooltip("Increments to rotate at. If zero, will be continuous.")]
         [SerializeField] Vector3 AngleIncrements = Vector3.zero;
 
-        public override void DoInit(GameObject go, Entity entity, IRandom random) {
+        public override void DoInit(GameObject go, Entity entity, ISeededRandom random) {
             this.transform.localEulerAngles = new Vector3(
                 GetAngle(random, MaxAngles.x, RotateInIncrements, AngleIncrements.x),
                 GetAngle(random, MaxAngles.y, RotateInIncrements, AngleIncrements.y),
@@ -22,7 +22,7 @@ namespace DungeonestCrab.Dungeon.Printer {
             );
         }
 
-        private float GetAngle(IRandom random, float maxAngle, bool shouldUseIncrements, float increment) {
+        private float GetAngle(ISeededRandom random, float maxAngle, bool shouldUseIncrements, float increment) {
             if (!shouldUseIncrements || increment <= 0) return random.Next(0, maxAngle);
             return random.Next(Mathf.FloorToInt(maxAngle / increment)) * increment;
         }

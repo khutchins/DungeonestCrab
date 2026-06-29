@@ -16,12 +16,12 @@ namespace DungeonestCrab.Dungeon.Generator {
 
         protected virtual TheDungeon Make() {
             TheGenerator generator = CreateGenerator();
-            IRandom random = GetRandom();
+            ISeededRandom random = GetRandom();
             return generator.Generate(random);
         }
 
-        public virtual IRandom GetRandom() {
-			return new SystemRandom();
+        public virtual ISeededRandom GetRandom() {
+			return new Xoshiro256PpRandom();
 		}
 
 		public DungeonPrinter Printer {

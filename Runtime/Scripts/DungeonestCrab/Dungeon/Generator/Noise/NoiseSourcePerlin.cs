@@ -14,7 +14,7 @@ namespace KH.Noise {
 		}
 
 		public void SetSeed(int seed) {
-			IRandom rand = new SystemRandom(seed);
+			ISeededRandom rand = new Xoshiro256PpRandom(seed);
 			_offset = new Vector2((float)(rand.NextDouble() * 1000000), (float)(rand.NextDouble() * 1000000));
 		}
 

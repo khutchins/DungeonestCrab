@@ -11,7 +11,7 @@ namespace DungeonestCrab.Dungeon.Generator {
             _extraConnectionChance = extraConnectionChance;
         }
 
-        public IEnumerable<ConnectionRequest> GetConnections(TheDungeon dungeon, int[,] regionMap, int maxRegion, IRandom rand) {
+        public IEnumerable<ConnectionRequest> GetConnections(TheDungeon dungeon, int[,] regionMap, int maxRegion, ISeededRandom rand) {
             Dictionary<int, List<Vector2Int>> regionTiles = new Dictionary<int, List<Vector2Int>>();
             for (int i = 0; i <= maxRegion; i++) regionTiles[i] = new List<Vector2Int>();
 

@@ -43,7 +43,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
                 return cost;
             }
 
-            public void Init(IRandom rand) { }
+            public void Init(ISeededRandom rand) { }
         }
     }
 }

@@ -10,7 +10,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 	/// </summary>
 	public class AddEntitiesAlongPath : IEntityAdder {
 
-		public delegate List<Vector2Int> PathComputer(TheDungeon generator, IRandom random);
+		public delegate List<Vector2Int> PathComputer(TheDungeon generator, ISeededRandom random);
 
 		private readonly EntitySource _source;
 		private readonly int _minRequired;
@@ -40,7 +40,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 			_matcher = matcher ?? TileMatcher.MatchingAll();
 		}
 
-		public override bool Modify(TheDungeon generator, IRandom rand) {
+		public override bool Modify(TheDungeon generator, ISeededRandom rand) {
 			List<Vector2Int> path = _pathComputer.Invoke(generator, rand);
 
 			// Path couldn't be generated.
@@ -105,7 +105,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 			}
 
 			public static Builder ForShortestPath(EntitySource source, Vector2Int from, Vector2Int to, TerrainSO requiredTerrain = null) {
-				Builder builder = new Builder(source, (TheDungeon generator, IRandom rand) => {
+				Builder builder = new Builder(source, (TheDungeon generator, ISeededRandom rand) => {
 					DungeonPather pather = new DungeonPather(generator, DungeonPather.UniformCostTerrainSpecificWalkablePather(requiredTerrain));
 					IEnumerable<Vector2Int> path = pather.FindPath(from, to);
 					if (path == null) {
@@ -121,7 +121,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 			}
 
 			public static Builder ToFarthestPoint(EntitySource source, Vector2Int from, TerrainSO requiredTerrain = null) {
-				Builder builder = new Builder(source, (TheDungeon generator, IRandom rand) => {
+				Builder builder = new Builder(source, (TheDungeon generator, ISeededRandom rand) => {
 					DungeonPather pather = new DungeonPather(generator, DungeonPather.UniformCostTerrainSpecificWalkablePather(requiredTerrain));
 					IEnumerable<Vector2Int> path = pather.FindPathToFarthestPoint(from);
 

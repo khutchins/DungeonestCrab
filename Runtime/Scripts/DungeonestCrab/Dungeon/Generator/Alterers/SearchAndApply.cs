@@ -20,7 +20,7 @@ namespace DungeonestCrab.Dungeon.Generator {
             _action = action;
         }
 
-        public bool Modify(TheDungeon dungeon, IRandom rand) {
+        public bool Modify(TheDungeon dungeon, ISeededRandom rand) {
             if (_action == null) return true;
 
             var affectedTiles = new HashSet<TileSpec>();

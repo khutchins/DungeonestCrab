@@ -11,17 +11,17 @@ namespace DungeonestCrab.Dungeon.Generator {
 	/// </summary>
 	public class SourceCallback : ISource {
 
-		private readonly Action<Stamp, IRandom> _callback;
+		private readonly Action<Stamp, ISeededRandom> _callback;
 
 		/// <summary>
 		/// Constructor for the callback source.
 		/// </summary>
 		/// <param name="callback">Callback executed to perform stamp.</param>
-		public SourceCallback(Action<Stamp, IRandom> callback) : base(Tile.Unset) {
+		public SourceCallback(Action<Stamp, ISeededRandom> callback) : base(Tile.Unset) {
 			_callback = callback;
 		}
 
-		public override void Generate(Stamp stamp, IRandom rand) {
+		public override void Generate(Stamp stamp, ISeededRandom rand) {
 			_callback(stamp, rand);
 		}
 	}

@@ -19,7 +19,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
             TheDungeon workingDungeon = inputDungeon != null ? inputDungeon.Clone() : null;
 
             if (workingDungeon != null) {
-                ApplyNodeLogic(workingDungeon, new SystemRandom(GetPreviewSeed()));
+                ApplyNodeLogic(workingDungeon, new Xoshiro256PpRandom(GetPreviewSeed()));
                 UpdateTexture(workingDungeon);
             } else {
                 PreviewTexture = null;
@@ -29,7 +29,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
             return _cachedPreview;
         }
 
-        protected override bool ApplyNodeLogic(TheDungeon dungeon, IRandom random) {
+        protected override bool ApplyNodeLogic(TheDungeon dungeon, ISeededRandom random) {
             return new Finalizer(DefaultTerrain).Modify(dungeon, random);
         }
     }

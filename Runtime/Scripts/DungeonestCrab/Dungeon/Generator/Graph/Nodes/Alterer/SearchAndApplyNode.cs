@@ -17,7 +17,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         [Tooltip("The range around tiles matching the search criteria to look for target tiles.")]
         public int SearchRadius = 0;
 
-        protected override bool ApplyNodeLogic(TheDungeon dungeon, IRandom random) {
+        protected override bool ApplyNodeLogic(TheDungeon dungeon, ISeededRandom random) {
             IMatcher searchCriteria = GetInputValue<IMatcher>("SearchCriteria", null);
             if (searchCriteria == null) searchCriteria = TileMatcher.MatchingAll();
 

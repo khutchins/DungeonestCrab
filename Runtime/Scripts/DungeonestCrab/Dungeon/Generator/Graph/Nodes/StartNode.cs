@@ -20,20 +20,20 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
 
         public override TheDungeon GetPreviewDungeon() {
             Vector2Int size = GetDimensions();
-            TheDungeon dungeon = new TheDungeon(size.x, size.y, new SystemRandom(GetPreviewSeed()));
+            TheDungeon dungeon = new TheDungeon(size.x, size.y, new Xoshiro256PpRandom(GetPreviewSeed()));
             if (Traits != null) dungeon.Traits.AddRange(Traits);
             UpdateTexture(dungeon);
             _cachedPreview = dungeon;
             return dungeon;
         }
 
-        public override bool GenerateRuntime(IRandom random, TheDungeon incomingDungeon) {
+        public override bool GenerateRuntime(ISeededRandom random, TheDungeon incomingDungeon) {
             if (Traits != null) incomingDungeon.Traits.AddRange(Traits);
 
             return base.GenerateRuntime(random, incomingDungeon);
         }
 
-        protected override bool ApplyNodeLogic(TheDungeon dungeon, IRandom random) {
+        protected override bool ApplyNodeLogic(TheDungeon dungeon, ISeededRandom random) {
             return true;
         }
     }

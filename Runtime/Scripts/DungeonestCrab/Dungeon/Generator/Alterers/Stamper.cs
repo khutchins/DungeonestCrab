@@ -215,7 +215,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 			_preserveWalls = preserveWalls;
 		}
 
-        public bool Modify(TheDungeon generator, IRandom rand) {
+        public bool Modify(TheDungeon generator, ISeededRandom rand) {
             Bounds actualBounds = _bounds ?? new FullBounds();
             AppliedBounds applied = actualBounds.Apply(generator.Bounds);
             Stamp stamp = new Stamp(generator, _protectExistingTerrain, applied);
@@ -246,7 +246,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 			return true;
 		}
 
-		public bool[,] DebugModify(int w, int h, IRandom rand) {
+		public bool[,] DebugModify(int w, int h, ISeededRandom rand) {
 			Stamp stamp = new Stamp(w, h);
 			_source.Generate(stamp, rand);
 

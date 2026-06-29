@@ -18,7 +18,7 @@ namespace DungeonestCrab.Dungeon.Generator {
             }
         }
 
-        public override void Generate(Stamp stamp, IRandom rand) {
+        public override void Generate(Stamp stamp, ISeededRandom rand) {
             if (strategies.Length == 0) return;
 
             int roomTries = (int)(triesPerSquare * stamp.W * stamp.H);
@@ -46,7 +46,7 @@ namespace DungeonestCrab.Dungeon.Generator {
             }
         }
 
-        public Stamp CreateRoom(RoomStrategy strategy, int x, int y, int w, int h, IRandom rand) {
+        public Stamp CreateRoom(RoomStrategy strategy, int x, int y, int w, int h, ISeededRandom rand) {
             Stamp stamp = new Stamp(x, y, w, h);
             strategy.StampRoom(stamp, rand);
             return stamp;

@@ -11,6 +11,6 @@ namespace DungeonestCrab.Dungeon.Generator {
 		/// <param name="dungeon">The dungeon to modify</param>
 		/// <param name="rand">Random number source</param>
 		/// <returns>Return false if the dungeon generation should be aborted.</returns>
-		bool Modify(TheDungeon dungeon, IRandom rand);
+		bool Modify(TheDungeon dungeon, ISeededRandom rand);
 	}
 }

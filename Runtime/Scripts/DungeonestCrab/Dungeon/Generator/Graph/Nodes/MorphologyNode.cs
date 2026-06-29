@@ -11,7 +11,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         public Morphology.Operation Operation;
         public int Iterations = 1;
 
-        protected override bool ApplyNodeLogic(TheDungeon dungeon, IRandom random) {
+        protected override bool ApplyNodeLogic(TheDungeon dungeon, ISeededRandom random) {
             Morphology morph = new Morphology(Operation, Iterations);
             return morph.Modify(dungeon, random);
         }

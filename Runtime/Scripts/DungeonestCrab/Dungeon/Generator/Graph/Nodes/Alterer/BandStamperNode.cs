@@ -18,7 +18,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         [Header("Bands")]
         [Input(ShowBackingValue.Never, ConnectionType.Multiple, TypeConstraint.Strict)] public NoiseBandConnection Bands;
 
-        protected override bool ApplyNodeLogic(TheDungeon dungeon, IRandom random) {
+        protected override bool ApplyNodeLogic(TheDungeon dungeon, ISeededRandom random) {
             INoiseSource noise = GetInputValue<INoiseSource>("Noise", null);
             if (noise == null) return true;
 

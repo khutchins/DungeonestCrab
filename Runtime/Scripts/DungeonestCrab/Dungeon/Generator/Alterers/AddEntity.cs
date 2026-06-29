@@ -24,7 +24,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 			this._matcher = matcher;
 		}
 
-		public override bool Modify(TheDungeon generator, IRandom rand) {
+		public override bool Modify(TheDungeon generator, ISeededRandom rand) {
 			int actualTarget = (int)(_targetAmt * _chanceToPlace);
 			return PlaceMany(generator, rand, _source, _matcher, _placeToNotBlockDungeon, _minRequired, actualTarget, _avoidAdjacency);
 		}

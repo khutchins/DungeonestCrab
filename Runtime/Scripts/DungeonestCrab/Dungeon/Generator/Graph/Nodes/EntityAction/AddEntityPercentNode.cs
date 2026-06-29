@@ -6,7 +6,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
     public class AddEntityPercentNode : EntityPassNode {
         [Range(0, 1)] public float Percent = 0.1f;
 
-        protected override bool ApplyNodeLogic(TheDungeon dungeon, IRandom random) {
+        protected override bool ApplyNodeLogic(TheDungeon dungeon, ISeededRandom random) {
             EntitySource source = GetEntitySource();
             if (source == null) return false;
 

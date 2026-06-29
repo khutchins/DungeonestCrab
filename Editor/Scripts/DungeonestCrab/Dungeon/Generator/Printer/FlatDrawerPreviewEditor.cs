@@ -181,7 +181,7 @@ namespace DungeonestCrab.Editor {
 
             var info = new IFlatDrawer.FlatInfo {
                 parent = null,
-                random = new SystemRandom(12345),
+                random = new Xoshiro256PpRandom(12345),
                 tileSpec = centerTile,
                 tileSize = Vector3.one,
                 hasCeiling = false

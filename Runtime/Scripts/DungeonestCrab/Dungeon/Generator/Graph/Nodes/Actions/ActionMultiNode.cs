@@ -14,7 +14,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         private class MultiAction : ITileAction {
             readonly List<ITileAction> _actions;
             public MultiAction(List<ITileAction> actions) => _actions = actions;
-            public void Apply(TileSpec spec, IRandom rand) {
+            public void Apply(TileSpec spec, ISeededRandom rand) {
                 foreach (var a in _actions) a?.Apply(spec, rand);
             }
         }

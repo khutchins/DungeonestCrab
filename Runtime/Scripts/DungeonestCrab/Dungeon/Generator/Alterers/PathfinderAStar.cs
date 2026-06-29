@@ -13,11 +13,11 @@ namespace DungeonestCrab.Dungeon.Generator {
             _costProvider = costProvider;
         }
 
-        public void Init(IRandom rand) {
+        public void Init(ISeededRandom rand) {
             _costProvider.Init(rand);
         }
 
-        public IEnumerable<Vector2Int> FindPath(TheDungeon dungeon, Vector2Int start, Vector2Int end, IRandom rand) {
+        public IEnumerable<Vector2Int> FindPath(TheDungeon dungeon, Vector2Int start, Vector2Int end, ISeededRandom rand) {
             float[,] costs = new float[dungeon.Size.x, dungeon.Size.y];
             for (int x = 0; x < dungeon.Size.x; x++) {
                 for (int y = 0; y < dungeon.Size.y; y++) {

@@ -9,7 +9,7 @@ namespace DungeonestCrab.Dungeon.Printer {
         [SerializeField] float MinScale = 1;
         [SerializeField] float MaxScale = 1;
 
-        public override void DoInit(GameObject go, Entity entity, IRandom random) {
+        public override void DoInit(GameObject go, Entity entity, ISeededRandom random) {
             float scale = random.Next(MinScale, MaxScale);
             this.transform.localScale = new Vector3(scale, scale, scale);
         }

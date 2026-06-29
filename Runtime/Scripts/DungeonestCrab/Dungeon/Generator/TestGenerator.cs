@@ -14,15 +14,15 @@ namespace DungeonestCrab.Dungeon.Generator {
         [DisableIf("RandomizeSeed")]
         public int Seed = 313;
 
-        public override IRandom GetRandom() {
+        public override ISeededRandom GetRandom() {
             if (RandomizeSeed) {
-                Seed = new SystemRandom().Next(1000000);
+                Seed = new Xoshiro256PpRandom().Next(1000000);
             }
-            return new SystemRandom(Seed);
+            return new Xoshiro256PpRandom(Seed);
         }
 
         protected override TheDungeon Make() {
-            IRandom rand = GetRandom();
+            ISeededRandom rand = GetRandom();
 
             if (DungeonToGenerate != null) {
                 return DungeonToGenerate.Generate(rand);

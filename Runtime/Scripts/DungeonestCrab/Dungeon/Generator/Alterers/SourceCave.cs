@@ -42,7 +42,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 			_invert = invert;
 		}
 
-		public override void Generate(Stamp stamp, IRandom rand) {
+		public override void Generate(Stamp stamp, ISeededRandom rand) {
 			int w = stamp.W;
 			int h = stamp.H;
 

@@ -21,7 +21,7 @@ namespace DungeonestCrab.Dungeon {
 		/// </summary>
 		/// <param name="random"></param>
 		/// <returns></returns>
-        public virtual Pair GetPair(IRandom random) {
+        public virtual Pair GetPair(ISeededRandom random) {
 			if (_pairs == null || _pairs.Length == 0) return null;
 			return random.From(_pairs);
 		}

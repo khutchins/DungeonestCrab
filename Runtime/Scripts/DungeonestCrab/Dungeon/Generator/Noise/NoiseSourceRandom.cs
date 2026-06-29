@@ -4,10 +4,10 @@ using Pomerandomian;
 
 namespace KH.Noise {
     public class NoiseSourceRandom : INoiseSource {
-        private IRandom _random;
+        private ISeededRandom _random;
 
 		public void SetSeed(int seed) {
-			_random = new SystemRandom(seed);
+			_random = new Xoshiro256PpRandom(seed);
 		}
 
 		public float At(float x, float y) {

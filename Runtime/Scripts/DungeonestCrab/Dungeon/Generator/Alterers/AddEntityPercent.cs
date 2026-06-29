@@ -20,7 +20,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 			_avoidAdjacency = avoidAdjacency;
 		}
 
-		public override bool Modify(TheDungeon generator, IRandom rand) {
+		public override bool Modify(TheDungeon generator, ISeededRandom rand) {
 			if (_chancePerTile <= 0) return true;
 			int qualifiedTiles = 0;
 			foreach (TileSpec spec in generator.AllTiles()) {

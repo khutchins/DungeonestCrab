@@ -13,7 +13,7 @@ namespace DungeonestCrab.Dungeon.Generator {
     }
 
     public interface IRegionConnector {
-        IEnumerable<ConnectionRequest> GetConnections(TheDungeon dungeon, int[,] regionMap, int maxRegion, IRandom rand);
+        IEnumerable<ConnectionRequest> GetConnections(TheDungeon dungeon, int[,] regionMap, int maxRegion, ISeededRandom rand);
     }
 
     public interface IPathFinder {
@@ -22,12 +22,12 @@ namespace DungeonestCrab.Dungeon.Generator {
         /// Use this to set seed for noise functions or cache data.
         /// </summary>
         /// <param name="rand"></param>
-        void Init(IRandom rand);
-        IEnumerable<Vector2Int> FindPath(TheDungeon dungeon, Vector2Int start, Vector2Int end, IRandom rand);
+        void Init(ISeededRandom rand);
+        IEnumerable<Vector2Int> FindPath(TheDungeon dungeon, Vector2Int start, Vector2Int end, ISeededRandom rand);
     }
 
     public interface ITileCarver {
-        void Carve(TheDungeon dungeon, IEnumerable<Vector2Int> path, IRandom rand);
+        void Carve(TheDungeon dungeon, IEnumerable<Vector2Int> path, ISeededRandom rand);
     }
 
     public class ModularCombiner : IAlterer {
@@ -41,7 +41,7 @@ namespace DungeonestCrab.Dungeon.Generator {
             _carver = carver;
         }
 
-        public bool Modify(TheDungeon dungeon, IRandom rand) {
+        public bool Modify(TheDungeon dungeon, ISeededRandom rand) {
             _pathFinder.Init(rand);
 
             int maxRegion;

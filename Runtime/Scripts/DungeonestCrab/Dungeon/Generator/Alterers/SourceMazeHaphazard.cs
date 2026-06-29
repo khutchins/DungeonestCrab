@@ -24,7 +24,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 			_moveMultiplier = moveMultiplier;
 		}
 
-		public override void Generate(Stamp stamp, IRandom rand) {
+		public override void Generate(Stamp stamp, ISeededRandom rand) {
 			_moveMultiplier = Mathf.Max(_moveMultiplier, 1);
 			_currentPosition = new Vector2Int(rand.Next(stamp.W), rand.Next(stamp.H));
 			int attempts = Mathf.FloorToInt(stamp.W * stamp.H * _insertionAttemptsPerTile);

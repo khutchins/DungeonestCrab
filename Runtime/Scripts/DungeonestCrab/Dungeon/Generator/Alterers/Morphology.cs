@@ -15,7 +15,7 @@ namespace DungeonestCrab.Dungeon.Generator {
             _iterations = iterations;
         }
 
-        public bool Modify(TheDungeon dungeon, IRandom rand) {
+        public bool Modify(TheDungeon dungeon, ISeededRandom rand) {
             for (int i = 0; i < _iterations; i++) {
                 switch (_op) {
                     case Operation.Dilation: Dilate(dungeon); break;

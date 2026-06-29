@@ -29,7 +29,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 			return partitions <= 2;
 		}
 
-		protected static void PlaceAt(TheDungeon generator, IRandom rand, EntitySource source, List<Vector2Int> coords) {
+		protected static void PlaceAt(TheDungeon generator, ISeededRandom rand, EntitySource source, List<Vector2Int> coords) {
 			int entityIndex = 0;
 			foreach(Vector2Int coord in coords) {
 				EntitySource.Pair pair = source.GetPair(rand);
@@ -37,7 +37,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 			}
 		}
 
-		protected static bool PlaceMany(TheDungeon generator, IRandom rand, EntitySource source, IMatcher matcher, bool placeToNotBlockDungeon, int minRequired, int targetAmt, bool avoidAdjacency = true) {
+		protected static bool PlaceMany(TheDungeon generator, ISeededRandom rand, EntitySource source, IMatcher matcher, bool placeToNotBlockDungeon, int minRequired, int targetAmt, bool avoidAdjacency = true) {
 			if (targetAmt <= 0) return true;
 			int actualMin = targetAmt < minRequired ? targetAmt : minRequired;
 
@@ -75,6 +75,6 @@ namespace DungeonestCrab.Dungeon.Generator {
 			return i >= minRequired;
 		}
 
-		public abstract bool Modify(TheDungeon generator, IRandom rand);
+		public abstract bool Modify(TheDungeon generator, ISeededRandom rand);
 	}
 }

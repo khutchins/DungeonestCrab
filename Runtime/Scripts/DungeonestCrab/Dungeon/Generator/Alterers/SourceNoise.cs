@@ -121,7 +121,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 			this.source = source ?? new NoiseSourcePerlin(0.015f);
 		}
 
-		public override void Generate(Stamp stamp, IRandom rand) {
+		public override void Generate(Stamp stamp, ISeededRandom rand) {
 			int w = stamp.W;
 			int h = stamp.H;
 

@@ -14,7 +14,7 @@ namespace DungeonestCrab.Dungeon.Generator {
             _loopChance = loopChance;
         }
 
-        public IEnumerable<ConnectionRequest> GetConnections(TheDungeon dungeon, int[,] regionMap, int maxRegion, IRandom rand) {
+        public IEnumerable<ConnectionRequest> GetConnections(TheDungeon dungeon, int[,] regionMap, int maxRegion, ISeededRandom rand) {
             var regionPoints = new Dictionary<int, List<Vector2Int>>();
             for (int i = 0; i <= maxRegion; i++) regionPoints[i] = new List<Vector2Int>();
 

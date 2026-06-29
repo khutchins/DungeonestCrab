@@ -13,8 +13,8 @@ namespace DungeonestCrab.Dungeon.Generator {
             _maxIterations = maxIterations;
         }
 
-        public void Init(IRandom rand) { }
-        public IEnumerable<Vector2Int> FindPath(TheDungeon dungeon, Vector2Int start, Vector2Int end, IRandom rand) {
+        public void Init(ISeededRandom rand) { }
+        public IEnumerable<Vector2Int> FindPath(TheDungeon dungeon, Vector2Int start, Vector2Int end, ISeededRandom rand) {
             Stack<Vector2Int> pathStack = new Stack<Vector2Int>();
             HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
 

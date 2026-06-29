@@ -19,7 +19,7 @@ namespace DungeonestCrab.Dungeon.Generator {
             _terrainToSet = terrainToSet;
         }
 
-        public bool Modify(TheDungeon dungeon, IRandom rand) {
+        public bool Modify(TheDungeon dungeon, ISeededRandom rand) {
             var set = new HashSet<TileSpec>();
             foreach (TileSpec tile in dungeon.AllTiles()) {
                 if (_matcher.Matches(tile)) {

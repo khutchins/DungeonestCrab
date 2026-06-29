@@ -192,7 +192,7 @@ namespace DungeonestCrab.Editor {
 
             IWallDrawer.WallInfo info = new IWallDrawer.WallInfo {
                 parent = null,
-                random = new SystemRandom(12345),
+                random = new Xoshiro256PpRandom(12345),
                 tileSpec = mockTile,
                 position = Vector3.zero,
                 rotation = 0f,

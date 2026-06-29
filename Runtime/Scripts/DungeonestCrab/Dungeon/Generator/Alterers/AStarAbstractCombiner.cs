@@ -44,7 +44,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 			return graph.Nodes.Where(x => x.Element.x == c.x && x.Element.y == c.y).FirstOrDefault();
 		}
 
-		public bool Modify(TheDungeon generator, IRandom rand) {
+		public bool Modify(TheDungeon generator, ISeededRandom rand) {
 			List<Vector2Int> points = PointsToConnect(generator, rand);
 			carveNoise?.SetSeed(rand.Next(1000000000));
 
@@ -77,7 +77,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 			return true;
 		}
 
-		protected List<Vector2Int> PointsToConnect(TheDungeon gen, IRandom rand) {
+		protected List<Vector2Int> PointsToConnect(TheDungeon gen, ISeededRandom rand) {
 			int maxRegions;
 			int[,] regions = gen.ComputeRegions(out maxRegions);
 
@@ -111,7 +111,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 			}
 		}
 
-		protected float[,] CostMap(TheDungeon gen, IRandom rand) {
+		protected float[,] CostMap(TheDungeon gen, ISeededRandom rand) {
 			float[,] costMap = new float[gen.Size.x, gen.Size.y];
 
 			for (int y = 0; y < gen.Size.y; y++) {

@@ -16,7 +16,7 @@ namespace DungeonestCrab.Dungeon.Generator {
             _filter = filter;
         }
 
-        public bool Modify(TheDungeon dungeon, IRandom rand) {
+        public bool Modify(TheDungeon dungeon, ISeededRandom rand) {
             List<TileSpec> deadEnds = DeadEndPruner.GetDeadEnds(dungeon).ToList();
             bool modificationsMade = false;
             

@@ -4,7 +4,7 @@ using Pomerandomian;
 
 namespace DungeonestCrab.Dungeon.Generator {
 	public class DeadEndPruner : IAlterer {
-		public bool Modify(TheDungeon generator, IRandom rand) {
+		public bool Modify(TheDungeon generator, ISeededRandom rand) {
 			while (true) {
 				bool hadItem = false;
 				foreach (TileSpec spec in DeadEndPruner.GetDeadEnds(generator)) {

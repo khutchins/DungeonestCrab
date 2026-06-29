@@ -38,7 +38,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
                 return c + (_noise.At(x, y) * _multiplier);
             }
 
-            public void Init(IRandom rand) {
+            public void Init(ISeededRandom rand) {
                 _baseProvider.Init(rand);
                 _noise.SetSeed(rand.Next(1_000_000));
             }

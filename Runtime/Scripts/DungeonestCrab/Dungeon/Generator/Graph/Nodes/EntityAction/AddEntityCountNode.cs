@@ -7,7 +7,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         public int MinCount = 1;
         public int TargetCount = 5;
 
-        protected override bool ApplyNodeLogic(TheDungeon dungeon, IRandom random) {
+        protected override bool ApplyNodeLogic(TheDungeon dungeon, ISeededRandom random) {
             EntitySource source = GetEntitySource();
             return new AddEntity(source, GetMatcher(), AvoidBlockingPath, AvoidAdjacency, MinCount, TargetCount)
                 .Modify(dungeon, random);

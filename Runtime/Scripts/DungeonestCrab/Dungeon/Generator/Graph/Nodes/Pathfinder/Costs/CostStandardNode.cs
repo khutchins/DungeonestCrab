@@ -14,7 +14,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
                 return tileSpec.TileCarvingCost;
             }
 
-            public void Init(IRandom rand) {}
+            public void Init(ISeededRandom rand) {}
         }
     }
 }

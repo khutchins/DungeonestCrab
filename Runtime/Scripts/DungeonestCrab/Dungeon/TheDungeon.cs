@@ -19,7 +19,7 @@ namespace DungeonestCrab.Dungeon {
 		public float FogDensity = 0.01f;
 		public Color FogColor = Color.white;
 
-		public readonly IRandom ConsistentRNG;
+		public readonly ISeededRandom ConsistentRNG;
 		/// <summary>
 		/// A RNG that will not have consistent results each time. 
 		/// Only use this on things that it makes sense to change,
@@ -28,7 +28,7 @@ namespace DungeonestCrab.Dungeon {
 		/// a range of events, NEVER use the consistent RNG for 
 		/// those events, as it will result in inconsistent results.
 		/// </summary>
-		public readonly IRandom NonConsistentRNG;
+		public readonly ISeededRandom NonConsistentRNG;
 
 		private int[,] _cachedRegionMap;
 		private DirectedGraph<Vector2Int> _cachedPathGraph;
@@ -53,14 +53,14 @@ namespace DungeonestCrab.Dungeon {
 			return tile.Terrain?.GetMixin<T>();
 		}
 
-        public TheDungeon(int w, int h, IRandom consistentRNG = null, IRandom inconsistentRNG = null) {
+        public TheDungeon(int w, int h, ISeededRandom consistentRNG = null, ISeededRandom inconsistentRNG = null) {
 			Size = new Vector2Int(w, h);
 			Bounds = new AppliedBounds(0, 0, w, h);
 			TilesWithEntities = new HashSet<TileSpec>();
 			Entities = new List<Entity>();
 			_tiles = CreateTiles();
-			this.ConsistentRNG = consistentRNG ?? new SystemRandom();
-			this.NonConsistentRNG = inconsistentRNG ?? new SystemRandom();
+			this.ConsistentRNG = consistentRNG ?? new Xoshiro256PpRandom();
+			this.NonConsistentRNG = inconsistentRNG ?? new Xoshiro256PpRandom();
 		}
 
         public void InvalidateCaches() {
@@ -80,8 +80,8 @@ namespace DungeonestCrab.Dungeon {
             FogDensity = other.FogDensity;
             FogColor = other.FogColor;
 
-			ConsistentRNG = other.ConsistentRNG.Split(0);
-            NonConsistentRNG = new SystemRandom();
+			ConsistentRNG = other.ConsistentRNG.WithSameSeed();
+            NonConsistentRNG = new Xoshiro256PpRandom();
 
             _tiles = new TileSpec[Size.y, Size.x];
             TilesWithEntities = new HashSet<TileSpec>();

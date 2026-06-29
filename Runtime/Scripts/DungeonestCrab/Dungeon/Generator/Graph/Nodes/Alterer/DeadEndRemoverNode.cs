@@ -11,7 +11,7 @@ namespace DungeonestCrab.Dungeon.Generator.Nodes {
         
         [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public MatcherConnection Filter;
 
-        protected override bool ApplyNodeLogic(TheDungeon dungeon, IRandom random) {
+        protected override bool ApplyNodeLogic(TheDungeon dungeon, ISeededRandom random) {
             IMatcher filter = GetInputValue<IMatcher>("Filter", null);
             return new DeadEndRemover(MaxDeadEndLength, filter).Modify(dungeon, random);
         }

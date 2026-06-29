@@ -9,7 +9,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         private class TileAction : ITileAction {
             readonly Tile _tile;
             public TileAction(Tile tile) => _tile = tile;
-            public void Apply(TileSpec spec, IRandom rand) => spec.Tile = _tile;
+            public void Apply(TileSpec spec, ISeededRandom rand) => spec.Tile = _tile;
         }
     }
 }

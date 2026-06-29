@@ -15,7 +15,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
 
         protected abstract IAlterer CreateStamper(ISource source, Bounds bounds);
 
-        protected override bool ApplyNodeLogic(TheDungeon dungeon, IRandom random) {
+        protected override bool ApplyNodeLogic(TheDungeon dungeon, ISeededRandom random) {
             ISource source = GetInputValue<ISource>("Source", null);
             Bounds bounds = GetInputValue<Bounds>("Bounds", null);
 

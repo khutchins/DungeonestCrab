@@ -13,7 +13,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 		public SourceCircle(Tile tileToSet) : base(tileToSet) {
 		}
 
-		public override void Generate(Stamp stamp, IRandom rand) {
+		public override void Generate(Stamp stamp, ISeededRandom rand) {
 			int min = Mathf.Min(stamp.W, stamp.H);
 			float rad = min / 2f;
 

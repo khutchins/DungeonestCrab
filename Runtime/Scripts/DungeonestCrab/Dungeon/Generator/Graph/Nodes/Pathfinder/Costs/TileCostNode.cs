@@ -9,7 +9,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         /// <summary>
         /// Called at the start of pathfinding. Use this to set seeds on noise functions.
         /// </summary>
-        void Init(IRandom rand);
+        void Init(ISeededRandom rand);
 
         /// <summary>
         /// Calculates the cost to traverse or carve a specific tile. Negative is impassable.

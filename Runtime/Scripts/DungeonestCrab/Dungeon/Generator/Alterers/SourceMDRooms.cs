@@ -48,7 +48,7 @@ namespace DungeonestCrab.Dungeon.Generator {
             MergeChance = mergeChance;
         }
 
-        public override void Generate(Stamp stamp, IRandom rand) {
+        public override void Generate(Stamp stamp, ISeededRandom rand) {
             // Initialize the room grid.
             int cellW = stamp.W / GridColumns;
             int cellH = stamp.H / GridRows;
@@ -162,8 +162,9 @@ namespace DungeonestCrab.Dungeon.Generator {
             if (!AllowDeadEnds) {
                 // I can remove this - it lets me more easily visualize the
                 // impact of this option by eliminating it as something that
-                // consumes the default random.
-                IRandom childRandom = rand.Split(0);
+                // consumes the default random by shoving it off to a new RNG
+                // without consuming values.
+                ISeededRandom childRandom = rand.Split(0);
                 foreach (var c in cells) {
                     if (c.IsRoom) continue;
                     if (c.IsConnectedToAnything && c.Connections.Count == 1) {
@@ -267,7 +268,7 @@ namespace DungeonestCrab.Dungeon.Generator {
             return null;
         }
 
-        private void DrawHallway(Stamp stamp, Cell start, Cell end, bool horizontal, IRandom rand) {
+        private void DrawHallway(Stamp stamp, Cell start, Cell end, bool horizontal, ISeededRandom rand) {
             Vector2Int pStart = GetConnectionPoint(start, rand);
             Vector2Int pEnd = GetConnectionPoint(end, rand);
 
@@ -306,7 +307,7 @@ namespace DungeonestCrab.Dungeon.Generator {
             stamp.MaybeSetAt(cursor, _tileToSet);
         }
 
-        private Vector2Int GetConnectionPoint(Cell c, IRandom rand) {
+        private Vector2Int GetConnectionPoint(Cell c, ISeededRandom rand) {
             if (!c.IsRoom) return c.CrossroadPoint;
 
             RectInt r = c.IsMerged ? c.MergedRect : c.RoomRect;
@@ -334,7 +335,7 @@ namespace DungeonestCrab.Dungeon.Generator {
             }
         }
 
-        private void ApplyImperfections(Stamp stamp, RectInt r, IRandom rand) {
+        private void ApplyImperfections(Stamp stamp, RectInt r, ISeededRandom rand) {
             // Make some of the rooms messier. I should probably have this take
             // room suppliers instead of just doing this step, but that's
             // future me's problem.

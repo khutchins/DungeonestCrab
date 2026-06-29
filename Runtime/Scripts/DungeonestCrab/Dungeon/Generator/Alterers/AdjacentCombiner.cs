@@ -18,7 +18,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 			this._terrain = terrain;
 		}
 
-		public bool Modify(TheDungeon generator, IRandom rand) {
+		public bool Modify(TheDungeon generator, ISeededRandom rand) {
 			int maxRegion = -1;
 			int[,] tileRegionMap = generator.ComputeRegions(out maxRegion);
 

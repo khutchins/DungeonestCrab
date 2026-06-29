@@ -22,10 +22,10 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         public int DebugSeed = 0;
 
         public TheDungeon Generate(int seed) {
-            return Generate(new SystemRandom(seed));
+            return Generate(new Xoshiro256PpRandom(seed));
         }
 
-        public TheDungeon Generate(IRandom rng) {
+        public TheDungeon Generate(ISeededRandom rng) {
             StartNode start = nodes.FirstOrDefault(x => x is StartNode) as StartNode;
             for (int i = 0; i < MaxAttempts; i++) {
                 TheDungeon dungeon = new TheDungeon(Width, Height, rng) {

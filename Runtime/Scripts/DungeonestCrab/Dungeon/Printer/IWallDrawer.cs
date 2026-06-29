@@ -11,7 +11,7 @@ namespace DungeonestCrab.Dungeon.Printer {
 	public abstract class IWallDrawer : ScriptableObject {
 		public struct WallInfo {
 			public Transform parent;
-            public IRandom random;
+            public ISeededRandom random;
 			public TileSpec tileSpec;
 			public Vector3 position;
 			public Vector3Int tileSize;

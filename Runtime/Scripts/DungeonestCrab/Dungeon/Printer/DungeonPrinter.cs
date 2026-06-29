@@ -494,7 +494,7 @@ namespace DungeonestCrab.Dungeon.Printer {
             return t;
         }
 
-        private void AddEntity(TheDungeon dungeon, Entity entity, Vector2Int coords, float z, IRandom rand) {
+        private void AddEntity(TheDungeon dungeon, Entity entity, Vector2Int coords, float z, ISeededRandom rand) {
             Transform parent = entity.Type.CanBeMerged ? StaticEntityHolder : EntityHolder;
             Vector3 pos = OriginForCoords(coords) + new Vector3(0, z * _tileHeightMult, 0);
             Quaternion rot = Quaternion.Euler(0, entity.YAngle, 0);

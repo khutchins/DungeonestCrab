@@ -102,7 +102,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
 
         public abstract TheDungeon GetPreviewDungeon();
 
-        public virtual bool GenerateRuntime(IRandom random, TheDungeon dungeon) {
+        public virtual bool GenerateRuntime(ISeededRandom random, TheDungeon dungeon) {
             if (!ApplyNodeLogic(dungeon, random)) {
                 Debug.LogWarning($"Generation failed at node: {name}");
                 return false;
@@ -121,6 +121,6 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
             return true;
         }
 
-        protected abstract bool ApplyNodeLogic(TheDungeon dungeon, IRandom random);
+        protected abstract bool ApplyNodeLogic(TheDungeon dungeon, ISeededRandom random);
     }
 }

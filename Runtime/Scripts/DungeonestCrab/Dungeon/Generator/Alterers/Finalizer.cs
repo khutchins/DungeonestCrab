@@ -9,7 +9,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 			this._defaultTerrain = defaultTerrain;
 		}
 
-		public bool Modify(TheDungeon generator, IRandom rand) {
+		public bool Modify(TheDungeon generator, ISeededRandom rand) {
 			foreach (TileSpec tile in generator.AllTiles()) {
 				tile.SetTerrainIfNull(_defaultTerrain);
 			}

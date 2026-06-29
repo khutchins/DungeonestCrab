@@ -10,7 +10,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         public TerrainSO TerrainToSet;
         public int Range = 0;
 
-        protected override bool ApplyNodeLogic(TheDungeon dungeon, IRandom random) {
+        protected override bool ApplyNodeLogic(TheDungeon dungeon, ISeededRandom random) {
             IMatcher matcher = GetInputValue<IMatcher>("Matcher", null);
             if (matcher == null) matcher = TileMatcher.MatchingAll();
 

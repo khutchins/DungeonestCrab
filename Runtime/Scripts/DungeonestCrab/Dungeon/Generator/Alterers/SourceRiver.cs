@@ -68,7 +68,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 			return Dir.Up;
 		}
 
-        public override void Generate(Stamp stamp, IRandom rand) {
+        public override void Generate(Stamp stamp, ISeededRandom rand) {
 			int w = stamp.W;
 			int h = stamp.H;
 			Sides startSide = rand.From(_startSides);
@@ -89,7 +89,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 			Displace(stamp, mid, endPoint, rand);
 		}
 
-		private void Displace(Stamp stamp, RiverPoint start, RiverPoint dest, IRandom rand) {
+		private void Displace(Stamp stamp, RiverPoint start, RiverPoint dest, ISeededRandom rand) {
 			int w = stamp.W;
 			int h = stamp.H;
 			float wl = dest.x - start.x;
@@ -126,17 +126,17 @@ namespace DungeonestCrab.Dungeon.Generator {
 			}
 		}
 
-		private float RandomWidth(IRandom rand) {
+		private float RandomWidth(ISeededRandom rand) {
 			return (float)rand.NextDouble(_minWidth, _maxWidth);
 		}
 
-		private RiverPoint ControlPoint(int w, int h, IRandom rand) {
+		private RiverPoint ControlPoint(int w, int h, ISeededRandom rand) {
 			float x = (float)(rand.NextDouble(w * .25, w * .75));
 			float y = (float)(rand.NextDouble(h * .25, h * .75));
 			return new RiverPoint(x, y, RandomWidth(rand));
 		}
 
-		private RiverPoint ControlPoint(Dir dir, int w, int h, IRandom rand) {
+		private RiverPoint ControlPoint(Dir dir, int w, int h, ISeededRandom rand) {
 			float x = (float)(rand.NextDouble(w * .25, w * .75));
 			float y = (float)(rand.NextDouble(h * .25, h * .75));
 

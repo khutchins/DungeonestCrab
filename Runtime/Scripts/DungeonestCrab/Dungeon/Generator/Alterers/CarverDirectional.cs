@@ -15,7 +15,7 @@ namespace DungeonestCrab.Dungeon.Generator {
             _preserveExistingFloors = preserveExistingFloors;
         }
 
-        public void Carve(TheDungeon dungeon, IEnumerable<Vector2Int> path, IRandom rand) {
+        public void Carve(TheDungeon dungeon, IEnumerable<Vector2Int> path, ISeededRandom rand) {
             var pathList = path.ToList();
             if (pathList.Count == 0) return;
 

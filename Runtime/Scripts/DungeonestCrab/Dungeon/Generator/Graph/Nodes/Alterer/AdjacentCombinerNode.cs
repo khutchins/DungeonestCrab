@@ -10,7 +10,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         public TerrainSO Terrain;
         [Range(0, 1)] public float ExtraJunctionChance = 0.1f;
 
-        protected override bool ApplyNodeLogic(TheDungeon dungeon, IRandom random) {
+        protected override bool ApplyNodeLogic(TheDungeon dungeon, ISeededRandom random) {
             return new AdjacentCombiner(Terrain, ExtraJunctionChance).Modify(dungeon, random);
         }
     }

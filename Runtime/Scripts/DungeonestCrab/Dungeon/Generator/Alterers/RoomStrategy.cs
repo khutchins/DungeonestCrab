@@ -17,7 +17,7 @@ namespace DungeonestCrab.Dungeon.Generator {
         [Tooltip("Relative probability of picking this room type.")]
         public int Weight = 1;
 
-        public abstract void StampRoom(Stamp stamp, IRandom rand);
+        public abstract void StampRoom(Stamp stamp, ISeededRandom rand);
 
         protected void Set(Stamp stamp, int x, int y, Tile tile, params string[] tags) {
             stamp.MaybeSetAt(x, y, tile, tags);
@@ -26,7 +26,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 
     [Serializable]
     public class RoomBasic : RoomStrategy {
-        public override void StampRoom(Stamp stamp, IRandom rand) {
+        public override void StampRoom(Stamp stamp, ISeededRandom rand) {
             for (int y = 0; y < stamp.H; y++) {
                 for (int x = 0; x < stamp.W; x++) {
                     if (y == 0 || x == 0 || y == stamp.H - 1 || x == stamp.W - 1) {
@@ -41,7 +41,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 
     [Serializable]
     public class RoomRounded : RoomStrategy {
-        public override void StampRoom(Stamp stamp, IRandom rand) {
+        public override void StampRoom(Stamp stamp, ISeededRandom rand) {
             int w = stamp.W - 2;
             int h = stamp.H - 2;
             float radW = ((w - 2) / 2F);
@@ -66,7 +66,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 
     [Serializable]
     public class RoomRoundedCorners : RoomStrategy {
-        public override void StampRoom(Stamp stamp, IRandom rand) {
+        public override void StampRoom(Stamp stamp, ISeededRandom rand) {
             for (int y = 0; y < stamp.H; y++) {
                 for (int x = 0; x < stamp.W; x++) {
                     bool edge = y == 0 || x == 0 || y == stamp.H - 1 || x == stamp.W - 1;
@@ -84,7 +84,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 
     [Serializable]
     public class RoomLibrary : RoomStrategy {
-        public override void StampRoom(Stamp stamp, IRandom rand) {
+        public override void StampRoom(Stamp stamp, ISeededRandom rand) {
             bool vert = stamp.H >= stamp.W;
 
             if (vert) {
@@ -121,7 +121,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 
     [Serializable]
     public class RoomBaths : RoomStrategy {
-        public override void StampRoom(Stamp stamp, IRandom rand) {
+        public override void StampRoom(Stamp stamp, ISeededRandom rand) {
             for (int y = 0; y < stamp.H; y++) {
                 for (int x = 0; x < stamp.W; x++) {
                     bool edge = y == 0 || x == 0 || y == stamp.H - 1 || x == stamp.W - 1;
@@ -145,7 +145,7 @@ namespace DungeonestCrab.Dungeon.Generator {
         public int Iterations = 5;
         public int Neighbors = 5;
 
-        public override void StampRoom(Stamp stamp, IRandom rand) {
+        public override void StampRoom(Stamp stamp, ISeededRandom rand) {
             for (int iy = 1; iy < stamp.H - 1; iy++) {
                 for (int ix = 1; ix < stamp.W - 1; ix++) {
                     if (rand.WithPercentChance(InitialOdds)) {

@@ -11,6 +11,6 @@ namespace DungeonestCrab.Dungeon.Generator {
 			_tileToSet = tileToSet;
 		}
 
-		public abstract void Generate(Stamp stamp, IRandom rand);
+		public abstract void Generate(Stamp stamp, ISeededRandom rand);
 	}
 }

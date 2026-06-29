@@ -16,7 +16,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 			this._altererToDo = altererToDo;
 		}
 
-		public bool Modify(TheDungeon generator, IRandom rand) {
+		public bool Modify(TheDungeon generator, ISeededRandom rand) {
 			_altererToDo.Modify(generator, rand);
 			return true;
 		}

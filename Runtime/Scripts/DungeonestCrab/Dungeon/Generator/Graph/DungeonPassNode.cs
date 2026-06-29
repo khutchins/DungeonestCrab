@@ -24,7 +24,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
 
             try {
                 if (workingDungeon != null) {
-                    ApplyNodeLogic(workingDungeon, new SystemRandom(GetPreviewSeed()));
+                    ApplyNodeLogic(workingDungeon, new Xoshiro256PpRandom(GetPreviewSeed()));
                     UpdateTexture(workingDungeon);
                 } else {
                     PreviewTexture = null;

@@ -46,7 +46,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
                 _remove = remove ?? new List<string>();
             }
 
-            public void Apply(TileSpec spec, IRandom rand) {
+            public void Apply(TileSpec spec, ISeededRandom rand) {
                 if (_setTile) spec.Tile = _tile;
                 if (_setTerrain) spec.Terrain = _terrain;
                 foreach (var t in _remove) spec.RemoveTag(t);

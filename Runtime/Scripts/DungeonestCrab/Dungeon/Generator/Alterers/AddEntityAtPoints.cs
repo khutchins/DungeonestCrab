@@ -7,7 +7,7 @@ using Pomerandomian;
 namespace DungeonestCrab.Dungeon.Generator {
 	public class AddEntityAtPoints : IEntityAdder {
 
-		public delegate List<Vector2Int> PointCollector(TheDungeon generator, IRandom random);
+		public delegate List<Vector2Int> PointCollector(TheDungeon generator, ISeededRandom random);
 
 		private readonly EntitySource _source;
 		private readonly Entity.CodeOnInstantiate _code;
@@ -18,7 +18,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 			_collector = collector;
 		}
 
-		public override bool Modify(TheDungeon generator, IRandom rand) {
+		public override bool Modify(TheDungeon generator, ISeededRandom rand) {
 			PlaceAt(generator, rand, _source, _collector.Invoke(generator, rand));
 			return true;
 		}

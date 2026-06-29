@@ -29,7 +29,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 			_deadEndOddPerSquare = deadEndOddPerSquare;
 		}
 
-		public override void Generate(Stamp stamp, IRandom rand) {
+		public override void Generate(Stamp stamp, ISeededRandom rand) {
 			int w = stamp.W;
 			int h = stamp.H;
 			this._maxTilesPerStripe = w * h;
@@ -54,7 +54,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 			}
 		}
 
-		private void CarveStripe(Stamp stamp, DirectedPoint pt, IRandom rand, int currentNum = 0) {
+		private void CarveStripe(Stamp stamp, DirectedPoint pt, ISeededRandom rand, int currentNum = 0) {
 			DirectedPoint currentPt = pt;
 
 			// Should terminate, probably. This will make sure it does.
@@ -79,7 +79,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 			}
 		}
 
-		private Dir AdjDir(Dir curr, IRandom rand) {
+		private Dir AdjDir(Dir curr, ISeededRandom rand) {
 			bool toLeft = rand.NextBool();
 			switch (curr) {
 				case Dir.Left:

@@ -28,7 +28,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 			_dungeonSpec = ds;
 		}
 
-		public TheDungeon Generate(IRandom random) {
+		public TheDungeon Generate(ISeededRandom random) {
 			IAlterer[] dungeonAlterers = _dungeonSpec.alterers.ToArray();
 			int attempts = 20;
 			bool dungeonFailed = true;

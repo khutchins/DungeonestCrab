@@ -11,7 +11,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         private class TagAction : ITileAction {
             readonly List<string> _add, _remove;
             public TagAction(List<string> add, List<string> remove) { _add = add; _remove = remove; }
-            public void Apply(TileSpec spec, IRandom rand) {
+            public void Apply(TileSpec spec, ISeededRandom rand) {
                 foreach (var t in _remove) spec.RemoveTag(t);
                 foreach (var t in _add) spec.AddTag(t);
             }

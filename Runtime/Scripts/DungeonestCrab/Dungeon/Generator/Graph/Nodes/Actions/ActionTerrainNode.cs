@@ -9,7 +9,7 @@ namespace DungeonestCrab.Dungeon.Generator.Graph {
         private class TerrainAction : ITileAction {
             readonly TerrainSO _terrain;
             public TerrainAction(TerrainSO terrain) => _terrain = terrain;
-            public void Apply(TileSpec spec, IRandom rand) => spec.Terrain = _terrain;
+            public void Apply(TileSpec spec, ISeededRandom rand) => spec.Terrain = _terrain;
         }
     }
 }

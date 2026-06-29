@@ -10,7 +10,7 @@ namespace DungeonestCrab.Dungeon.Printer {
     public abstract class IFlatDrawer : ScriptableObject {
         public struct FlatInfo {
             public Transform parent;
-            public IRandom random;
+            public ISeededRandom random;
             public TileSpec tileSpec;
             public Vector3 tileSize;
             public bool hasCeiling;

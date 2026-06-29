@@ -10,14 +10,14 @@ namespace DungeonestCrab.Dungeon.Generator {
 	/// </summary>
 	public class Conditional : IAlterer {
 		readonly IAlterer altererToDo;
-		readonly Func<TheDungeon, IRandom, bool> shouldPerform;
+		readonly Func<TheDungeon, ISeededRandom, bool> shouldPerform;
 
-		public Conditional(IAlterer altererToDo, Func<TheDungeon, IRandom, bool> shouldPerform) {
+		public Conditional(IAlterer altererToDo, Func<TheDungeon, ISeededRandom, bool> shouldPerform) {
 			this.altererToDo = altererToDo;
 			this.shouldPerform = shouldPerform;
 		}
 
-		public bool Modify(TheDungeon generator, IRandom rand) {
+		public bool Modify(TheDungeon generator, ISeededRandom rand) {
 			if (this.shouldPerform(generator, rand)) {
 				return this.altererToDo.Modify(generator, rand);
 			}

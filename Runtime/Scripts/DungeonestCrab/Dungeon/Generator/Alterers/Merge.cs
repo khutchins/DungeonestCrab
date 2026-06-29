@@ -13,7 +13,7 @@ namespace DungeonestCrab.Dungeon.Generator {
 			_alterers.AddRange(alterers);
 		}
 
-		public bool Modify(TheDungeon generator, IRandom rand) {
+		public bool Modify(TheDungeon generator, ISeededRandom rand) {
 			foreach (IAlterer alterer in _alterers) {
 				if (!alterer.Modify(generator, rand)) {
 					return false;

@@ -23,7 +23,7 @@ namespace DungeonestCrab.Dungeon.Printer {
         [ShowIf("ProviderType", ProviderType.RandomWithShares)]
         [SerializeField] ObjectOdds<T>[] ObjectAndShares;
 
-        public T GetAsset(IRandom random) {
+        public T GetAsset(ISeededRandom random) {
             switch (ProviderType) {
                 case ProviderType.Single:
                     return Object;
