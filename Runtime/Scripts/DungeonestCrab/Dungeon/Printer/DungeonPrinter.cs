@@ -161,8 +161,8 @@ namespace DungeonestCrab.Dungeon.Printer {
                 if (tileSpec.DrawAsFloor) {
                     bool replacesFloor = _tileMods.Any(t => t.ReplacesFloor);
 
-                    // Draw floor at Zero (if walkable or default)
-                    if (ruleConfig.GroundOffset == 0 || tileSpec.Walkable) {
+                    // Draw floor at Zero (if a floor tile, e.g. a bridge over sunken ground, or default)
+                    if (ruleConfig.GroundOffset == 0 || tileSpec.Tile == Tile.Floor) {
                         AddFloor(tileSpec, tileSpec.Tile, replacesFloor, dg, 0);
                     }
                     // Draw sunken floor (if offset)
@@ -178,7 +178,8 @@ namespace DungeonestCrab.Dungeon.Printer {
                     } else {
                         // Surface: ground level for walkable/draw-as-floor tiles, wall top for wall tiles
                         if (walkable || tileSpec.DrawAsFloor) {
-                            entityZ = -ruleConfig.GroundOffset;
+                            // Floor tiles are drawn at zero even over sunken ground.
+                            entityZ = tileSpec.Tile == Tile.Floor ? 0 : -ruleConfig.GroundOffset;
                         } else {
                             entityZ = ruleConfig.WallHeight;
                         }
@@ -356,8 +357,8 @@ namespace DungeonestCrab.Dungeon.Printer {
 
             // Lower wall: drawn when this tile's ground is deeper than neighbor's.
             if (myRules.GroundOffset > adjRules.GroundOffset) {
-                float minY = -myRules.GroundOffset;
-                float maxY = -adjRules.GroundOffset;
+                float minY = -myRules.GroundOffset * tileHeightMult;
+                float maxY = -adjRules.GroundOffset * tileHeightMult;
                 if (minY < maxY) {
                     segments.Add(new WallSegment(WallSegmentType.Lower, minY, maxY));
                 }

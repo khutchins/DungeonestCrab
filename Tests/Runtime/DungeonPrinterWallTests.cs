@@ -219,6 +219,17 @@ namespace DungeonestCrab.Tests {
         // Tile height multiplier
 
         [Test]
+        public void TileHeightMult_ScalesLowerSegment() {
+            var my = MakeRules(wallHeight: 1, ceilingHeight: 1, groundOffset: 0.5f);
+            var adj = MakeRules(wallHeight: 1, ceilingHeight: 1, groundOffset: 0.25f);
+
+            var segs = DungeonPrinter.ComputeWallSegments(my, adj, styleWallHeight: 1, drawsStandardWalls: false, adjDrawsAsFloor: true, tileHeightMult: 2);
+
+            Assert.AreEqual(1, segs.Count, "Should have only a lower segment");
+            AssertSegment(segs[0], DungeonPrinter.WallSegmentType.Lower, -1, -0.5f);
+        }
+
+        [Test]
         public void TileHeightMult_ScalesAllHeights() {
             var my = MakeRules(wallHeight: 1, ceilingHeight: 2);
             var adj = MakeRules(wallHeight: 1, ceilingHeight: 1);
