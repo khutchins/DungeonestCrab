@@ -16,6 +16,8 @@ namespace DungeonestCrab.Dungeon.Crawl {
         [SerializeField] AudioEvent WallMoveSound;
         [SerializeField] BoolReference PlayerMovementInputAllowed;
         [SerializeField] BoolReference PlayerInitiatedInteraction;
+        [Tooltip("The player's setting for movement queueing. Defaults to on.")]
+        [SerializeField] BoolReference QueueingEnabled;
         [SerializeField] bool InteractOnBump;
         [Tooltip("Time to wait before allowing another interaction. This is primarily to avoid the interact close input beginning another interaction.")]
         [SerializeField] float InteractCooldown = 0.2f;
@@ -270,6 +272,8 @@ namespace DungeonestCrab.Dungeon.Crawl {
             }
         }
 
+        private bool QueueingAllowed => QueueingEnabled == null || QueueingEnabled.Value;
+
         private void CheckAndDoMove() {
             if (!MovementInputAllowed() || Time.timeScale == 0) return;
 
@@ -287,7 +291,7 @@ namespace DungeonestCrab.Dungeon.Crawl {
 
             // Queue up button presses.
             foreach (Action action in actionOrder) {
-                if (MovementConfig.AllowEnqueue(TypeForAction(action), action) && _actions[action].InputJustDown()) {
+                if (QueueingAllowed && MovementConfig.AllowEnqueue(TypeForAction(action), action) && _actions[action].InputJustDown()) {
                     _bufferedAction = action;
                     break;
                 }
