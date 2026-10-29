@@ -100,8 +100,6 @@ namespace DungeonestCrab.Dungeon.Pen {
             if (!SetPassage(passage)) {
                 yield break;
             }
-
-            _story.ChoosePathString(passage);
             yield return Read(reader);
         }
 
