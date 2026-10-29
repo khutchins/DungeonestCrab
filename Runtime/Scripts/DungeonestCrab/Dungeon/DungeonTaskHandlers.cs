@@ -6,6 +6,7 @@ using KH.Texts;
 using Ratferences;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using static KH.TaskQueue;
@@ -19,6 +20,7 @@ namespace DungeonestCrab.Dungeon {
         [SerializeField] ColorReference BackgroundColor;
         [SerializeField] FloatReference FaderRef;
         [SerializeField] StringReference SplashText;
+        [SerializeField] ChoiceSpecQueue ChoiceQueue;
 
         private void Awake() {
             FaderRef.Value = 1f;
@@ -30,6 +32,14 @@ namespace DungeonestCrab.Dungeon {
             TaskQueueManager.INSTANCE.AddHandler(typeof(FadeTask), FadeTaskHandler);
             TaskQueueManager.INSTANCE.AddHandler(typeof(SceneLoadTask), SceneLoadTaskHandler);
             TaskQueueManager.INSTANCE.AddHandler(typeof(SplashTextTask), SplashTextTaskHandler);
+            TaskQueueManager.INSTANCE.AddHandler(typeof(ChoiceTask), ChoiceTaskHandler);
+        }
+
+        IEnumerator ChoiceTaskHandler(ITask task) {
+            ChoiceTask tt = task as ChoiceTask;
+            ChoiceSpec spec = new ChoiceSpec(tt.Choices.Select(x => new ChoiceOptionSpec(x.text)));
+            yield return ChoiceQueue.EnqueueAndAwait(spec);
+            tt.SelectedChoice = spec.LastIndex;
         }
 
         IEnumerator FadeTaskHandler(ITask task) {
